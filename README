@@ -22,6 +22,14 @@ for more information and the latest version.
 Change Log:
 ===========
 
+2005.01.11 version:
+A fix to some out-of-bounds accesses reported by Milan Tomic (see the comment under `BigUnsigned::divideWithRemainder').  `BigUnsigned::multiply' and `BigUnsigned::divideWithRemainder' implementations neatened up a bit with the help of a function `getShiftedBlock'.  I (finally!) introduced a constant `BigUnsigned::N', the number of bits in a `BigUnsigned::Blk', which varies depending on machine word size.  In both code and comments, it replaces the much clunkier `8*sizeof(Blk)'.  Numerous other small changes.
+
+I have inserted a significant number of new comments.  Most explain unobvious aspects of the code.
+
+2005.01.06 version:
+Some changes to the way zero-length arrays are handled by `NumberlikeArray', which fixed a memory leak reported by Milan Tomic.
+
 2004.12.24.2 version:
 I tied down a couple of loose ends involving division/modulo.  I added an explanation of put-here vs. overloaded operators in the sample program; this has confused too many people.  Miscellaneous other improvements.
 

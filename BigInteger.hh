@@ -15,8 +15,9 @@
 * and many math operations are defined on BigIntegers.
 *
 * The number is stored as a series of blocks in a
-* dynamically allocated array.  It is as if the numbers
-* were written digit by digit in base 256 ^ sizeof(unsigned long).
+* dynamically allocated array.  It is as if the number
+* were written digit by digit in base 2 ^ N, **where N is the
+* number of bits in an unsigned long.**
 *
 * This class is derived from BigUnsigned, which represents
 * a large nonnegative integer.  BigUnsigned should be studied

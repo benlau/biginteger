@@ -13,7 +13,6 @@
 */
 
 #include "BigUnsignedInABase.hh"
-#include <iostream>
 
 namespace {
 	unsigned int bitLen(unsigned int x) {
@@ -28,9 +27,7 @@ namespace {
 		return (a + b - 1) / b;
 	}
 }
-	/*std::cout << "((( BigUnsigned ==> BigUnsignedInABase\n";
-	std::cout << "[ Parameter BigUnsigned @ " << (void *)(NumberlikeArray<BigUnsigned::Blk> *)(&x)
-		<< ",\nresulting BigUnsignedInABase @ " << (void *)(NumberlikeArray<Digit> *)(this) << "]" << std::endl;*/
+
 BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 
 	// Check the base
@@ -41,7 +38,7 @@ BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 	this->base = base;
 	
 	// Get an upper bound on how much space we need
-	int maxBitLenOfX = x.getLength() * 8 * sizeof(BigUnsigned::Blk);
+	int maxBitLenOfX = x.getLength() * BigUnsigned::N;
 	int minBitsPerDigit = bitLen(base) - 1;
 	int maxDigitLenOfX = ceilingDiv(maxBitLenOfX, minBitsPerDigit);
 	len = maxDigitLenOfX; // Another change to comply with `staying in bounds'; see `BigUnsigned::divideWithRemainder'.
@@ -62,7 +59,6 @@ BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 	
 	// Save the actual length.
 	len = digitNum;
-	/*std::cout << "BigUnsigned ==> BigUnsignedInABase )))\n";*/
 }
 
 BigUnsignedInABase::operator BigUnsigned() const {
@@ -84,7 +80,9 @@ BigUnsignedInABase::BigUnsignedInABase(const std::string &s, Base base) {
 	// This pattern is seldom seen in C++, but the analogous ``this.'' is common in Java.
 	this->base = base;
 	
-	len = s.length();
+	// `s.length()' is a `size_t', while `len' is a `NumberlikeArray::Index',
+	// also known as an `unsigned int'.  Some compilers warn without this cast.
+	len = Index(s.length());
 	allocate(len);
 	
 	Index digitNum, symbolNumInString;
@@ -104,7 +102,6 @@ BigUnsignedInABase::BigUnsignedInABase(const std::string &s, Base base) {
 }
 
 BigUnsignedInABase::operator std::string() const {
-	//std::cout << "((( BigUnsignedInABase ==> std::string\n";
 	if (base > 36)
 		throw "BigUnsignedInABase ==> std::string: The default string conversion routines use the symbol set 0-9, A-Z and therefore support only up to base 36.  You tried a conversion with a base over 36; write your own string conversion routine.";
 	if (len == 0)
@@ -122,6 +119,5 @@ BigUnsignedInABase::operator std::string() const {
 	}
 	std::string s2(s);
 	delete s;
-	//std::cout << "BigUnsignedInABase ==> std::string )))\n";
 	return s2;
 }

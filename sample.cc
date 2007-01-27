@@ -42,29 +42,19 @@ int main() {
 		
 		BigInteger c(a); // Copy a BigInteger.
 		
-		std::cout << "here 0" << std::endl;
-		
 		BigInteger d(-314159265); // c is -314159265.  The `int' literal is converted to a BigInteger.
 		
 		// Ahem: that's too big to be an `int' literal (or even a `long' literal)!
 		// Disillusion yourself now -- this won't compile.
 		//BigInteger e(3141592653589793238462643383279);
 		
-		std::cout << "here 1" << std::endl;
-		
 		std::string s("3141592653589793238462643383279");
 		BigInteger f = easyStringToBI(s);
 		// Ah.  The string is converted to a BigInteger, and strings can be as long as you want.
 		
-		std::cout << "here 2" << std::endl;
-		
 		std::string s2 = easyBItoString(f); // You can convert the other way too.
 		
-		std::cout << "here 3" << std::endl;
-		
 		std::cout << f << std::endl; // f is stringified and send to std::cout.
-		
-		std::cout << "here 4" << std::endl;
 		
 		/*
 		* Let's do some math!
@@ -99,14 +89,10 @@ int main() {
 		std::cout << (g + h) << '\n' << (g - h) << '\n' << (g * h)
 			<< '\n' << (g / h) << '\n' << (g % h) << std::endl;
 		
-		std::cout << "here 5" << std::endl;
-		
 		BigInteger i(5), j(10), k;
 		// These two lines do the same thing: k is set to a BigInteger containing 15.
 		k = i + j;
 		k.add(i, j);
-		
-		std::cout << "here 6" << std::endl;
 		
 		// Let's do some heavy lifting.
 		std::cout << "Powers of 3" << std::endl;

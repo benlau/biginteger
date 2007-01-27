@@ -15,8 +15,9 @@
 * and many math operations are defined on BigUnsigneds.
 *
 * The number is stored as a series of blocks in a
-* dynamically allocated array.  It is as if the numbers
-* were written digit by digit in base 256 ^ sizeof(unsigned long).
+* dynamically allocated array.  It is as if the number
+* were written digit by digit in base 2 ^ N, **where N is the
+* number of bits in an unsigned long.**
 *
 * The memory-management details that used to be in here have
 * been moved into NumberlikeArray, which BigUnsigned now derives from.
@@ -32,6 +33,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	enum CmpRes { less = -1, equal = 0, greater = 1 }; // Enumeration for the result of a comparison
 	typedef unsigned long Blk; // The number block type that BigUnsigneds are built from
 	typedef NumberlikeArray<Blk>::Index Index; // (NlA) Type for the index of a block in the array
+	NumberlikeArray<Blk>::N; // Number of bits in a Blk
 	
 	/*
 	// FIELDS
@@ -185,6 +187,8 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	void operator --(   ); // Prefix  increment
 	void operator --(int); // Postfix decrement
 	
+	// Helper function that needs access to BigUnsigned internals
+	friend Blk getShiftedBlock(const BigUnsigned &num, Index x, unsigned int y);
 };
 
 // NORMAL OPERATORS
