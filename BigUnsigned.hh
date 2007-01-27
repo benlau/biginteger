@@ -104,8 +104,14 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	// Compares this to x like Perl's <=>
 	CmpRes compareTo(const BigUnsigned &x) const;
 	// Normal comparison operators
-	NumberlikeArray<Blk>::operator ==; // (NlA) The body used to be `{ return compareTo(x) == equal; }'.  For performance reasons we use NumberlikeArray code that only worries about (in)equality and doesn't waste time determining which is bigger
-	NumberlikeArray<Blk>::operator !=; // (NlA) Ditto.
+	// Bug fixed 2006.04.24: Only we, not the user, can pass a BigUnsigned off as a
+	// NumberlikeArray, so we have to wrap == and !=.
+	bool operator ==(const BigUnsigned &x) const {
+		return NumberlikeArray<Blk>::operator ==(x);
+	}
+	bool operator !=(const BigUnsigned &x) const {
+		return NumberlikeArray<Blk>::operator !=(x);
+	}
 	bool operator < (const BigUnsigned &x) const { return compareTo(x) == less   ; }
 	bool operator <=(const BigUnsigned &x) const { return compareTo(x) != greater; }
 	bool operator >=(const BigUnsigned &x) const { return compareTo(x) != less   ; }

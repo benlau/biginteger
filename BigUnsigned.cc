@@ -752,8 +752,10 @@ void BigUnsigned::operator ++() {
 	}
 	if (carry) {
 		// Matt fixed a bug 2004.12.24: next 2 lines used to say allocateAndCopy(len + 1)
+		// Matt fixed another bug 2006.04.24:
+		// old number only has len blocks, so copy before increasing length
+		allocateAndCopy(len + 1);
 		len++;
-		allocateAndCopy(len);
 		blk[i] = 1;
 	}
 }

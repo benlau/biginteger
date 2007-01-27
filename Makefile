@@ -3,55 +3,51 @@
 # http://hashproduct.metaesthetics.net/bigint/
 #
 
-# The implicit rules we need
-%.tag : %
-	touch $@
+# Mention default target.
+all :
+
+# Implicit rule to compile C++ files.  Modify to your taste.
 %.o : %.cc
 	g++ -c -O -Wall -Wextra -pedantic $<
 
-# Default target
-all : library sample
+# Components of the library.
+library-objects = BigUnsigned.o BigInteger.o BigUnsignedInABase.o BigIntegerUtils.o
+library-headers = NumberlikeArray.hh BigUnsigned.hh BigUnsignedInABase.hh BigInteger.hh BigIntegerLibrary.hh
 
-library : BigUnsigned.o BigInteger.o BigUnsignedInABase.o BigIntegerUtils.o
+# To ``make the library'', make all its objects using the implicit rule.
+library : $(library-objects)
 
-# Extra dependencies from `#include'
-BigUnsigned.hh.tag : NumberlikeArray.hh.tag
-BigUnsigned.o : BigUnsigned.hh.tag
-BigInteger.hh.tag : BigUnsigned.hh.tag
-BigInteger.o : BigInteger.hh.tag
-BigUnsignedInABase.hh.tag : BigUnsigned.hh.tag
-BigUnsignedInABase.o : BigUnsignedInABase.hh.tag
-BigIntegerUtils.hh.tag : BigInteger.hh.tag
-BigIntegerUtils.o : BigIntegerUtils.hh.tag
+# Extra dependencies from `#include'.
+BigUnsigned.o : NumberlikeArray.hh BigUnsigned.hh
+BigInteger.o : NumberlikeArray.hh BigUnsigned.hh BigInteger.hh
+BigUnsignedInABase.o : NumberlikeArray.hh BigUnsigned.hh BigUnsignedInABase.hh
+BigIntegerUtils.o : NumberlikeArray.hh BigUnsigned.hh BigUnsignedInABase.hh BigInteger.hh
 
-# sample program
-sample : library sample.cc
-	g++ -osample *.o sample.cc
+# The rules below build a program that uses the library.  They are preset to
+# build ``sample'' from ``sample.cc''.  You can change the name(s) of the
+# source file(s) and program file to build your own program, or you can write
+# your own Makefile.
 
+# Components of the program.
+program = sample
+program-objects = sample.o
+
+# Conservatively assume all the program source files depend on all the library
+# headers.  You can change this if it is not the case.
+$(program-objects) : $(library-headers)
+
+# How to link the program.  The implicit rule covers individual objects.
+$(program) : $(program-objects) $(library-objects)
+	g++ $(program-objects) $(library-objects) -o $(program)
+
+# Delete all generated files we know about.
 clean :
-	rm -f *.tag *.o sample
+	rm -f $(library-objects) $(program-objects) $(program)
 
-# The `.tag' mechanism allows for proper recompilation when a header file
-# changes, considering that some header files may include others.
-#
-# If a header file X includes other header
-# files Y and Z, we create a file X.tag that depends
-# on X, Y.tag, and Z.tag.  Other headers that include X should
-# depend on X.tag.
-#
-# Suppose Y is subsequently changed.  X doesn't get ``recompiled'',
-# but anything that includes X should be recompiled.  Well, Y.tag becomes
-# out-of-date, so X.tag becomes out-of-date, so anything depending on X.tag
-# (that is, anything including X) becomes out-of-date.  Magic!
-#
-# In this system, the tag files are empty files used only for their
-# timestamps.  If one wished to use precompiled headers, one could use
-# ``.gch'' files exactly how ``.tag'' files are used now, except that
-# their contents would be meaningful.
-#
-# However, the same sort of ``deadly diamond'' problem that surfaces with
-# multiple inheritance also applies to precompiled headers.  The ``#ifndef''
-# mechanism that prevents multiple inclusion doesn't work when headers are
-# compiled independently in a hierarchical structure, since the second
-# inclusion of a file won't even know there was a first inclusion.  For
-# this reason, I just use ``.tag''s.
+# I removed the *.tag dependency tracking system because it had few advantages
+# over manually entering all the dependencies.  If there were a portable,
+# reliable dependency tracking system, I'd use it, but I know of no such;
+# cons and depcomp are almost good enough.
+
+# Come back and define default target.
+all : library $(program)
