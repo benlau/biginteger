@@ -1,11 +1,12 @@
 +===================================================================+
 | Big Integer Library                                               |
 | A C++ library that does arithmetic on integers of unlimited size. |
-| Version 2006.02.26                                                |
+| Version 2006.05.01                                                |
 +-------------------------------------------------------------------+
 | By Matt McCutchen                                                 |
-| E-mail: hashproduct@verizon.net                                   |
-| Project Web site: http://hashproduct.metaesthetics.net/bigint/    |
+| E-mail: hashproduct@gmail.com                                     |
+| My Web site gateway: http://mysite.verizon.net/hashproduct/       |
+| Project Web site: http://www.kepreon.com/~matt/bigint/            |
 +===================================================================+
 
 What the Big Integer Library provides
@@ -30,6 +31,6 @@ The library has been tested by myself and others but is by no means bug-free.  T
 
 Keep in touch
 =============
-Feel free to e-mail me at `hashproduct@verizon.net' to report bugs or request features.  When I fix the bug or add the feature, you will generally be credited by name in the source code and/or the Change Log unless you request otherwise.  I am also curious as to what uses you find for the library.  If you would like an e-mail whenever a new version of the library is released, e-mail me to join my informal mailing list.  New versions of the library will be available at the project Web site at `http://hashproduct.metaesthetics.net/bigint/'.
+Feel free to e-mail me at `hashproduct@gmail.com' to report bugs or request features.  When I fix the bug or add the feature, you will generally be credited by name in the source code and/or the Change Log unless you request otherwise.  I am also curious as to what uses you find for the library.  New versions of the library will be available at the project Web site.
 
 =====================================================================

@@ -1,10 +1,13 @@
 +===================================================================+
 Matt McCutchen's Big Integer Library
-http://hashproduct.metaesthetics.net/bigint/
 
 Change Log
 ==========
 These entries tell you what was added, fixed, or improved in each version as compared to the previous one.  In case you haven't noticed, a version number roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]' format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the same day.
+
+2006.05.01
+----------
+I fixed incorrect results reported by Mohand Mezmaz and related memory corruption on platforms where Blk is bigger than int.  I replaced (1 << x) with (Blk(1) << x) in two places in BigUnsigned.cc.
 
 2006.04.24
 ----------

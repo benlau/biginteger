@@ -1,6 +1,5 @@
 /*
 * Matt McCutchen's Big Integer Library
-* http://hashproduct.metaesthetics.net/bigint/
 */
 
 #include "BigIntegerUtils.hh"

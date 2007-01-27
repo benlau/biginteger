@@ -1,6 +1,5 @@
 /*
 * Matt McCutchen's Big Integer Library
-* http://hashproduct.metaesthetics.net/bigint/
 */
 
 #include "BigUnsigned.hh"
@@ -428,7 +427,7 @@ void BigUnsigned::multiply(const BigUnsigned &a, const BigUnsigned &b) {
 	for (i = 0; i < a.len; i++) {
 		// For each 1-bit of that block...
 		for (i2 = 0; i2 < N; i2++) {
-			if ((a.blk[i] & (1 << i2)) == 0)
+			if ((a.blk[i] & (Blk(1) << i2)) == 0)
 				continue;
 			/*
 			* Add b to this, shifted left i blocks and i2 bits.
@@ -623,7 +622,7 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 			* the region of work2 we copy is just [i, k).
 			*/
 			if (!borrowIn) {
-				q.blk[i] |= (1 << i2);
+				q.blk[i] |= (Blk(1) << i2);
 				while (k > i) {
 					k--;
 					blk[k] = work2[k];
