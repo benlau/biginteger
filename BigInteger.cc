@@ -1,9 +1,9 @@
 /*
 * Matt McCutchen's Big Integer Library
-* See: http://mysite.verizon.net/mccutchen/bigint/
+* http://mysite.verizon.net/mccutchen/bigint/
 */
 
-#include "BigInteger.h"
+#include "BigInteger.hh"
 
 // MANAGEMENT
 
@@ -19,7 +19,7 @@ void BigInteger::operator =(const BigInteger &x) {
 }
 
 // Constructor from an array of blocks and a sign
-BigInteger::BigInteger(const Blk *b, BlkNum l, Sign s) : BigUnsigned(b, l) {
+BigInteger::BigInteger(const Blk *b, Index l, Sign s) : BigUnsigned(b, l) {
 	switch (s) {
 		case zero:
 		case positive:
@@ -27,7 +27,7 @@ BigInteger::BigInteger(const Blk *b, BlkNum l, Sign s) : BigUnsigned(b, l) {
 		sign = (len == 0) ? zero : s;
 		break;
 		default:
-		throw "BigInteger::BigInteger(Blk *, BlkNum, Sign): Invalid sign";
+		throw "BigInteger::BigInteger(Blk *, Index, Sign): Invalid sign";
 	}
 }
 
@@ -40,7 +40,7 @@ BigInteger::BigInteger(const BigUnsigned &x, Sign s) : BigUnsigned(x) {
 		sign = (len == 0) ? zero : s;
 		break;
 		default:
-		throw "BigInteger::BigInteger(Blk *, BlkNum, Sign): Invalid sign";
+		throw "BigInteger::BigInteger(Blk *, Index, Sign): Invalid sign";
 	}
 }
 
@@ -425,67 +425,101 @@ void BigInteger::multiply(const BigInteger &a, const BigInteger &b) {
 	BigUnsigned::multiply(a, b);
 }
 
-// Division
-void BigInteger::divide(const BigInteger &a, const BigInteger &b) {
+/*
+* DIVISION WITH REMAINDER
+* Please read the comments before the definition of
+* `BigUnsigned::divideWithRemainder' in `BigUnsigned.cc' for lots of
+* information you should know before reading this function.
+*
+* Following Knuth, I decree that x / y is to be
+* 0 if y==0 and floor(real-number x / y) if y!=0.
+* Then x % y shall be x - y*(integer x / y).
+*
+* Note that x = y * (x / y) + (x % y) always holds.
+* In addition, (x % y) is from 0 to y - 1 if y > 0,
+* and from -(|y| - 1) to 0 if y < 0.  (x % y) = x if y = 0.
+*
+* Examples: (q = a / b, r = a % b)
+*	a	b	q	r
+*	===	===	===	===
+*	4	3	1	1
+*	-4	3	-2	2
+*	4	-3	-2	-2
+*	-4	-3	1	-1
+*/
+void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigInteger::divide: One of the arguments is the invoked object";
-	// If b is zero, the caller has tried to divide by zero.  Throw an exception.
-	if (b.sign == zero)
-		throw "BigInteger::divide: Division by zero";
-	// Otherwise if a is zero, copy zero and return.
-	else if (a.sign == zero) {
-		sign = zero;
-		len = 0;
+	if (this == &b || this == &q || &b == &q)
+		throw "BigInteger::divideWithRemainder: One of the arguments is the invoked object";
+	// Division by zero gives quotient 0 and remainder *this
+	if (b.sign == zero) {
+		q.len = 0;
+		q.sign = zero;
 		return;
 	}
-	// If the signs of the arguments are the same, the result
-	// is positive, otherwise it is negative.
-	sign = (a.sign == b.sign) ? positive : negative;
+	// 0 / b gives quotient 0 and remainder 0
+	if (sign == zero) {
+		q.len = 0;
+		q.sign = zero;
+		return;
+	}
+	
+	// Here *this != 0, b != 0.
+	
+	// Do the operands have the same sign?
+	if (sign == b.sign) {
+		// Yes: easy case.  Quotient is zero or positive.
+		q.sign = positive;
+	} else {
+		// No: harder case.  Quotient is negative.
+		q.sign = negative;
+		// Decrease the magnitude of the dividend by one.
+		BigUnsigned::operator --();
+		/*
+		* We tinker with the dividend before and with the
+		* quotient and remainder after so that the result
+		* comes out right.  To see why it works, consider the following
+		* list of examples, where A is the magnitude-decreased
+		* a, Q and R are the results of BigUnsigned division
+		* with remainder on A and |b|, and q and r are the
+		* final results we want:
+		*
+		*	a	A	b	Q	R	q	r
+		*	-3	-2	3	0	2	-1	0
+		*	-4	-3	3	1	0	-2	2
+		*	-5	-4	3	1	1	-2	1
+		*	-6	-5	3	1	2	-2	0
+		*
+		* It appears that we need a total of 3 corrections:
+		* Decrease the magnitude of a to get A.  Increase the
+		* magnitude of Q to get q (and make it negative).
+		* Find r = (b - 1) - R and give it the desired sign.
+		*/
+	}
+	
 	// Divide the magnitudes.
-	// Note: This is integer division.  Any fractional part
-	// of the result is truncated toward zero.
-	BigUnsigned::divide(a, b);
-	// If the result is zero, set the sign to zero.
+	BigUnsigned::divideWithRemainder(b, q);
+	
+	if (sign != b.sign) {
+		// More for the harder case (as described):
+		// Increase the magnitude of the quotient by one.
+		q.BigUnsigned::operator ++();
+		// Modify the remainder.
+		BigUnsigned temp(*this);
+		BigUnsigned::subtract(b, temp);
+		BigUnsigned::operator --();
+	}
+	
+	// Sign of the remainder is always the sign of the divisor b.
+	sign = b.sign;
+	
+	// Set signs to zero as necessary.  (Thanks David Allen!)
 	if (len == 0)
 		sign = zero;
-}
-
-// Modular reduction
-void BigInteger::modulo(const BigInteger &a, const BigInteger &b) {
-	/* Note that the mathematical definition of mod is somewhat
-	* different from the way the normal C++ % operator behaves.
-	* This function does it the mathematical way. */
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigInteger::modulo: One of the arguments is the invoked object";
-	// If b is zero, copy a and return.  By the mathematical definition,
-	// x mod 0 = x, though the normal C++ % would throw an exception.
-	if (b.len == 0) {
-		operator =(a);
-		return;
-		// If a is zero, copy zero and return.
-	} else if (a.sign == zero) {
-		sign = zero;
-		len = 0;
-		return;
-	}
-	// Perform modular reduction on the magnitudes
-	BigUnsigned::modulo(a, b);
-	// If the result is zero, set the sign to zero.
-	if (len == 0)
-		sign = zero;
-	else {
-		/* If necessary, flip the result over zero so that it has the
-		* same sign as the modulus (by the mathematical definition).
-		* The normal C++ % does not perform this step and always
-		* takes the sign of the first input. */
-		if (a.sign != b.sign) {
-			BigUnsigned temp(*this);
-			BigUnsigned::subtract(b, temp);
-		}
-		sign = b.sign;
-	}
+	if (q.len == 0)
+		q.sign = zero;
+	
+	// WHEW!!!
 }
 
 // Negation

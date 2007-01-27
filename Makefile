@@ -5,22 +5,62 @@
 #    http://mysite.verizon.net/mccutchen/bigint/
 # for more information and the latest version.
 #
-# December 16, 2004 version
+# December 23, 2004 development version
 #
+# NEWS:
+# We're now using array indexes instead of pointers.
+# After having used pointers for faster speed, I decided
+# that they detracted too much from the readability of
+# the program and that a good optimizing compiler should
+# be able to produce as efficient code.
 
-library        : BigUnsigned.o BigInteger.o BigIntegerIO.o
+# The implicit rules we need
+%.tag : %
+	touch $@
+%.o : %.cc
+	g++ -c -O -Wall -Wextra -pedantic $<
 
-BigUnsigned.o  : BigUnsigned.h BigUnsigned.cpp
-	g++ -c BigUnsigned.cpp
+# Default target
+library : NumberlikeArray.hh.tag BigUnsigned.o BigInteger.o BigUnsignedInABase.o BigIntegerUtils.o
 
-BigInteger.o   : BigUnsigned.h BigInteger.h BigInteger.cpp
-	g++ -c BigInteger.cpp
+# Extra `include' dependencies
+BigUnsigned.hh.tag : NumberlikeArray.hh.tag
+BigUnsigned.o : BigUnsigned.hh.tag
+BigInteger.hh.tag : BigUnsigned.hh.tag
+BigInteger.o : BigInteger.hh.tag
+BigUnsignedInABase.hh.tag : BigUnsigned.hh.tag
+BigUnsignedInABase.o : BigUnsignedInABase.hh.tag
+BigIntegerUtils.hh.tag : BigInteger.hh.tag
+BigIntegerUtils.o : BigIntegerUtils.hh.tag
 
-BigIntegerIO.o : BigUnsigned.h BigInteger.h BigIntegerIO.cpp
-	g++ -c BigIntegerIO.cpp
+# sample program
+sample : library sample.cc
+	g++ -osample *.o sample.cc
 
-po3demo        : library PowersOfThreeDemo.cpp
-	g++ -opo3demo BigUnsigned.o BigInteger.o BigIntegerIO.o PowersOfThreeDemo.cpp
+clean :
+	rm -f *.tag *.o sample
 
-clean          :
-	rm -f *.o po3demo
+# The ``.tag'' mechanism allows for proper recompilation when a header file
+# changes, considering that some header files may include others.
+#
+# If a header file X includes other header
+# files Y and Z, we create a file X.tag that depends
+# on X, Y.tag, and Z.tag.  Other headers that include X should
+# depend on X.tag.
+#
+# Suppose Y is subsequently changed.  X doesn't get ``recompiled'',
+# but anything that includes X should be recompiled.  Well, Y.tag becomes
+# out-of-date, so X.tag becomes out-of-date, so anything depending on X.tag
+# (that is, anything including X) becomes out-of-date.  Magic!
+#
+# In this system, the tag files are empty files used only for their
+# timestamps.  If one wished to use precompiled headers, one could use
+# ``.gch'' files exactly how ``.tag'' files are used now, except that
+# their contents would be meaningful.
+#
+# However, the same sort of ``deadly diamond'' problem that surfaces with
+# multiple inheritance also applies to precompiled headers.  The ``#ifndef''
+# mechanism that prevents multiple inclusion doesn't work when headers are
+# compiled independently in a hierarchical structure, since the second
+# inclusion of a file won't even know there was a first inclusion.  For
+# this reason, I just use ``.tag''s.

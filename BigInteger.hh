@@ -6,21 +6,20 @@
 #ifndef BIGINTEGER
 #define BIGINTEGER
 
-#include "BigUnsigned.h"
+#include "BigUnsigned.hh"
 
 /*
-*
 * A BigInteger object represents a signed integer of size
 * limited only by available memory.  A BigInteger can be
 * created from and converted back to most integral types,
-* and many math operations are defined on them.
+* and many math operations are defined on BigIntegers.
 *
 * The number is stored as a series of blocks in a
 * dynamically allocated array.  It is as if the numbers
-* were written digit by digit in base 2^32.
+* were written digit by digit in base 256 ^ sizeof(unsigned long).
 *
 * This class is derived from BigUnsigned, which represents
-* a large nonnegative integer.  This should be understood
+* a large nonnegative integer.  BigUnsigned should be studied
 * first, as only new or different things are declared here.
 * Some things are redeclared so that they use the BigInteger
 * versions of methods, rather than the BigUnsigned versions.
@@ -38,14 +37,19 @@ class BigInteger : public BigUnsigned {
 	
 	// MANAGEMENT
 	protected:
-	BigInteger(Sign s, BlkNum c); // Creates a BigInteger with a sign and capacity
+	BigInteger(Sign s, Index c) : BigUnsigned(0, c), sign(s) {}; // Creates a BigInteger with a sign and capacity
 	public:
-	BigInteger(); // Default constructor (value is 0)
-	BigInteger(const BigInteger &x); // Copy constructor
+
+	BigInteger() : BigUnsigned(), sign(zero) {} // Default constructor (value is 0)
+	BigInteger(const BigInteger &x) : BigUnsigned(x), sign(x.sign) {}; // Copy constructor
 	void operator=(const BigInteger &x); // Assignment operator
-	BigInteger(const Blk *b, BlkNum l); // Constructor from an array of blocks
-	BigInteger(const Blk *b, BlkNum l, Sign s); // Constructor from an array of blocks and a sign
-	BigInteger(const BigUnsigned &x); // Constructor from a BigUnsigned
+	BigInteger(const Blk *b, Index l) : BigUnsigned(b, l) { // Constructor from an array of blocks
+		sign = (len == 0) ? zero : positive;
+	}
+	BigInteger(const Blk *b, Index l, Sign s); // Constructor from an array of blocks and a sign
+	BigInteger(const BigUnsigned &x) : BigUnsigned(x) { // Constructor from a BigUnsigned
+		sign = (len == 0) ? zero : positive;
+	}
 	BigInteger(const BigUnsigned &x, Sign s); // Constructor from a BigUnsigned and a sign
 	// Constructors from integral types
 	BigInteger(unsigned long  x);
@@ -76,12 +80,14 @@ class BigInteger : public BigUnsigned {
 	// Compares this to x like Perl's <=>
 	CmpRes compareTo(const BigInteger &x) const;
 	// Normal comparison operators
-	bool operator ==(const BigInteger &x) const;
-	bool operator !=(const BigInteger &x) const;
-	bool operator < (const BigInteger &x) const;
-	bool operator <=(const BigInteger &x) const;
-	bool operator >=(const BigInteger &x) const;
-	bool operator > (const BigInteger &x) const;
+	bool operator ==(const BigInteger &x) const {
+		return sign == x.sign && BigUnsigned::operator ==(x);
+	}
+	bool operator !=(const BigInteger &x) const { return !operator ==(x); };
+	bool operator < (const BigInteger &x) const { return compareTo(x) == less   ; }
+	bool operator <=(const BigInteger &x) const { return compareTo(x) != greater; }
+	bool operator >=(const BigInteger &x) const { return compareTo(x) != less   ; }
+	bool operator > (const BigInteger &x) const { return compareTo(x) == greater; }
 	
 	// PUT-HERE OPERATIONS
 	/* These store the result of the operation on the arguments into this.
@@ -91,12 +97,34 @@ class BigInteger : public BigUnsigned {
 	void add     (const BigInteger &a, const BigInteger &b); // Addition
 	void subtract(const BigInteger &a, const BigInteger &b); // Subtraction
 	void multiply(const BigInteger &a, const BigInteger &b); // Multiplication
-	void divide  (const BigInteger &a, const BigInteger &b); // Division
-	void modulo  (const BigInteger &a, const BigInteger &b); // Modular reduction
-	void negate  (const BigInteger &a                     ); // Negative
+	/* Divisive stuff
+	* `a.divideWithRemainder(b, q)' is like `q = a / b, a %= b'.
+	* Semantics similar to Donald E. Knuth's are used for / and %,
+	* and these usually differ from the semantics of primitive-type
+	* / and % when negatives and/or zeroes are involved.
+	* Look in `BigInteger.cc' for details.
+	*/
+	void divideWithRemainder(const BigInteger &b, BigInteger &q);
+	void divide(const BigInteger &a, const BigInteger &b) {
+		// Division, deprecated and provided for compatibility
+		BigInteger a2(a);
+		a2.divideWithRemainder(b, *this);
+		// quotient now in *this
+		// don't care about remainder left in a2
+	}
+	void modulo(const BigInteger &a, const BigInteger &b) {
+		// Modular reduction, deprecated and provided for compatibility
+		*this = a;
+		BigInteger q;
+		divideWithRemainder(b, q);
+		// remainder now in *this
+		// don't care about quotient left in q
+	}
+	void negate(const BigInteger &a); // Negative
 	// Some operations are inherently unsigned and are not
 	// redefined for BigIntegers.  Calling one of these on
-	// a BigInteger will take its absolute value first.
+	// a BigInteger will convert it to a BigUnsigned,
+	// which takes its absolute value.
 	
 	// NORMAL OPERATORS
 	// These perform the operation on this (to the left of the operator)
@@ -130,23 +158,8 @@ class BigInteger : public BigUnsigned {
 	
 };
 
-// MANAGEMENT
-inline BigInteger::BigInteger(Sign s, BlkNum c) : BigUnsigned(0, c), sign(s) { }
-inline BigInteger::BigInteger() : BigUnsigned(), sign(zero) { }
-inline BigInteger::BigInteger(const BigInteger &x) : BigUnsigned(x), sign(x.sign) { }
-inline BigInteger::BigInteger(const Blk *b, BlkNum l) : BigUnsigned(b, l) { sign = (len == 0) ? zero : positive; }
-inline BigInteger::BigInteger(const BigUnsigned &x) : BigUnsigned(x) { sign = (len == 0) ? zero : positive; }
-
 // PICKING APART
 inline BigInteger::Sign BigInteger::getSign() const { return sign; }
-
-// COMPARISONS
-inline bool BigInteger::operator==(const BigInteger &x) const { return compareTo(x) == equal  ; }
-inline bool BigInteger::operator!=(const BigInteger &x) const { return compareTo(x) != equal  ; }
-inline bool BigInteger::operator< (const BigInteger &x) const { return compareTo(x) == less   ; }
-inline bool BigInteger::operator<=(const BigInteger &x) const { return compareTo(x) != greater; }
-inline bool BigInteger::operator>=(const BigInteger &x) const { return compareTo(x) != less   ; }
-inline bool BigInteger::operator> (const BigInteger &x) const { return compareTo(x) == greater; }
 
 // NORMAL OPERATORS
 /* These create an object to hold the result and invoke
@@ -199,12 +212,18 @@ inline void BigInteger::operator *=(const BigInteger &x) {
 	multiply(thisCopy, x);
 }
 inline void BigInteger::operator /=(const BigInteger &x) {
+	// Updated for divideWithRemainder
 	BigInteger thisCopy(*this);
-	divide(thisCopy, x);
+	thisCopy.divideWithRemainder(x, *this);
+	// quotient left in *this
+	// don't care about remainder left in thisCopy
 }
 inline void BigInteger::operator %=(const BigInteger &x) {
-	BigInteger thisCopy(*this);
-	modulo(thisCopy, x);
+	// Shortcut (woohoo!)
+	BigInteger q;
+	divideWithRemainder(x, q);
+	// remainder left in *this
+	// don't care about quotient left in q
 }
 // This one is trivial
 inline void BigInteger::flipSign() {
