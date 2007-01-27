@@ -562,8 +562,9 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	* amusing story of this section of code.
 	*/
 	Index origLen = len; // Save real length.
+	// 2006.05.03: Copy the number and then change the length!
+	allocateAndCopy(len + 1); // Get the space.
 	len++; // Increase the length.
-	allocateAndCopy(len); // Get the space.
 	blk[origLen] = 0; // Zero the extra block.
 	
 	// work2 holds part of the result of a subtraction; see above.

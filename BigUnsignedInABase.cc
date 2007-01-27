@@ -117,6 +117,7 @@ BigUnsignedInABase::operator std::string() const {
 			s[symbolNumInString] = char('A' + theDigit - 10);
 	}
 	std::string s2(s);
-	delete s;
+	// 2006.05.03: This needs to be [] to match the allocation
+	delete [] s;
 	return s2;
 }
