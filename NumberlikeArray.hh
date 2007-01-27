@@ -1,6 +1,6 @@
 /*
 * Matt McCutchen's Big Integer Library
-* http://mysite.verizon.net/mccutchen/bigint/
+* http://hashproduct.metaesthetics.net/bigint/
 */
 
 /*
@@ -60,7 +60,7 @@ class NumberlikeArray {
 	* `NULL' as if it were a zero-length array from `new'.
 	*
 	* This is a great convenience because the only code that need be changed
-	* is the array allocation code.  All other code will still work file.
+	* is the array allocation code.  All other code will still work fine.
 	*/
 	
 	// MANAGEMENT
@@ -109,7 +109,7 @@ class NumberlikeArray {
 	// Derived classes may wish to override these if differing arrays can
 	// sometimes be considered equivalent.
 	bool operator ==(const NumberlikeArray<Blk> &x) const;
-	bool operator !=(const NumberlikeArray<Blk> &x) const;
+	bool operator !=(const NumberlikeArray<Blk> &x) const { return !operator ==(x);	}
 	
 };
 

@@ -1,6 +1,6 @@
 #
 # Matt McCutchen's Big Integer Library
-# http://mysite.verizon.net/mccutchen/bigint/
+# http://hashproduct.metaesthetics.net/bigint/
 #
 
 # The implicit rules we need

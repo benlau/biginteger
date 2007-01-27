@@ -1,10 +1,14 @@
 +===================================================================+
 Matt McCutchen's Big Integer Library
-http://mysite.verizon.net/mccutchen/bigint/
+http://hashproduct.metaesthetics.net/bigint/
 
 Change Log
 ==========
 These entries tell you what was added, fixed, or improved in each version as compared to the previous one.  In case you haven't noticed, a version number roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]' format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the same day.
+
+2006.02.26
+----------
+A few tweaks in preparation for a group to distribute the library.  The project Web site has moved; I updated the references.  I fixed a typo and added a missing function in NumberlikeArray.hh.  I'm using Eclipse now, so you get Eclipse project files.
 
 2005.03.30
 ----------
