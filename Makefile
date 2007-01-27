@@ -1,18 +1,7 @@
 #
 # Matt McCutchen's Big Integer Library
+# http://mysite.verizon.net/mccutchen/bigint/
 #
-# Please see the project Web site at
-#    http://mysite.verizon.net/mccutchen/bigint/
-# for more information and the latest version.
-#
-# December 23, 2004 development version
-#
-# NEWS:
-# We're now using array indexes instead of pointers.
-# After having used pointers for faster speed, I decided
-# that they detracted too much from the readability of
-# the program and that a good optimizing compiler should
-# be able to produce as efficient code.
 
 # The implicit rules we need
 %.tag : %

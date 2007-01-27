@@ -57,15 +57,15 @@ BigInteger::BigInteger(const BigUnsigned &x, Sign s) : BigUnsigned(x) {
 *    to the unsigned type of the same length.
 * 6. Expand x (or the result of step 5) to a Blk,
 *    and store it in the number array.
+*
+* See remarks in `BigUnsigned.cc' and `NumberlikeArray.hh'
+* about new handling of zero-length arrays.
 */
 
 BigInteger::BigInteger(unsigned long x) {
-	if (x == 0) {
-		cap = 0;
-		blk = new Blk[0];
-		sign = zero;
-		len = 0;
-	} else {
+	if (x == 0)
+		sign = zero; // NumberlikeArray did the rest
+	else {
 		cap = 1;
 		blk = new Blk[1];
 		sign = positive;
@@ -87,21 +87,14 @@ BigInteger::BigInteger(long x) {
 		sign = negative;
 		len = 1;
 		*blk = Blk(-x);
-	} else {
-		cap = 0;
-		blk = new Blk[0];
-		sign = zero;
-		len = 0;
-	}
+	} else
+	sign = zero;
 }
 
 BigInteger::BigInteger(unsigned int x) {
-	if (x == 0) {
-		cap = 0;
-		blk = new Blk[0];
+	if (x == 0)
 		sign = zero;
-		len = 0;
-	} else {
+	else {
 		cap = 1;
 		blk = new Blk[1];
 		sign = positive;
@@ -123,21 +116,14 @@ BigInteger::BigInteger(int x) {
 		sign = negative;
 		len = 1;
 		*blk = Blk(-x);
-	} else {
-		cap = 0;
-		blk = new Blk[0];
-		sign = zero;
-		len = 0;
-	}
+	} else
+	sign = zero;
 }
 
 BigInteger::BigInteger(unsigned short x) {
-	if (x == 0) {
-		cap = 0;
-		blk = new Blk[0];
+	if (x == 0)
 		sign = zero;
-		len = 0;
-	} else {
+	else {
 		cap = 1;
 		blk = new Blk[1];
 		sign = positive;
@@ -159,12 +145,8 @@ BigInteger::BigInteger(short x) {
 		sign = negative;
 		len = 1;
 		*blk = Blk(-x);
-	} else {
-		cap = 0;
-		blk = new Blk[0];
-		sign = zero;
-		len = 0;
-	}
+	} else
+	sign = zero;
 }
 
 // CONVERTERS

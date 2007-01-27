@@ -15,28 +15,32 @@
 * GO FORTH and play with many-digit numbers!  (c.f. The TeXbook.)
 */
 
-#include "BigUnsigned.hh"
-#include "BigInteger.hh"
-#include "BigIntegerUtils.hh"
-
+// Standard libraries
 #include <string>
 #include <iostream>
+
+// For the BigInteger class itself.
+#include "BigInteger.hh"
+
+// For the 4 routines `easy BI/BU <=> string' and `iostream' integration.
+#include "BigIntegerUtils.hh"
 
 int main() {
 	try {
 		BigInteger a; // a is 0
 		int b = 535;
 		
-		a = b; // From int to BigUnsigned...
+		a = b; // From int to BigInteger...
 		b = a; // ...and back, no casts required!
 		/*
 		* If a were too big for an int you'd get a runtime exception.  The Big Integer Library
 		* throws C-strings (that is, `const char *'s) when something goes wrong.  It's a good
-		* idea to catch them.  Some C++ compilers need a special command-line option to compile
-		* code that uses throw/catch.
+		* idea to catch them; the `try/catch' construct wrapping all this code is an example
+		* of how to do this.  Some C++ compilers need a special command-line option to compile
+		* code that uses exceptions.
 		*/
 		
-		BigInteger c(a); // Copy them.
+		BigInteger c(a); // Copy a BigInteger.
 		
 		BigInteger d(-314159265); // c is -314159265.  The `int' literal is converted to a BigInteger.
 		
@@ -104,10 +108,11 @@ int main() {
 		
 		std::cout << "There you go.  Goodbye." << std::endl;
 		
-	} catch(char const* err){
+	} catch(char const* err) {
 		std::cout << "Sorry, the library threw an exception:\n"
 			<< err << std::endl;
 	}
+	
 	return 0;
 }
 

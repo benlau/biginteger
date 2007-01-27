@@ -3,6 +3,15 @@
 * http://mysite.verizon.net/mccutchen/bigint/
 */
 
+/*
+* Milan Tomic had trouble compiling this file on Microsoft
+* Visual C++ 6 because, in the libraries that come with
+* Visual C++ 6, the `std::string::push_back' method apparently
+* does not exist.  To get around the problem, I rewrote
+* `BigUnsignedInABase::operator std::string' (at the bottom
+* of this file) so it doesn't use `push_back'.
+*/
+
 #include "BigUnsignedInABase.hh"
 
 namespace {
@@ -93,16 +102,16 @@ BigUnsignedInABase::operator std::string() const {
 		throw "BigUnsignedInABase ==> std::string: The default string conversion routines use the symbol set 0-9, A-Z and therefore support only up to base 36.  You tried a conversion with a base over 36; write your own string conversion routine.";
 	if (len == 0)
 		return std::string("0");
-	std::string s;
-	s.reserve(len);
+	char *s = new char[len + 1];
+	s[len] = '\0';
 	Index digitNum, symbolNumInString;
 	for (symbolNumInString = 0; symbolNumInString < len; symbolNumInString++) {
 		digitNum = len - 1 - symbolNumInString;
 		Digit theDigit = blk[digitNum];
 		if (theDigit < 10)
-			s.push_back(char('0' + theDigit));
+			s[symbolNumInString] = char('0' + theDigit);
 		else
-			s.push_back(char('A' + theDigit - 10));
+			s[symbolNumInString] = char('A' + theDigit - 10);
 	}
-	return s;
+	return std::string(s);
 }

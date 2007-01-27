@@ -5,7 +5,7 @@
 
 #include "BigUnsigned.hh"
 
-// The "management" routines that used to be here are now in NumberlikeArray.cpp.
+// The "management" routines that used to be here are now in NumberlikeArray.hh.
 
 /*
 * The steps for construction of a BigUnsigned
@@ -16,14 +16,19 @@
 * 4. If x is of a signed type, convert x to the unsigned
 *    type of the same length.
 * 5. Expand x to a Blk, and store it in the number array.
+*
+* Since 2005.01.06, NumberlikeArray uses `NULL' rather
+* than a real array if one of zero length is needed.
+* These constructors implicitly call NumberlikeArray's
+* default constructor, which sets `blk = NULL, cap = len = 0'.
+* So if the input number is zero, they can just return.
+* See remarks in `NumberlikeArray.hh'.
 */
 
 BigUnsigned::BigUnsigned(unsigned long x) {
-	if (x == 0) {
-		cap = 0;
-		blk = new Blk[0];
-		len = 0;
-	} else {
+	if (x == 0)
+		; // NumberlikeArray already did all the work
+	else {
 		cap = 1;
 		blk = new Blk[1];
 		len = 1;
@@ -32,25 +37,21 @@ BigUnsigned::BigUnsigned(unsigned long x) {
 }
 
 BigUnsigned::BigUnsigned(long x) {
-	if (x == 0) {
-		cap = 0;
-		blk = new Blk[0];
-		len = 0;
-	} else if (x > 0) {
+	if (x == 0)
+		;
+	else if (x > 0) {
 		cap = 1;
 		blk = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	} else
-    throw "BigUnsigned::BigUnsigned(long): Cannot construct a BigUnsigned from a negative number";
+	throw "BigUnsigned::BigUnsigned(long): Cannot construct a BigUnsigned from a negative number";
 }
 
 BigUnsigned::BigUnsigned(unsigned int x) {
-	if (x == 0) {
-		cap = 0;
-		blk = new Blk[0];
-		len = 0;
-	} else {
+	if (x == 0)
+		;
+	else {
 		cap = 1;
 		blk = new Blk[1];
 		len = 1;
@@ -59,25 +60,21 @@ BigUnsigned::BigUnsigned(unsigned int x) {
 }
 
 BigUnsigned::BigUnsigned(int x) {
-	if (x == 0) {
-		cap = 0;
-		blk = new Blk[0];
-		len = 0;
-	} else if (x > 0) {
+	if (x == 0)
+		;
+	else if (x > 0) {
 		cap = 1;
 		blk = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	} else
-    throw "BigUnsigned::BigUnsigned(int): Cannot construct a BigUnsigned from a negative number";
+	throw "BigUnsigned::BigUnsigned(int): Cannot construct a BigUnsigned from a negative number";
 }
 
 BigUnsigned::BigUnsigned(unsigned short x) {
-	if (x == 0) {
-		cap = 0;
-		blk = new Blk[0];
-		len = 0;
-	} else {
+	if (x == 0)
+		;
+	else {
 		cap = 1;
 		blk = new Blk[1];
 		len = 1;
@@ -86,17 +83,15 @@ BigUnsigned::BigUnsigned(unsigned short x) {
 }
 
 BigUnsigned::BigUnsigned(short x) {
-	if (x == 0) {
-		cap = 0;
-		blk = new Blk[0];
-		len = 0;
-	} else if (x > 0) {
+	if (x == 0)
+		;
+	else if (x > 0) {
 		cap = 1;
 		blk = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	} else
-    throw "BigUnsigned::BigUnsigned(short): Cannot construct a BigUnsigned from a negative number";
+	throw "BigUnsigned::BigUnsigned(short): Cannot construct a BigUnsigned from a negative number";
 }
 
 // CONVERTERS

@@ -1,8 +1,9 @@
-=================================================================
-Matt McCutchen's Big Integer Library
-A C++ library that does arithmetic on integers of unlimited size.
-=================================================================
-Version 2004.12.24.2
++===================================================================+
+| Matt McCutchen's Big Integer Library                              |
+| A C++ library that does arithmetic on integers of unlimited size. |
++===================================================================+
+
+Version 2005.01.06.
 
 This library contains two classes, BigUnsigned and BigInteger, that represent nonnegative integers and integers, respectively.  Each provides the operations listed below and possibly others:
 +, -, *, /, %, unary -
