@@ -20,7 +20,7 @@
 * Since 2005.01.06, NumberlikeArray uses `NULL' rather
 * than a real array if one of zero length is needed.
 * These constructors implicitly call NumberlikeArray's
-* default constructor, which sets `blk = NULL, cap = len = 0'.
+* default constructor, which sets `blk2 = NULL, cap = len = 0'.
 * So if the input number is zero, they can just return.
 * See remarks in `NumberlikeArray.hh'.
 */
@@ -30,7 +30,7 @@ BigUnsigned::BigUnsigned(unsigned long x) {
 		; // NumberlikeArray already did all the work
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	}
@@ -41,7 +41,7 @@ BigUnsigned::BigUnsigned(long x) {
 		;
 	else if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	} else
@@ -53,7 +53,7 @@ BigUnsigned::BigUnsigned(unsigned int x) {
 		;
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	}
@@ -64,7 +64,7 @@ BigUnsigned::BigUnsigned(int x) {
 		;
 	else if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	} else
@@ -76,7 +76,7 @@ BigUnsigned::BigUnsigned(unsigned short x) {
 		;
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	}
@@ -87,7 +87,7 @@ BigUnsigned::BigUnsigned(short x) {
 		;
 	else if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	} else

@@ -37,6 +37,9 @@
 *     NumberlikeArray< whatever >::getLength;
 */
 
+/*debug*/
+#include <iostream>
+
 template <class Blk>
 class NumberlikeArray {
 	public:
@@ -47,7 +50,44 @@ class NumberlikeArray {
 	// FIELDS
 	Index cap; // The current allocated capacity of this NumberlikeArray (in blocks)
 	Index len; // The actual length of the value stored in this NumberlikeArray (in blocks)
-	Blk *blk; // Dynamically allocated array of the blocks
+	Blk *blk2; // Dynamically allocated array of the blocks
+	
+	static Blk x; // trash that [] can return for out-of-range requests
+	
+	void dump() const {
+		std::cout << "Dumping NumberlikeArray @ " << (void *)(this) << '\n';
+		std::cout << "Length " << (len) << ", capacity " << (cap) << '\n';
+		for (unsigned int i = 0; i < len; i++) {
+			std::cout << "Block " << i << ":" << blk2[i] << '\n';
+		}
+	}
+	
+	struct BoundsCheckingBlk {
+		const NumberlikeArray *na;
+		BoundsCheckingBlk(NumberlikeArray *na) {
+			this->na = na;
+		}
+		Blk & operator [](Index index) const {
+			if (index >= na->len) {
+				std::cout << "== Out-of-bounds access to block " << index << ".  Affected NumberlikeArray: ==\n";
+				na->dump();
+				std::cout << "== End of dump. ==" << std::endl;
+				return x;
+			} else
+				return na->blk2[index];
+		} // dangerous because it allows ``always writable'', but OK for now
+		/*const Blk & operator [](Index index) const {
+			if (index >= na->len)
+				std::cout << "OUT OF BOUNDS!  Length " << (na->len) << ", accessed " << index << std::endl;
+			else
+				return na->blk[index];
+		}*/
+		/*operator Blk * () {
+			return na->blk2;
+		}*/
+	};
+	
+	BoundsCheckingBlk blk;
 	
 	/*
 	* Change made on 2005.01.06:
@@ -64,8 +104,8 @@ class NumberlikeArray {
 	*/
 	
 	// MANAGEMENT
-	NumberlikeArray(Index c) : cap(c), len(0) { // Creates a NumberlikeArray with a capacity
-		blk = (cap > 0) ? (new Blk[cap]) : NULL;
+	NumberlikeArray(Index c) : cap(c), len(0), blk(this) { // Creates a NumberlikeArray with a capacity
+		blk2 = (cap > 0) ? (new Blk[cap]) : NULL;
 	}
 	void allocate(Index c); // Ensures the array has at least the indicated capacity, maybe discarding contents
 	void allocateAndCopy(Index c); // Ensures the array has at least the indicated capacity, preserving its contents
@@ -88,14 +128,14 @@ class NumberlikeArray {
 	* created a real `new'-allocated zero-length array.  This array would then be lost,
 	* causing a small but annoying memory leak.
 	*/
-	NumberlikeArray() : cap(0), len(0) {
-		blk = NULL;
+	NumberlikeArray() : cap(0), len(0), blk(this) {
+		blk2 = NULL;
 	}
 	NumberlikeArray(const NumberlikeArray<Blk> &x); // Copy constructor
 	void operator=(const NumberlikeArray<Blk> &x); // Assignment operator
 	NumberlikeArray(const Blk *b, Index l); // Constructor from an array of blocks
 	~NumberlikeArray() { // Destructor
-		delete [] blk; // Does nothing and causes no error if `blk' is null.
+		delete [] blk2; // Does nothing and causes no error if `blk' is null.
 	}
 	
 	// PICKING APART
@@ -130,6 +170,9 @@ class NumberlikeArray {
 */
 
 template <class Blk>
+Blk NumberlikeArray<Blk>::x = 0;
+
+template <class Blk>
 const unsigned int NumberlikeArray<Blk>::N = 8 * sizeof(Blk);
 
 // MANAGEMENT
@@ -141,10 +184,10 @@ void NumberlikeArray<Blk>::allocate(Index c) {
 	// If the requested capacity is more than the current capacity...
 	if (c > cap) {
 		// Delete the old number array
-		delete [] blk;
+		delete [] blk2;
 		// Allocate the new array
 		cap = c;
-		blk = new Blk[cap];
+		blk2 = new Blk[cap];
 	}
 }
 
@@ -154,10 +197,10 @@ template <class Blk>
 void NumberlikeArray<Blk>::allocateAndCopy(Index c) {
 	// If the requested capacity is more than the current capacity...
 	if (c > cap) {
-		Blk *oldBlk = blk;
+		Blk *oldBlk = blk2;
 		// Allocate the new number array
 		cap = c;
-		blk = new Blk[cap];
+		blk2 = new Blk[cap];
 		// Copy number blocks
 		Index i;
 		for (i = 0; i < len; i++)
@@ -169,10 +212,10 @@ void NumberlikeArray<Blk>::allocateAndCopy(Index c) {
 
 // Copy constructor
 template <class Blk>
-NumberlikeArray<Blk>::NumberlikeArray(const NumberlikeArray<Blk> &x) : len(x.len) {
+NumberlikeArray<Blk>::NumberlikeArray(const NumberlikeArray<Blk> &x) : len(x.len), blk(this) {
 	// Create array
 	cap = len;
-	blk = new Blk[cap];
+	blk2 = new Blk[cap];
 	// Copy blocks
 	Index i;
 	for (i = 0; i < len; i++)
@@ -197,9 +240,9 @@ void NumberlikeArray<Blk>::operator=(const NumberlikeArray<Blk> &x) {
 
 // Constructor from an array of blocks
 template <class Blk>
-NumberlikeArray<Blk>::NumberlikeArray(const Blk *b, Index l) : cap(l), len(l) {
+NumberlikeArray<Blk>::NumberlikeArray(const Blk *b, Index l) : cap(l), len(l), blk(this) {
 	// Create array
-	blk = new Blk[cap];
+	blk2 = new Blk[cap];
 	// Copy blocks
 	Index i;
 	for (i = 0; i < len; i++)

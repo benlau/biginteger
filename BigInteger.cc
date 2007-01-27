@@ -67,7 +67,7 @@ BigInteger::BigInteger(unsigned long x) {
 		sign = zero; // NumberlikeArray did the rest
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
 		blk[0] = Blk(x);
@@ -77,13 +77,13 @@ BigInteger::BigInteger(unsigned long x) {
 BigInteger::BigInteger(long x) {
 	if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
 		blk[0] = Blk(x);
 	} else if (x < 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = negative;
 		len = 1;
 		blk[0] = Blk(-x);
@@ -96,7 +96,7 @@ BigInteger::BigInteger(unsigned int x) {
 		sign = zero;
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
 		blk[0] = Blk(x);
@@ -106,13 +106,13 @@ BigInteger::BigInteger(unsigned int x) {
 BigInteger::BigInteger(int x) {
 	if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
 		blk[0] = Blk(x);
 	} else if (x < 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = negative;
 		len = 1;
 		blk[0] = Blk(-x);
@@ -125,7 +125,7 @@ BigInteger::BigInteger(unsigned short x) {
 		sign = zero;
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
 		blk[0] = Blk(x);
@@ -135,13 +135,13 @@ BigInteger::BigInteger(unsigned short x) {
 BigInteger::BigInteger(short x) {
 	if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
 		blk[0] = Blk(x);
 	} else if (x < 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = negative;
 		len = 1;
 		blk[0] = Blk(-x);
