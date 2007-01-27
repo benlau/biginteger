@@ -1,4 +1,4 @@
-=====================================================================
++===================================================================+
 Matt McCutchen's Big Integer Library
 http://mysite.verizon.net/mccutchen/bigint/
 
@@ -6,9 +6,9 @@ Change Log
 ==========
 These entries tell you what was added, fixed, or improved in each version as compared to the previous one.  In case you haven't noticed, a version number roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]' format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the same day.
 
-2005.01.11
+2005.01.17
 ----------
-A fix to some out-of-bounds accesses reported by Milan Tomic (see the comment under `BigUnsigned::divideWithRemainder').  `BigUnsigned::multiply' and `BigUnsigned::divideWithRemainder' implementations neatened up a bit with the help of a function `getShiftedBlock'.  I (finally!) introduced a constant `BigUnsigned::N', the number of bits in a `BigUnsigned::Blk', which varies depending on machine word size.  In both code and comments, it replaces the much clunkier `8*sizeof(Blk)'.  Numerous other small changes.
+A fix to some out-of-bounds accesses reported by Milan Tomic (see the comment under `BigUnsigned::divideWithRemainder').  `BigUnsigned::multiply' and `BigUnsigned::divideWithRemainder' implementations neatened up a bit with the help of a function `getShiftedBlock'.  I (finally!) introduced a constant `BigUnsigned::N', the number of bits in a `BigUnsigned::Blk', which varies depending on machine word size.  In both code and comments, it replaces the much clunkier `8*sizeof(Blk)'.  Numerous other small changes.  There's a new conversion routine `easyDataToBI' that will convert almost any format of binary data to a `BigInteger'.
 
 I have inserted a significant number of new comments.  Most explain unobvious aspects of the code.
 
@@ -46,4 +46,4 @@ Brad Spencer pointed out a memory leak in `BigUnsigned::divide'.  It is fixed in
 ---------
 After months of inactivity, I fixed a bug in the `BigInteger' division routine; thanks to David Allen for reporting the bug.  I also added simple routines for decimal output to `std::ostream's, and there is a demo that prints out powers of 3.
 
-=====================================================================
++===================================================================+
