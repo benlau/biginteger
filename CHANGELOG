@@ -6,6 +6,10 @@ Change Log
 ==========
 These entries tell you what was added, fixed, or improved in each version as compared to the previous one.  In case you haven't noticed, a version number roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]' format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the same day.
 
+2005.03.30
+----------
+Sam Larkin found a bug in `BigInteger::subtract'; I fixed it.
+
 2005.01.18
 ----------
 I fixed some problems with `easyDataToBI'.  Due to some multiply declared variables, this function would not compile.  However, it is a template function, so the compiler parses it and doesn't compile the parsed representation until something uses the function; this is how I missed the problems.  I also removed debugging output from this function.

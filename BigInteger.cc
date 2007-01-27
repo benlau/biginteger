@@ -358,9 +358,11 @@ void BigInteger::subtract(const BigInteger &a, const BigInteger &b) {
 	// If a is zero, copy b and flip its sign.  If b is zero, copy a.
 	if (a.sign == zero) {
 		BigUnsigned::operator =(b);
-		sign = Sign(-sign);
+		// Take the negative of _b_'s, sign, not ours.
+		// Bug pointed out by Sam Larkin on 2005.03.30.
+		sign = Sign(-b.sign);
 	} else if (b.sign == zero)
-    operator =(a);
+		operator =(a);
 	// If their signs differ, take a.sign and add the magnitudes.
 	else if (a.sign != b.sign) {
 		sign = a.sign;
