@@ -4,12 +4,11 @@
 */
 
 /*
-* This sample file demonstrates the most important features of the Big Integer Library.
+* This sample program demonstrates the most important features of the Big Integer Library.
+* To get started quickly, read the code and explanations below.  Then try the program out.
 *
-* To get started quickly with the library, imitate the code in `main' below.
-*
-* If you want more detail or more speed or can't find a feature here,
-* look in the appropriate source file.  This file shows only the more ``user-friendly'' features;
+* If you want more detail or more speed or can't find a feature here, look in the
+* appropriate source file.  This file shows only the more ``user-friendly'' features;
 * the other features are messier but worth learning eventually.
 *
 * GO FORTH and play with many-digit numbers!  (c.f. The TeXbook.)
@@ -27,6 +26,8 @@
 
 int main() {
 	try {
+		std::cout << "=====\nBig Integer Library Demonstration" << std::endl;
+		
 		BigInteger a; // a is 0
 		int b = 535;
 		
@@ -42,74 +43,47 @@ int main() {
 		
 		BigInteger c(a); // Copy a BigInteger.
 		
-		std::cout << "here 0" << std::endl;
-		
 		BigInteger d(-314159265); // c is -314159265.  The `int' literal is converted to a BigInteger.
 		
 		// Ahem: that's too big to be an `int' literal (or even a `long' literal)!
 		// Disillusion yourself now -- this won't compile.
 		//BigInteger e(3141592653589793238462643383279);
 		
-		std::cout << "here 1" << std::endl;
-		
 		std::string s("3141592653589793238462643383279");
 		BigInteger f = easyStringToBI(s);
 		// Ah.  The string is converted to a BigInteger, and strings can be as long as you want.
 		
-		std::cout << "here 2" << std::endl;
-		
 		std::string s2 = easyBItoString(f); // You can convert the other way too.
 		
-		std::cout << "here 3" << std::endl;
-		
 		std::cout << f << std::endl; // f is stringified and send to std::cout.
-		
-		std::cout << "here 4" << std::endl;
 		
 		/*
 		* Let's do some math!
 		*
-		* The Big Integer Library provides three kinds of operators:
-		*
-		* (1) Overloaded ``value'' operators: +, -, *, /, %, unary -.
-		* Big-integer code using these operators looks identical to
-		* code using the primitive integer types.  The operator takes
-		* one or two BigInteger inputs and returns a BigInteger result,
-		* which can then be assigned to a BigInteger variable or used
-		* in an expression.
-		*
-		* (2) Overloaded assignment operators: +=, -=, *=, /=, %=,
-		*     ++, --, flipSign.
-		* Again, these are used on BigIntegers just like on ints.
-		* They take one writable BigInteger that both provides an
-		* operand and receives a result.  The first five also take
-		* a second read-only operand.
-		*
-		* (3) ``Put-here'' operations: `add', `subtract', etc.
-		* Use these if and only if you are concerned about performance.
-		* They require fewer BigInteger copy-constructions and assignments
-		* than do operators in (1) or (2).  Most take two read-only operands
-		* and save the result in the invoked object `*this', whose previous
-		* value is irrelevant.  `divideWithRemainder' is an exception.
-		* <<< NOTE >>>: Put-here operations do not return a value: they don't need to!!
+		* The Big Integer Library provides lots of overloaded operators
+		* and corresponding assignment operators.  So you can do `a + b'
+		* with big integers just as with normal integers.  The named
+		* methods `add', `divideWithRemainder', etc. are more advanced
+		* ``put-here operations''; see `BigUnsigned.hh' for details.
 		*/
-		
 		BigInteger g(314159), h(265);
-		// All five ``value'' operators
+		// All five ``return-by-value'' operators.
 		std::cout << (g + h) << '\n' << (g - h) << '\n' << (g * h)
 			<< '\n' << (g / h) << '\n' << (g % h) << std::endl;
 		
-		std::cout << "here 5" << std::endl;
+		std::cout << "=====\nTest code" << std::endl;
 		
-		BigInteger i(5), j(10), k;
-		// These two lines do the same thing: k is set to a BigInteger containing 15.
-		k = i + j;
-		k.add(i, j);
+		/*
+		* If you want to experiment with the library,
+		* put your own test code here.
+		*/
 		
-		std::cout << "here 6" << std::endl;
+		/*
+		* (End of test code)
+		*/
 		
 		// Let's do some heavy lifting.
-		std::cout << "Powers of 3" << std::endl;
+		std::cout << "=====\nPowers of 3" << std::endl;
 		std::cout << "How many do you want?" << std::endl;
 		int maxPower;
 		std::cin >> maxPower;
@@ -120,10 +94,10 @@ int main() {
 			x *= three; // A BigInteger assignment operator
 		}
 		
-		std::cout << "There you go.  Goodbye." << std::endl;
+		std::cout << "There you go.  Goodbye.\n=====" << std::endl;
 		
 	} catch(char const* err) {
-		std::cout << "Sorry, the library threw an exception:\n"
+		std::cout << "=====\nSorry, the library threw an exception:\n"
 			<< err << std::endl;
 	}
 	

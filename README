@@ -1,59 +1,35 @@
 +===================================================================+
-| Matt McCutchen's Big Integer Library                              |
+| Big Integer Library                                               |
 | A C++ library that does arithmetic on integers of unlimited size. |
+| Version 2005.01.16                                                |
++-------------------------------------------------------------------+
+| By Matt McCutchen                                                 |
+| E-mail: hashproduct@verizon.net                                   |
+| Project Web site: http://mysite.verizon.net/mccutchen/bigint/     |
 +===================================================================+
 
-Version 2005.01.06.
+What the Big Integer Library provides
+=====================================
+This library contains two classes, BigUnsigned and BigInteger, that represent nonnegative integers and integers, respectively, of size limited only by your computer's memory.  Their capabilities include these operators:
+        Math:   +  -  *  /  %  &  |  ^  unary-
+  Assignment: = += -= *= /= %= &= |= ^= ++ --
+  Comparison:   == != <  <= >  >=
+In the works are the << and >> operators, integer algorithms like `gcd', and possibly a working implementation of RSA using the library.
 
-This library contains two classes, BigUnsigned and BigInteger, that represent nonnegative integers and integers, respectively.  Each provides the operations listed below and possibly others:
-+, -, *, /, %, unary -
-+=, -=, *=, /=, %=, ++, --
-==, !=, <, <=, >, >=
-&, |, ^
+Using the features of the library
+=================================
+The file `sample.cc' explains and demonstrates the most important features of the library.  I recommend that you read `sample.cc' and then run the sample program it contains.  If you want to do something not shown in `sample.cc' or want more detail, read the actual header and source files, which are extensively commented.
 
-To get started using this library, look at the code in `sample.cc'.  Type `make sample' to compile the sample program in `sample.cc' so you can see what it does.
+Compiling programs with the library
+===================================
+The library consists of a folder full of header files (`.hh') and source files (`.cc').  `#include' header files and compile with source files as necessary for your own programs.  For those who use `make', a `Makefile' is included that compiles the source code to object files (`.o') and compiles the sample program.
 
-This library includes a makefile.  To compile it, just type `make'; you'll get some `.o' files.  Include `.hh' files and link with `.o' files as necessary for your programming projects.
+Bugs
+====
+The library has been tested by myself and others but is by no means bug-free.  The programs you write using the library will be the best test of its correctness.  I urge you to report any problems that you find, whether they come in the form of compiling trouble, mathematically inaccurate results, or runtime memory-management bloopers (which, since I use Java, are altogether too common in my C++).
 
-Please see the project Web site at
-   http://mysite.verizon.net/mccutchen/bigint/
-for more information and the latest version.
+Keep in touch
+=============
+Feel free to e-mail me at `hashproduct@verizon.net' to report bugs or request features.  When I fix the bug or add the feature, you will generally be credited by name in the source code and/or the Change Log unless you request otherwise.  I am also curious as to what uses you find for the library.  If you would like an e-mail whenever a new version of the library is released, e-mail me to join my informal mailing list.  New versions of the library will be available at the project Web site at `http://mysite.verizon.net/mccutchen/bigint/'.
 
-Change Log:
-===========
-
-2005.01.11 version:
-A fix to some out-of-bounds accesses reported by Milan Tomic (see the comment under `BigUnsigned::divideWithRemainder').  `BigUnsigned::multiply' and `BigUnsigned::divideWithRemainder' implementations neatened up a bit with the help of a function `getShiftedBlock'.  I (finally!) introduced a constant `BigUnsigned::N', the number of bits in a `BigUnsigned::Blk', which varies depending on machine word size.  In both code and comments, it replaces the much clunkier `8*sizeof(Blk)'.  Numerous other small changes.
-
-I have inserted a significant number of new comments.  Most explain unobvious aspects of the code.
-
-2005.01.06 version:
-Some changes to the way zero-length arrays are handled by `NumberlikeArray', which fixed a memory leak reported by Milan Tomic.
-
-2004.12.24.2 version:
-I tied down a couple of loose ends involving division/modulo.  I added an explanation of put-here vs. overloaded operators in the sample program; this has confused too many people.  Miscellaneous other improvements.
-
-I believe that, at this point, the Big Integer Library makes no assumptions about the word size of the machine it is using.  `BigUnsigned::Blk' is always an `unsigned long', whatever that may be, and its size is computed with `sizeof' when necessary.  However, just in case, I would be interested to have someone test the library on a non-32-bit machine to see if it works.
-
-2004.12.24 version:
-This is a _major_ upgrade to the library.  Among the things that have changed:
-
-I wrote the original version of the library, particularly the four ``classical algorithms'' in `BigUnsigned.cc', using array indexing.  Then I rewrote it to use pointers because I thought that would be faster.  But recently, I revisited the code in `BigUnsigned.cc' and found that I could not begin to understand what it was doing.
-
-I have decided that the drawbacks of pointers, increased coding difficulty and reduced code readability, far outweigh their speed benefits.  Plus, any modern optimizing compiler should produce fast code either way.  Therefore, I rewrote the library to use array indexing again.  (Thank goodness for regular-expression find-and-replace.  It saved me a lot of time.)
-
-The put-here operations `divide' and `modulo' of each of `BigUnsigned' and `BigInteger' have been supplanted by a single operation `divideWithRemainder'.  Read the profuse comments for more information on its exact behavior.
-
-There is a new class `BigUnsignedInABase' that is like `BigUnsigned' but uses a user-specified, small base instead of `256 ^ sizeof(unsigned long)'.  Much of the code common to the two has been factored out into `NumberlikeArray'.
-
-`BigUnsignedInABase' facilitates conversion between `BigUnsigned's and digit-by-digit string representations using `std::string'.  Convenience routines to do this conversion are in `BigIntegerUtils.hh'.  `iostream' compatibility has been improved.
-
-I would like to thank Chris Morbitzer for the e-mail message that catalyzed this major upgrade.  He wanted a way to convert a string to a BigInteger.  One thing just led to another, roughly in reverse order from how they are listed here.
-
-2004.1216 version:
-Brad Spencer pointed out a memory leak in `BigUnsigned::divide'.  It is fixed in the December 16, 2004 version.
-
-2004.1205 version:
-After months of inactivity, I fixed a bug in the `BigInteger' division routine; thanks to David Allen for reporting the bug.  I also added simple routines for decimal output to `std::ostream's, and there is a demo that prints out powers of 3.
-
-===================
+=====================================================================

@@ -10,9 +10,11 @@
 	g++ -c -O -Wall -Wextra -pedantic $<
 
 # Default target
-library : NumberlikeArray.hh.tag BigUnsigned.o BigInteger.o BigUnsignedInABase.o BigIntegerUtils.o
+all : library sample
 
-# Extra `include' dependencies
+library : BigUnsigned.o BigInteger.o BigUnsignedInABase.o BigIntegerUtils.o
+
+# Extra dependencies from `#include'
 BigUnsigned.hh.tag : NumberlikeArray.hh.tag
 BigUnsigned.o : BigUnsigned.hh.tag
 BigInteger.hh.tag : BigUnsigned.hh.tag
@@ -29,7 +31,7 @@ sample : library sample.cc
 clean :
 	rm -f *.tag *.o sample
 
-# The ``.tag'' mechanism allows for proper recompilation when a header file
+# The `.tag' mechanism allows for proper recompilation when a header file
 # changes, considering that some header files may include others.
 #
 # If a header file X includes other header

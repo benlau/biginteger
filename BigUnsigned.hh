@@ -110,16 +110,51 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	bool operator <=(const BigUnsigned &x) const { return compareTo(x) != greater; }
 	bool operator >=(const BigUnsigned &x) const { return compareTo(x) != less   ; }
 	bool operator > (const BigUnsigned &x) const { return compareTo(x) == greater; }
+
+	/*
+	* BigUnsigned and BigInteger both provide three kinds of operators.
+	* Here ``big-integer'' refers to BigInteger or BigUnsigned.
+	*
+	* (1) Overloaded ``return-by-value'' operators:
+	*     +, -, *, /, %, unary -.
+	* Big-integer code using these operators looks identical to
+	* code using the primitive integer types.  These operators take
+	* one or two big-integer inputs and return a big-integer result,
+	* which can then be assigned to a BigInteger variable or used
+	* in an expression.  Example:
+	*     BigInteger a(1), b = 1;
+	*     BigInteger c = a + b;
+	*
+	* (2) Overloaded assignment operators:
+	*     +=, -=, *=, /=, %=, &=, |=, ^=, ++, --, flipSign.
+	* Again, these are used on big integers just like on ints.
+	* They take one writable big integer that both provides an
+	* operand and receives a result.  The first eight also take
+	* a second read-only operand.  Example:
+	*     BigInteger a(1), b(1);
+	*     a += b;
+	*
+	* (3) ``Put-here'' operations: `add', `subtract', etc.
+	* Using a return-by-value or assignment operator generally involves
+	* copy constructions and/or assignments.  The ``put-here'' operations
+	* require none, but they are more of a hassle to use.  Most take two
+	* read-only operands and save the result in the calling object `*this',
+	* whose previous value is ignored.  `divideWithRemainder' is an exception.
+	* <<< NOTE >>>: Put-here operations do not return a value: they don't need to!!
+	* Examples:
+	*     BigInteger a(43), b(7), c, d;
+	*     c = a + b;   // Now c == 50.
+	*     c.add(a, b); // Same effect but without the two bulk-copies.
+	*     c.divideWithRemainder(b, d); // 50 / 7; now d == 7 (quotient) and c == 1 (remainder).
+	*     a.add(a, b); // Unsafe ``aliased'' call; causes a runtime error.
+	*/
 	
 	// PUT-HERE OPERATIONS
-	/* These store the result of the operation on the arguments into this.
-	* a.add(b, c) is equivalent to, but faster than, a = b + c.
-	* Calls like a.operation(a, b) are unsafe and not allowed. */
 	public:
-	// Easy 3
-	void add          (const BigUnsigned &a, const BigUnsigned &b); // Addition
-	void subtract     (const BigUnsigned &a, const BigUnsigned &b); // Subtraction
-	void multiply     (const BigUnsigned &a, const BigUnsigned &b); // Multiplication
+	/* These 3: Two read-only operands as arguments.  Result left in *this. */
+	void add(const BigUnsigned &a, const BigUnsigned &b); // Addition
+	void subtract(const BigUnsigned &a, const BigUnsigned &b); // Subtraction
+	void multiply(const BigUnsigned &a, const BigUnsigned &b); // Multiplication
 	/* Divisive stuff
 	* `a.divideWithRemainder(b, q)' is like `q = a / b, a %= b'.
 	* Semantics similar to Donald E. Knuth's are used for / and %,
@@ -129,28 +164,30 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	*/
 	void divideWithRemainder(const BigUnsigned &b, BigUnsigned &q);
 	void divide(const BigUnsigned &a, const BigUnsigned &b) {
-		// Division, deprecated and provided for compatibility
+		// Division, deprecated and provided for backward compatibility
 		BigUnsigned a2(a);
 		a2.divideWithRemainder(b, *this);
 		// quotient now in *this
 		// don't care about remainder left in a2
 	}
 	void modulo(const BigUnsigned &a, const BigUnsigned &b) {
-		// Modular reduction, deprecated and provided for compatibility
+		// Modular reduction, deprecated and provided for backward compatibility
 		*this = a;
 		BigUnsigned q;
 		divideWithRemainder(b, q);
 		// remainder now in *this
 		// don't care about quotient left in q
 	}
-	// Bitwise
-	void bitAnd       (const BigUnsigned &a, const BigUnsigned &b); // Bitwise AND
-	void bitOr        (const BigUnsigned &a, const BigUnsigned &b); // Bitwise OR
-	void bitXor       (const BigUnsigned &a, const BigUnsigned &b); // Bitwise XOR
+	// Bitwise operations.  Two read-only operands as arguments.  Result left in *this.
+	// These are not provided for BigIntegers; I think that using them on BigIntegers
+	// will discard the sign first.
+	void bitAnd(const BigUnsigned &a, const BigUnsigned &b); // Bitwise AND
+	void bitOr(const BigUnsigned &a, const BigUnsigned &b); // Bitwise OR
+	void bitXor(const BigUnsigned &a, const BigUnsigned &b); // Bitwise XOR
 	
 	// These functions are declared but not defined.  (Sorry.)
 	// Trying to call either will result in a link-time error.
-	void bitShiftLeft (const BigUnsigned &a, unsigned int b); // Bitwise left shift
+	void bitShiftLeft(const BigUnsigned &a, unsigned int b); // Bitwise left shift
 	void bitShiftRight(const BigUnsigned &a, unsigned int b); // Bitwise right shift
 	
 	// NORMAL OPERATORS
