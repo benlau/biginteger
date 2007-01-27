@@ -57,7 +57,6 @@ BigInteger easyDataToBI(const T* data, BigInteger::Index length, BigInteger::Sig
 	unsigned int pieceSizeInBits = 8 * sizeof(T);
 	unsigned int piecesPerBlock = sizeof(BigInteger::Blk) / sizeof(T);
 	unsigned int numBlocks = (length + piecesPerBlock - 1) / piecesPerBlock;
-	std::cout << pieceSizeInBits << ' ' << piecesPerBlock << ' ' << numBlocks << std::endl;
 	
 	// Allocate our block array
 	BigInteger::Blk *blocks = new BigInteger::Blk[numBlocks];
@@ -65,13 +64,12 @@ BigInteger easyDataToBI(const T* data, BigInteger::Index length, BigInteger::Sig
 	BigInteger::Index blockNum, pieceNum, pieceNumHere;
 	
 	// Convert
-	for (BigInteger::Index blockNum = 0, pieceNum = 0; blockNum < numBlocks; blockNum++) {
+	for (blockNum = 0, pieceNum = 0; blockNum < numBlocks; blockNum++) {
 		BigInteger::Blk curBlock = 0;
-		for (unsigned int pieceNumHere = 0; pieceNumHere < piecesPerBlock && pieceNum < length;
+		for (pieceNumHere = 0; pieceNumHere < piecesPerBlock && pieceNum < length;
 			pieceNumHere++, pieceNum++)
 			curBlock |= (BigInteger::Blk(data[pieceNum]) << (pieceSizeInBits * pieceNumHere));
 		blocks[blockNum] = curBlock;
-		std::cout << curBlock << std::endl;
 	}
 	
 	// Create the BigInteger.
