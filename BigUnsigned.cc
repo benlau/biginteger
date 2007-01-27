@@ -731,7 +731,7 @@ void BigUnsigned::bitXor(const BigUnsigned &a, const BigUnsigned &b) {
 		a2 = &b;
 		b2 = &a;
 	}
-	allocate(b2->len);
+	allocate(a2->len);
 	for (i = 0; i < b2->len; i++)
 		blk[i] = a2->blk[i] ^ b2->blk[i];
 	for (; i < a2->len; i++)
