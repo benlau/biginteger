@@ -67,26 +67,26 @@ BigInteger::BigInteger(unsigned long x) {
 		sign = zero; // NumberlikeArray did the rest
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
-		*blk = Blk(x);
+		blk[0] = Blk(x);
 	}
 }
 
 BigInteger::BigInteger(long x) {
 	if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
-		*blk = Blk(x);
+		blk[0] = Blk(x);
 	} else if (x < 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = negative;
 		len = 1;
-		*blk = Blk(-x);
+		blk[0] = Blk(-x);
 	} else
 	sign = zero;
 }
@@ -96,26 +96,26 @@ BigInteger::BigInteger(unsigned int x) {
 		sign = zero;
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
-		*blk = Blk(x);
+		blk[0] = Blk(x);
 	}
 }
 
 BigInteger::BigInteger(int x) {
 	if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
-		*blk = Blk(x);
+		blk[0] = Blk(x);
 	} else if (x < 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = negative;
 		len = 1;
-		*blk = Blk(-x);
+		blk[0] = Blk(-x);
 	} else
 	sign = zero;
 }
@@ -125,26 +125,26 @@ BigInteger::BigInteger(unsigned short x) {
 		sign = zero;
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
-		*blk = Blk(x);
+		blk[0] = Blk(x);
 	}
 }
 
 BigInteger::BigInteger(short x) {
 	if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = positive;
 		len = 1;
-		*blk = Blk(x);
+		blk[0] = Blk(x);
 	} else if (x < 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		sign = negative;
 		len = 1;
-		*blk = Blk(-x);
+		blk[0] = Blk(-x);
 	} else
 	sign = zero;
 }
@@ -186,7 +186,7 @@ BigInteger::operator unsigned long() const {
 		return 0;
 		case positive:
 		if (len == 1)
-			return *blk;
+			return blk[0];
 		else
 			throw "BigInteger operator unsigned long() const: Value is too big for an unsigned long";
 		case negative:
@@ -201,13 +201,13 @@ BigInteger::operator long() const {
 		case zero:
 		return 0;
 		case positive:
-		if (len == 1 && (*blk & ~lMask) == 0)
-			return long(*blk);
+		if (len == 1 && (blk[0] & ~lMask) == 0)
+			return long(blk[0]);
 		else
 			throw "BigInteger operator long() const: Value is too big for a long";
 		case negative:
-		if (len == 1 && (*blk & ~lMask) == 0)
-			return -long(*blk);
+		if (len == 1 && (blk[0] & ~lMask) == 0)
+			return -long(blk[0]);
 		else
 			throw "BigInteger operator long() const: Value is too big for a long";
 		default:
@@ -220,8 +220,8 @@ BigInteger::operator unsigned int() const {
 		case zero:
 		return 0;
 		case positive:
-		if (len == 1 && (*blk & ~uiMask) == 0)
-			return (unsigned int)(*blk);
+		if (len == 1 && (blk[0] & ~uiMask) == 0)
+			return (unsigned int)(blk[0]);
 		else
 			throw "BigInteger operator unsigned int() const: Value is too big for an unsigned int";
 		case negative:
@@ -236,13 +236,13 @@ BigInteger::operator int() const {
 		case zero:
 		return 0;
 		case positive:
-		if (len == 1 && (*blk & ~iMask) == 0)
-			return int(*blk);
+		if (len == 1 && (blk[0] & ~iMask) == 0)
+			return int(blk[0]);
 		else
 			throw "BigInteger operator int() const: Value is too big for an int";
 		case negative:
-		if (len == 1 && (*blk & ~iMask) == 0)
-			return -int(*blk);
+		if (len == 1 && (blk[0] & ~iMask) == 0)
+			return -int(blk[0]);
 		else
 			throw "BigInteger operator int() const: Value is too big for an int";
 		default:
@@ -255,8 +255,8 @@ BigInteger::operator unsigned short() const {
 		case zero:
 		return 0;
 		case positive:
-		if (len == 1 && (*blk & ~usMask) == 0)
-			return (unsigned short)(*blk);
+		if (len == 1 && (blk[0] & ~usMask) == 0)
+			return (unsigned short)(blk[0]);
 		else
 			throw "BigInteger operator unsigned short() const: Value is too big for an unsigned short";
 		case negative:
@@ -271,13 +271,13 @@ BigInteger::operator short() const {
 		case zero:
 		return 0;
 		case positive:
-		if (len == 1 && (*blk & ~sMask) == 0)
-			return short(*blk);
+		if (len == 1 && (blk[0] & ~sMask) == 0)
+			return short(blk[0]);
 		else
 			throw "BigInteger operator short() const: Value is too big for a short";
 		case negative:
-		if (len == 1 && (*blk & ~sMask) == 0)
-			return -short(*blk);
+		if (len == 1 && (blk[0] & ~sMask) == 0)
+			return -short(blk[0]);
 		else
 			throw "BigInteger operator short() const: Value is too big for a short";
 		default:
@@ -524,7 +524,7 @@ void BigInteger::operator ++() {
 		allocate(1);
 		sign = positive;
 		len = 1;
-		*blk = 1;
+		blk[0] = 1;
 		break;
 		case positive:
 		BigUnsigned::operator ++();
@@ -549,7 +549,7 @@ void BigInteger::operator --() {
 		allocate(1);
 		sign = negative;
 		len = 1;
-		*blk = 1;
+		blk[0] = 1;
 		break;
 		case negative:
 		BigUnsigned::operator ++();

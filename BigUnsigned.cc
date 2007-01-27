@@ -20,7 +20,7 @@
 * Since 2005.01.06, NumberlikeArray uses `NULL' rather
 * than a real array if one of zero length is needed.
 * These constructors implicitly call NumberlikeArray's
-* default constructor, which sets `blk = NULL, cap = len = 0'.
+* default constructor, which sets `blk2 = NULL, cap = len = 0'.
 * So if the input number is zero, they can just return.
 * See remarks in `NumberlikeArray.hh'.
 */
@@ -30,7 +30,7 @@ BigUnsigned::BigUnsigned(unsigned long x) {
 		; // NumberlikeArray already did all the work
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	}
@@ -41,7 +41,7 @@ BigUnsigned::BigUnsigned(long x) {
 		;
 	else if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	} else
@@ -53,7 +53,7 @@ BigUnsigned::BigUnsigned(unsigned int x) {
 		;
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	}
@@ -64,7 +64,7 @@ BigUnsigned::BigUnsigned(int x) {
 		;
 	else if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	} else
@@ -76,7 +76,7 @@ BigUnsigned::BigUnsigned(unsigned short x) {
 		;
 	else {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	}
@@ -87,7 +87,7 @@ BigUnsigned::BigUnsigned(short x) {
 		;
 	else if (x > 0) {
 		cap = 1;
-		blk = new Blk[1];
+		blk2 = new Blk[1];
 		len = 1;
 		blk[0] = Blk(x);
 	} else
@@ -392,6 +392,14 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	if (this == &b || &q == &b || this == &q)
 		throw "BigUnsigned::divideWithRemainder: Some two objects involved are the same";
 	
+	/*std::cout << "((( divideWithRemainder\n[ Dumps:\n*this:\n";
+	dump();
+	std::cout << "b:\n";
+	b.dump();
+	std::cout << "q:\n";
+	q.dump();
+	std::cout << "]\n";*/
+	
 	/*
 	* Note that the mathematical definition of mod (I'm trusting Knuth) is somewhat
 	* different from the way the normal C++ % operator behaves in the case of division by 0.
@@ -443,19 +451,28 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	Blk bHigh, temp;
 	bool borrowIn, borrowOut;
 	
-	// Make sure we have an extra zero block just past the value,
-	// but don't increase the logical length.  A shifted subtraction
-	// (for example, subtracting 1 << 2 from 4) might stick into
-	// this block.
-	allocateAndCopy(len + 1);
-	blk[len] = 0;
+	/*
+	* Make sure we have an extra zero block just past the value.
+	* A shifted subtraction (for example, subtracting 1 << 2 from 4)
+	* might stick into this block.
+	*
+	* In earlier versions, `len' was not increased.  But then Milan Tomic
+	* found out-of-bounds memory accesses.  In investigating the problem,
+	* I got tons of warnings in this routine, which I should have expected.
+	* I decided to make the extra block logically part of the number so it
+	* would not cause confusion in the future.
+	*/
+	Index origLen = len; // original length
+	len++; // increased to avoid memory management worries
+	allocateAndCopy(len);
+	blk[origLen] = 0;
 	
 	// work2 holds part of the result of a subtraction.
 	// (There's no work1.  The name work2 is from a previous version.)
-	Blk *work2 = new Blk[len];
+	Blk *work2 = new Blk[origLen];
 	
 	// Set preliminary length for quotient and make room
-	q.len = len - b.len + 1;
+	q.len = origLen - b.len + 1;
 	q.allocate(q.len);
 	// Zero out the quotient
 	for (i = 0; i < q.len; i++)
@@ -499,7 +516,7 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 			borrowIn = borrowOut;
 			j++;
 			k++;
-			for (; k < len && borrowIn; j++, k++) {
+			for (; k < origLen && borrowIn; j++, k++) {
 				borrowIn = (blk[k] == 0);
 				work2[j] = blk[k] - 1;
 			}
@@ -531,7 +548,15 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	<< "\nlast block of quotient: " << q.getBlock(0)
 	<< "\nlength of remainder: " << len
 	<< "\nlast block of remainder: " << getBlock(0)
-	<< std::endl; */
+	<< std::endl;
+	
+	std::cout << "[ Dumps:\n*this:\n";
+	dump();
+	std::cout << "b:\n";
+	b.dump();
+	std::cout << "q:\n";
+	q.dump();
+	std::cout << "]\ndivideWithRemainder )))\n"; */
 }
 
 // Bitwise and

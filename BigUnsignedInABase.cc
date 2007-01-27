@@ -13,6 +13,7 @@
 */
 
 #include "BigUnsignedInABase.hh"
+#include <iostream>
 
 namespace {
 	unsigned int bitLen(unsigned int x) {
@@ -27,8 +28,11 @@ namespace {
 		return (a + b - 1) / b;
 	}
 }
-
+	/*std::cout << "((( BigUnsigned ==> BigUnsignedInABase\n";
+	std::cout << "[ Parameter BigUnsigned @ " << (void *)(NumberlikeArray<BigUnsigned::Blk> *)(&x)
+		<< ",\nresulting BigUnsignedInABase @ " << (void *)(NumberlikeArray<Digit> *)(this) << "]" << std::endl;*/
 BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
+
 	// Check the base
 	if (base < 2)
 		throw "BigUnsignedInABase(BigUnsigned, Base): The base must be at least 2";
@@ -40,7 +44,8 @@ BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 	int maxBitLenOfX = x.getLength() * 8 * sizeof(BigUnsigned::Blk);
 	int minBitsPerDigit = bitLen(base) - 1;
 	int maxDigitLenOfX = ceilingDiv(maxBitLenOfX, minBitsPerDigit);
-	allocate(maxDigitLenOfX); // Get the space
+	len = maxDigitLenOfX; // Another change to comply with `staying in bounds'; see `BigUnsigned::divideWithRemainder'.
+	allocate(len); // Get the space
 	
 	BigUnsigned x2(x), buBase(base);
 	Index digitNum = 0;
@@ -55,8 +60,9 @@ BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 		digitNum++;
 	}
 	
-	// Save the eventual length.
+	// Save the actual length.
 	len = digitNum;
+	/*std::cout << "BigUnsigned ==> BigUnsignedInABase )))\n";*/
 }
 
 BigUnsignedInABase::operator BigUnsigned() const {
@@ -98,6 +104,7 @@ BigUnsignedInABase::BigUnsignedInABase(const std::string &s, Base base) {
 }
 
 BigUnsignedInABase::operator std::string() const {
+	//std::cout << "((( BigUnsignedInABase ==> std::string\n";
 	if (base > 36)
 		throw "BigUnsignedInABase ==> std::string: The default string conversion routines use the symbol set 0-9, A-Z and therefore support only up to base 36.  You tried a conversion with a base over 36; write your own string conversion routine.";
 	if (len == 0)
@@ -113,5 +120,8 @@ BigUnsignedInABase::operator std::string() const {
 		else
 			s[symbolNumInString] = char('A' + theDigit - 10);
 	}
-	return std::string(s);
+	std::string s2(s);
+	delete s;
+	//std::cout << "BigUnsignedInABase ==> std::string )))\n";
+	return s2;
 }
