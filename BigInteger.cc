@@ -310,11 +310,18 @@ BigInteger::CmpRes BigInteger::compareTo(const BigInteger &x) const {
 // These do some messing around to determine the sign of the result,
 // then call one of BigUnsigned's put-heres.
 
+// See remarks about aliased calls in BigUnsigned.cc .
+#define DOTR_ALIASED(cond, op) \
+	if (cond) { \
+		BigInteger tmpThis; \
+		tmpThis.op; \
+		*this = tmpThis; \
+		return; \
+	}
+
 // Addition
 void BigInteger::add(const BigInteger &a, const BigInteger &b) {
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigInteger::add: One of the arguments is the invoked object";
+	DOTR_ALIASED(this == &a || this == &b, add(a, b));
 	// If one argument is zero, copy the other.
 	if (a.sign == zero)
 		operator =(b);
@@ -351,9 +358,7 @@ void BigInteger::add(const BigInteger &a, const BigInteger &b) {
 void BigInteger::subtract(const BigInteger &a, const BigInteger &b) {
 	// Notice that this routine is identical to BigInteger::add,
 	// if one replaces b.sign by its opposite.
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigInteger::subtract: One of the arguments is the invoked object";
+	DOTR_ALIASED(this == &a || this == &b, subtract(a, b));
 	// If a is zero, copy b and flip its sign.  If b is zero, copy a.
 	if (a.sign == zero) {
 		BigUnsigned::operator =(b);
@@ -392,9 +397,7 @@ void BigInteger::subtract(const BigInteger &a, const BigInteger &b) {
 
 // Multiplication
 void BigInteger::multiply(const BigInteger &a, const BigInteger &b) {
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigInteger::multiply: One of the arguments is the invoked object";
+	DOTR_ALIASED(this == &a || this == &b, multiply(a, b));
 	// If one object is zero, copy zero and return.
 	if (a.sign == zero || b.sign == zero) {
 		sign = zero;
@@ -431,9 +434,16 @@ void BigInteger::multiply(const BigInteger &a, const BigInteger &b) {
 *	-4	-3	1	-1
 */
 void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
-	// Block unsafe calls
-	if (this == &b || this == &q || &b == &q)
-		throw "BigInteger::divideWithRemainder: One of the arguments is the invoked object";
+	// Defend against aliased calls;
+	// same idea as in BigUnsigned::divideWithRemainder .
+	if (this == &q)
+		throw "BigInteger::divideWithRemainder: Cannot write quotient and remainder into the same variable";
+	if (this == &b || &q == &b) {
+		BigInteger tmpB(b);
+		divideWithRemainder(tmpB, q);
+		return;
+	}
+	
 	// Division by zero gives quotient 0 and remainder *this
 	if (b.sign == zero) {
 		q.len = 0;
@@ -507,9 +517,7 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 
 // Negation
 void BigInteger::negate(const BigInteger &a) {
-	// Block unsafe calls
-	if (this == &a)
-		throw "BigInteger::negate: The argument is the invoked object";
+	DOTR_ALIASED(this == &a, negate(a));
 	// Copy a's magnitude
 	BigUnsigned::operator =(a);
 	// Copy the opposite of a.sign

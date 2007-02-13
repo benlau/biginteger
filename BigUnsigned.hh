@@ -151,7 +151,8 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	*     c = a + b;   // Now c == 50.
 	*     c.add(a, b); // Same effect but without the two bulk-copies.
 	*     c.divideWithRemainder(b, d); // 50 / 7; now d == 7 (quotient) and c == 1 (remainder).
-	*     a.add(a, b); // Unsafe ``aliased'' call; causes a runtime error.
+	*     a.add(a, b); // ``Aliased'' calls now do the right thing using a
+	*              // temporary copy, but see note on divideWithRemainder.
 	*/
 	
 	// PUT-HERE OPERATIONS
@@ -166,17 +167,17 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	* and these differ from the semantics of primitive-type
 	* / and % under division by zero.
 	* Look in `BigUnsigned.cc' for details.
+	* `a.divideWithRemainder(b, a)' causes an exception: it doesn't make
+	* sense to write quotient and remainder into the same variable.
 	*/
 	void divideWithRemainder(const BigUnsigned &b, BigUnsigned &q);
 	void divide(const BigUnsigned &a, const BigUnsigned &b) {
-		// Division, deprecated and provided for backward compatibility
 		BigUnsigned a2(a);
 		a2.divideWithRemainder(b, *this);
 		// quotient now in *this
 		// don't care about remainder left in a2
 	}
 	void modulo(const BigUnsigned &a, const BigUnsigned &b) {
-		// Modular reduction, deprecated and provided for backward compatibility
 		*this = a;
 		BigUnsigned q;
 		divideWithRemainder(b, q);
@@ -190,10 +191,9 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	void bitOr(const BigUnsigned &a, const BigUnsigned &b); // Bitwise OR
 	void bitXor(const BigUnsigned &a, const BigUnsigned &b); // Bitwise XOR
 	
-	// These functions are declared but not defined.  (Sorry.)
-	// Trying to call either will result in a link-time error.
-	void bitShiftLeft(const BigUnsigned &a, unsigned int b); // Bitwise left shift
-	void bitShiftRight(const BigUnsigned &a, unsigned int b); // Bitwise right shift
+	// These functions might exist someday.
+	//void bitShiftLeft(const BigUnsigned &a, unsigned int b); // Bitwise left shift
+	//void bitShiftRight(const BigUnsigned &a, unsigned int b); // Bitwise right shift
 	
 	// NORMAL OPERATORS
 	// These perform the operation on this (to the left of the operator)
@@ -278,21 +278,23 @@ inline BigUnsigned BigUnsigned::operator ^(const BigUnsigned &x) const {
 	return ans;
 }
 
-// ASSIGNMENT OPERATORS
-// These create a copy of this, then invoke the appropriate
-// put-here operation on this, passing the copy and x.
-// Exception: those updated for divideWithRemainder.
+/*
+ * ASSIGNMENT OPERATORS
+ * 
+ * Now the responsibility for making a temporary copy if necessary
+ * belongs to the put-here operations.  I made this change on 2007.02.13 after
+ * Boris Dessy pointed out that the old implementation handled calls like
+ * "a *= a" badly: it translated them to essentially "a.multiply(aCopy, a)",
+ * which threw an exception.
+ */
 inline void BigUnsigned::operator +=(const BigUnsigned &x) {
-	BigUnsigned thisCopy(*this);
-	add(thisCopy, x);
+	add(*this, x);
 }
 inline void BigUnsigned::operator -=(const BigUnsigned &x) {
-	BigUnsigned thisCopy(*this);
-	subtract(thisCopy, x);
+	subtract(*this, x);
 }
 inline void BigUnsigned::operator *=(const BigUnsigned &x) {
-	BigUnsigned thisCopy(*this);
-	multiply(thisCopy, x);
+	multiply(*this, x);
 }
 inline void BigUnsigned::operator /=(const BigUnsigned &x) {
 	// Updated for divideWithRemainder
@@ -309,16 +311,13 @@ inline void BigUnsigned::operator %=(const BigUnsigned &x) {
 	// don't care about quotient left in q
 }
 inline void BigUnsigned::operator &=(const BigUnsigned &x) {
-	BigUnsigned thisCopy(*this);
-	bitAnd(thisCopy, x);
+	bitAnd(*this, x);
 }
 inline void BigUnsigned::operator |=(const BigUnsigned &x) {
-	BigUnsigned thisCopy(*this);
-	bitOr(thisCopy, x);
+	bitOr(*this, x);
 }
 inline void BigUnsigned::operator ^=(const BigUnsigned &x) {
-	BigUnsigned thisCopy(*this);
-	bitXor(thisCopy, x);
+	bitXor(*this, x);
 }
 
 #endif

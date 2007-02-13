@@ -5,6 +5,10 @@ Change Log
 ==========
 These entries tell you what was added, fixed, or improved in each version as compared to the previous one.  In case you haven't noticed, a version number roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]' format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the same day.
 
+2007.02.13
+----------
+Boris Dessy pointed out that the library threw an exception on "a *= a", so I changed all the put-here operations to handle aliased calls correctly using a temporary copy instead of throwing exceptions.
+
 2006.08.14
 ----------
 In BigUnsigned::bitXor, change allocate(b2->len) to allocate(a2->len): we should allocate enough space for the longer number, not the shorter one!  Thanks to Sriram Sankararaman for pointing this out.

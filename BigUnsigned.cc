@@ -218,11 +218,37 @@ BigUnsigned::CmpRes BigUnsigned::compareTo(const BigUnsigned &x) const {
 * See Section 4.3.1 of Knuth's ``The Art of Computer Programming''.
 */
 
+/*
+ * On most calls to put-here operations, it's safe to read the inputs little by
+ * little and write the outputs little by little.  However, if one of the
+ * inputs is coming from the same variable into which the output is to be
+ * stored (an "aliased" call), we risk overwriting the input before we read it.
+ * In this case, we first compute the result into a temporary BigUnsigned
+ * variable and then copy it into the requested output variable *this.
+ * Each put-here operation uses the DOTR_ALIASED macro (Do The Right Thing on
+ * aliased calls) to generate code for this check.
+ * 
+ * I adopted this approach on 2007.02.13 (see Assignment Operators in
+ * BigUnsigned.hh).  Before then, put-here operations rejected aliased calls
+ * with an exception.  I think doing the right thing is better.
+ * 
+ * Some of the put-here operations can probably handle aliased calls safely
+ * without the extra copy because (for example) they process blocks strictly
+ * right-to-left.  At some point I might determine which ones don't need the
+ * copy, but my reasoning would need to be verified very carefully.  For now
+ * I'll leave in the copy.
+ */
+#define DOTR_ALIASED(cond, op) \
+	if (cond) { \
+		BigUnsigned tmpThis; \
+		tmpThis.op; \
+		*this = tmpThis; \
+		return; \
+	}
+
 // Addition
 void BigUnsigned::add(const BigUnsigned &a, const BigUnsigned &b) {
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigUnsigned::add: One of the arguments is the invoked object";
+	DOTR_ALIASED(this == &a || this == &b, add(a, b));
 	// If one argument is zero, copy the other.
 	if (a.len == 0) {
 		operator =(b);
@@ -283,9 +309,7 @@ void BigUnsigned::add(const BigUnsigned &a, const BigUnsigned &b) {
 
 // Subtraction
 void BigUnsigned::subtract(const BigUnsigned &a, const BigUnsigned &b) {
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigUnsigned::subtract: One of the arguments is the invoked object";
+	DOTR_ALIASED(this == &a || this == &b, subtract(a, b));
 	// If b is zero, copy a.  If a is shorter than b, the result is negative.
 	if (b.len == 0) {
 		operator =(a);
@@ -397,9 +421,7 @@ inline BigUnsigned::Blk getShiftedBlock(const BigUnsigned &num,
 
 // Multiplication
 void BigUnsigned::multiply(const BigUnsigned &a, const BigUnsigned &b) {
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigUnsigned::multiply: One of the arguments is the invoked object";
+	DOTR_ALIASED(this == &a || this == &b, multiply(a, b));
 	// If either a or b is zero, set to zero.
 	if (a.len == 0 || b.len == 0) {
 		len = 0;
@@ -483,11 +505,28 @@ void BigUnsigned::multiply(const BigUnsigned &a, const BigUnsigned &b) {
 * and provide outputs in the most convenient places so that no value ever needs
 * to be copied in its entirety.  That way, the client can perform exactly the
 * copying it needs depending on where the inputs are and where it wants the output.
+* A better name for this function might be "modWithQuotient", but I would rather
+* not change the name now.
 */
 void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
-	// Block unsafe calls
-	if (this == &b || &q == &b || this == &q)
-		throw "BigUnsigned::divideWithRemainder: Some two objects involved are the same";
+	/*
+	 * Defending against aliased calls is a bit tricky because we are
+	 * writing to both *this and q.
+	 * 
+	 * It would be silly to try to write quotient and remainder to the
+	 * same variable.  Rule that out right away.
+	 */
+	if (this == &q)
+		throw "BigUnsigned::divideWithRemainder: Cannot write quotient and remainder into the same variable";
+	/*
+	 * Now *this and q are separate, so the only concern is that b might be
+	 * aliased to one of them.  If so, use a temporary copy of b.
+	 */
+	if (this == &b || &q == &b) {
+		BigUnsigned tmpB(b);
+		divideWithRemainder(tmpB, q);
+		return;
+	}
 	
 	/*
 	* Note that the mathematical definition of mod (I'm trusting Knuth) is somewhat
@@ -684,9 +723,7 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 
 // Bitwise and
 void BigUnsigned::bitAnd(const BigUnsigned &a, const BigUnsigned &b) {
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigUnsigned::bitAnd: One of the arguments is the invoked object";
+	DOTR_ALIASED(this == &a || this == &b, bitAnd(a, b));
 	len = (a.len >= b.len) ? b.len : a.len;
 	allocate(len);
 	Index i;
@@ -697,9 +734,7 @@ void BigUnsigned::bitAnd(const BigUnsigned &a, const BigUnsigned &b) {
 
 // Bitwise or
 void BigUnsigned::bitOr(const BigUnsigned &a, const BigUnsigned &b) {
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigUnsigned::bitOr: One of the arguments is the invoked object";
+	DOTR_ALIASED(this == &a || this == &b, bitOr(a, b));
 	Index i;
 	const BigUnsigned *a2, *b2;
 	if (a.len >= b.len) {
@@ -719,9 +754,7 @@ void BigUnsigned::bitOr(const BigUnsigned &a, const BigUnsigned &b) {
 
 // Bitwise xor
 void BigUnsigned::bitXor(const BigUnsigned &a, const BigUnsigned &b) {
-	// Block unsafe calls
-	if (this == &a || this == &b)
-		throw "BigUnsigned::bitXor: One of the arguments is the invoked object";
+	DOTR_ALIASED(this == &a || this == &b, bitXor(a, b));
 	Index i;
 	const BigUnsigned *a2, *b2;
 	if (a.len >= b.len) {

@@ -92,7 +92,7 @@ class BigInteger : public BigUnsigned {
 	// PUT-HERE OPERATIONS
 	/* These store the result of the operation on the arguments into this.
 	* a.add(b, c) is equivalent to, but faster than, a = b + c.
-	* Calls like a.operation(a, b) are unsafe and not allowed. */
+	* See explanation of "put-here operations" in BigUnsigned.cc . */
 	public:
 	void add     (const BigInteger &a, const BigInteger &b); // Addition
 	void subtract(const BigInteger &a, const BigInteger &b); // Subtraction
@@ -103,17 +103,17 @@ class BigInteger : public BigUnsigned {
 	* and these usually differ from the semantics of primitive-type
 	* / and % when negatives and/or zeroes are involved.
 	* Look in `BigInteger.cc' for details.
+	* `a.divideWithRemainder(b, a)' causes an exception: it doesn't make
+	* sense to write quotient and remainder into the same variable.
 	*/
 	void divideWithRemainder(const BigInteger &b, BigInteger &q);
 	void divide(const BigInteger &a, const BigInteger &b) {
-		// Division, deprecated and provided for compatibility
 		BigInteger a2(a);
 		a2.divideWithRemainder(b, *this);
 		// quotient now in *this
 		// don't care about remainder left in a2
 	}
 	void modulo(const BigInteger &a, const BigInteger &b) {
-		// Modular reduction, deprecated and provided for compatibility
 		*this = a;
 		BigInteger q;
 		divideWithRemainder(b, q);
@@ -196,20 +196,21 @@ inline BigInteger BigInteger::operator -() const {
 	return ans;
 }
 
-// ASSIGNMENT OPERATORS
-// These create a copy of this, then invoke the appropriate
-// put-here operation on this, passing the copy and x.
+/*
+ * ASSIGNMENT OPERATORS
+ * 
+ * Now the responsibility for making a temporary copy if necessary
+ * belongs to the put-here operations.  See Assignment Operators in
+ * BigUnsigned.hh.
+ */
 inline void BigInteger::operator +=(const BigInteger &x) {
-	BigInteger thisCopy(*this);
-	add(thisCopy, x);
+	add(*this, x);
 }
 inline void BigInteger::operator -=(const BigInteger &x) {
-	BigInteger thisCopy(*this);
-	subtract(thisCopy, x);
+	subtract(*this, x);
 }
 inline void BigInteger::operator *=(const BigInteger &x) {
-	BigInteger thisCopy(*this);
-	multiply(thisCopy, x);
+	multiply(*this, x);
 }
 inline void BigInteger::operator /=(const BigInteger &x) {
 	// Updated for divideWithRemainder
