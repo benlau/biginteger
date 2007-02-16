@@ -1,9 +1,10 @@
-+===================================================================+
-Matt McCutchen's Big Integer Library
+                                   Change Log
 
-Change Log
-==========
-These entries tell you what was added, fixed, or improved in each version as compared to the previous one.  In case you haven't noticed, a version number roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]' format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the same day.
+These entries tell you what was added, fixed, or improved in each version as
+compared to the previous one.  In case you haven't noticed, a version number
+roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]'
+format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the
+same day.  The topmost version listed is the one you have.
 
 2007.02.13
 ----------
@@ -77,4 +78,4 @@ Brad Spencer pointed out a memory leak in `BigUnsigned::divide'.  It is fixed in
 ---------
 After months of inactivity, I fixed a bug in the `BigInteger' division routine; thanks to David Allen for reporting the bug.  I also added simple routines for decimal output to `std::ostream's, and there is a demo that prints out powers of 3.
 
-+===================================================================+
+~~~~
