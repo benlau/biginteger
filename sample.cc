@@ -78,7 +78,7 @@ int main() {
 		* If you want to experiment with the library,
 		* you can add your own test code here.
 		*/
-		// std::cout << "Beginning of custom test code:\n" << std::endl;
+		// std::cout << "Beginning of custom test code:" << std::endl;
 		
 	} catch(char const* err) {
 		std::cout << "The library threw an exception:\n"
