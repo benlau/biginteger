@@ -184,16 +184,14 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 		// remainder now in *this
 		// don't care about quotient left in q
 	}
-	// Bitwise operations.  Two read-only operands as arguments.  Result left in *this.
+	// Bitwise operations.  Result left in *this.
 	// These are not provided for BigIntegers; I think that using them on BigIntegers
 	// will discard the sign first.
 	void bitAnd(const BigUnsigned &a, const BigUnsigned &b); // Bitwise AND
 	void bitOr(const BigUnsigned &a, const BigUnsigned &b); // Bitwise OR
 	void bitXor(const BigUnsigned &a, const BigUnsigned &b); // Bitwise XOR
-	
-	// These functions might exist someday.
-	//void bitShiftLeft(const BigUnsigned &a, unsigned int b); // Bitwise left shift
-	//void bitShiftRight(const BigUnsigned &a, unsigned int b); // Bitwise right shift
+	void bitShiftLeft(const BigUnsigned &a, unsigned int b); // Bitwise left shift
+	void bitShiftRight(const BigUnsigned &a, unsigned int b); // Bitwise right shift
 	
 	// NORMAL OPERATORS
 	// These perform the operation on this (to the left of the operator)
@@ -207,6 +205,11 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	BigUnsigned operator &(const BigUnsigned &x) const; // Bitwise AND
 	BigUnsigned operator |(const BigUnsigned &x) const; // Bitwise OR
 	BigUnsigned operator ^(const BigUnsigned &x) const; // Bitwise XOR
+	BigUnsigned operator <<(unsigned int b) const; // Bitwise left shift
+	BigUnsigned operator >>(unsigned int b) const; // Bitwise right shift
+	// Additional operators in an attempt to avoid overloading tangles.
+	BigUnsigned operator <<(int b) const;
+	BigUnsigned operator >>(int b) const;
 	
 	// ASSIGNMENT OPERATORS
 	// These perform the operation on this and x, storing the result into this.
@@ -219,6 +222,11 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	void operator &=(const BigUnsigned &x); // Bitwise AND
 	void operator |=(const BigUnsigned &x); // Bitwise OR
 	void operator ^=(const BigUnsigned &x); // Bitwise XOR
+	void operator <<=(unsigned int b); // Bitwise left shift
+	void operator >>=(unsigned int b); // Bitwise right shift
+	// Additional operators in an attempt to avoid overloading tangles.
+	void operator <<=(int b);
+	void operator >>=(int b);
 	
 	// INCREMENT/DECREMENT OPERATORS
 	// These increase or decrease the number by 1.  To discourage side effects,
@@ -277,6 +285,26 @@ inline BigUnsigned BigUnsigned::operator ^(const BigUnsigned &x) const {
 	ans.bitXor(*this, x);
 	return ans;
 }
+inline BigUnsigned BigUnsigned::operator <<(unsigned int b) const {
+	BigUnsigned ans;
+	ans.bitShiftLeft(*this, b);
+	return ans;
+}
+inline BigUnsigned BigUnsigned::operator >>(unsigned int b) const {
+	BigUnsigned ans;
+	ans.bitShiftRight(*this, b);
+	return ans;
+}
+inline BigUnsigned BigUnsigned::operator <<(int b) const {
+	if (b < 0)
+		throw "BigUnsigned::operator <<(int): Negative shift amounts are not supported";
+	return *this << (unsigned int)(b);
+}
+inline BigUnsigned BigUnsigned::operator >>(int b) const {
+	if (b < 0)
+		throw "BigUnsigned::operator >>(int): Negative shift amounts are not supported";
+	return *this >> (unsigned int)(b);
+}
 
 /*
  * ASSIGNMENT OPERATORS
@@ -318,6 +346,22 @@ inline void BigUnsigned::operator |=(const BigUnsigned &x) {
 }
 inline void BigUnsigned::operator ^=(const BigUnsigned &x) {
 	bitXor(*this, x);
+}
+inline void BigUnsigned::operator <<=(unsigned int b) {
+	bitShiftLeft(*this, b);
+}
+inline void BigUnsigned::operator >>=(unsigned int b) {
+	bitShiftRight(*this, b);
+}
+inline void BigUnsigned::operator <<=(int b) {
+	if (b < 0)
+		throw "BigUnsigned::operator <<=(int): Negative shift amounts are not supported";
+	*this <<= (unsigned int)(b);
+}
+inline void BigUnsigned::operator >>=(int b) {
+	if (b < 0)
+		throw "BigUnsigned::operator >>=(int): Negative shift amounts are not supported";
+	*this >>= (unsigned int)(b);
 }
 
 #endif

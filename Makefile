@@ -7,7 +7,7 @@ all :
 
 # Implicit rule to compile C++ files.  Modify to your taste.
 %.o : %.cc
-	g++ -c -O -Wall -Wextra -pedantic $<
+	g++ -c -O2 -Wall -Wextra -pedantic $<
 
 # Components of the library.
 library-objects = BigUnsigned.o BigInteger.o BigUnsignedInABase.o BigIntegerUtils.o

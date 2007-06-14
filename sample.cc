@@ -62,9 +62,16 @@ int main() {
 		* ``put-here operations''; see `BigUnsigned.hh' for details.
 		*/
 		BigInteger g(314159), h(265);
-		// All five ``return-by-value'' operators.
+		// All five ``return-by-value'' arithmetic operators.
 		std::cout << (g + h) << '\n' << (g - h) << '\n' << (g * h)
 			<< '\n' << (g / h) << '\n' << (g % h) << std::endl;
+		
+		BigUnsigned i(0xFF0000FF), j(0x0000FFFF);
+		// All five ``return-by-value'' bitwise operators.
+		std::cout.flags(std::ios::hex | std::ios::showbase);
+		std::cout << (i & j) << '\n' << (i | j) << '\n' << (i ^ j) << '\n'
+			<< (j << 21) << '\n' << (j >> 10) << '\n';
+		std::cout.flags(std::ios::dec);
 		
 		// Let's do some heavy lifting and calculate powers of 314.
 		int maxPower = 10;

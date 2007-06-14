@@ -225,7 +225,7 @@ BigUnsigned::CmpRes BigUnsigned::compareTo(const BigUnsigned &x) const {
  * stored (an "aliased" call), we risk overwriting the input before we read it.
  * In this case, we first compute the result into a temporary BigUnsigned
  * variable and then copy it into the requested output variable *this.
- * Each put-here operation uses the DOTR_ALIASED macro (Do The Right Thing on
+ * Each put-here operation uses the DTRT_ALIASED macro (Do The Right Thing on
  * aliased calls) to generate code for this check.
  * 
  * I adopted this approach on 2007.02.13 (see Assignment Operators in
@@ -238,7 +238,7 @@ BigUnsigned::CmpRes BigUnsigned::compareTo(const BigUnsigned &x) const {
  * copy, but my reasoning would need to be verified very carefully.  For now
  * I'll leave in the copy.
  */
-#define DOTR_ALIASED(cond, op) \
+#define DTRT_ALIASED(cond, op) \
 	if (cond) { \
 		BigUnsigned tmpThis; \
 		tmpThis.op; \
@@ -248,7 +248,7 @@ BigUnsigned::CmpRes BigUnsigned::compareTo(const BigUnsigned &x) const {
 
 // Addition
 void BigUnsigned::add(const BigUnsigned &a, const BigUnsigned &b) {
-	DOTR_ALIASED(this == &a || this == &b, add(a, b));
+	DTRT_ALIASED(this == &a || this == &b, add(a, b));
 	// If one argument is zero, copy the other.
 	if (a.len == 0) {
 		operator =(b);
@@ -309,7 +309,7 @@ void BigUnsigned::add(const BigUnsigned &a, const BigUnsigned &b) {
 
 // Subtraction
 void BigUnsigned::subtract(const BigUnsigned &a, const BigUnsigned &b) {
-	DOTR_ALIASED(this == &a || this == &b, subtract(a, b));
+	DTRT_ALIASED(this == &a || this == &b, subtract(a, b));
 	// If b is zero, copy a.  If a is shorter than b, the result is negative.
 	if (b.len == 0) {
 		operator =(a);
@@ -421,7 +421,7 @@ inline BigUnsigned::Blk getShiftedBlock(const BigUnsigned &num,
 
 // Multiplication
 void BigUnsigned::multiply(const BigUnsigned &a, const BigUnsigned &b) {
-	DOTR_ALIASED(this == &a || this == &b, multiply(a, b));
+	DTRT_ALIASED(this == &a || this == &b, multiply(a, b));
 	// If either a or b is zero, set to zero.
 	if (a.len == 0 || b.len == 0) {
 		len = 0;
@@ -723,7 +723,7 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 
 // Bitwise and
 void BigUnsigned::bitAnd(const BigUnsigned &a, const BigUnsigned &b) {
-	DOTR_ALIASED(this == &a || this == &b, bitAnd(a, b));
+	DTRT_ALIASED(this == &a || this == &b, bitAnd(a, b));
 	len = (a.len >= b.len) ? b.len : a.len;
 	allocate(len);
 	Index i;
@@ -734,7 +734,7 @@ void BigUnsigned::bitAnd(const BigUnsigned &a, const BigUnsigned &b) {
 
 // Bitwise or
 void BigUnsigned::bitOr(const BigUnsigned &a, const BigUnsigned &b) {
-	DOTR_ALIASED(this == &a || this == &b, bitOr(a, b));
+	DTRT_ALIASED(this == &a || this == &b, bitOr(a, b));
 	Index i;
 	const BigUnsigned *a2, *b2;
 	if (a.len >= b.len) {
@@ -754,7 +754,7 @@ void BigUnsigned::bitOr(const BigUnsigned &a, const BigUnsigned &b) {
 
 // Bitwise xor
 void BigUnsigned::bitXor(const BigUnsigned &a, const BigUnsigned &b) {
-	DOTR_ALIASED(this == &a || this == &b, bitXor(a, b));
+	DTRT_ALIASED(this == &a || this == &b, bitXor(a, b));
 	Index i;
 	const BigUnsigned *a2, *b2;
 	if (a.len >= b.len) {
@@ -771,6 +771,51 @@ void BigUnsigned::bitXor(const BigUnsigned &a, const BigUnsigned &b) {
 		blk[i] = a2->blk[i];
 	len = a2->len;
 	zapLeadingZeros();
+}
+
+// Bitwise shift left
+void BigUnsigned::bitShiftLeft(const BigUnsigned &a, unsigned int b) {
+	DTRT_ALIASED(this == &a, bitShiftLeft(a, b));
+	Index shiftBlocks = b / N;
+	unsigned int shiftBits = b % N;
+	// + 1: room for high bits nudged left into another block
+	len = a.len + shiftBlocks + 1;
+	allocate(len);
+	Index i, j;
+	for (i = 0; i < shiftBlocks; i++)
+		blk[i] = 0;
+	for (j = 0, i = shiftBlocks; j <= a.len; j++, i++)
+		blk[i] = getShiftedBlock(a, j, shiftBits);
+	// Zap possible leading zero
+	if (blk[len - 1] == 0)
+		len--;
+}
+
+// Bitwise shift right
+void BigUnsigned::bitShiftRight(const BigUnsigned &a, unsigned int b) {
+	DTRT_ALIASED(this == &a, bitShiftRight(a, b));
+	// This calculation is wacky, but expressing the shift as a left bit shift
+	// within each block lets us use getShiftedBlock.
+	Index rightShiftBlocks = (b + N - 1) / N;
+	unsigned int leftShiftBits = N * rightShiftBlocks - b;
+	// Now (N * rightShiftBlocks - leftShiftBits) == b
+	// and 0 <= leftShiftBits < N.
+	if (rightShiftBlocks >= a.len + 1) {
+		// All of a is guaranteed to be shifted off, even considering the left
+		// bit shift.
+		len = 0;
+		return;
+	}
+	// Now we're allocating a positive amount.
+	// + 1: room for high bits nudged left into another block
+	len = a.len + 1 - rightShiftBlocks;
+	allocate(len);
+	Index i, j;
+	for (j = rightShiftBlocks, i = 0; j <= a.len; j++, i++)
+		blk[i] = getShiftedBlock(a, j, leftShiftBits);
+	// Zap possible leading zero
+	if (blk[len - 1] == 0)
+		len--;
 }
 
 // INCREMENT/DECREMENT OPERATORS
