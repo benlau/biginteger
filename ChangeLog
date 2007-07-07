@@ -6,6 +6,11 @@ roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]'
 format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the
 same day.  The topmost version listed is the one you have.
 
+2007.07.07
+----------
+Update the "Running the sample program produces this output:" comment in
+sample.cc for the bitwise operators.
+
 2007.06.14
 ----------
 - Implement << and >> for BigUnsigned in response to email from Marco Schulze.

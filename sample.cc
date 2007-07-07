@@ -104,6 +104,11 @@ Running the sample program produces this output:
 83252135
 1185
 134
+0xFF
+0xFF00FFFF
+0xFF00FF00
+0x1FFFE00000
+0x3F
 314^0 = 1
 314^1 = 314
 314^2 = 98596
