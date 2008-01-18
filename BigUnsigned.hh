@@ -1,6 +1,6 @@
 /*
-* Matt McCutchen's Big Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ */
 
 #ifndef BIGUNSIGNED
 #define BIGUNSIGNED
@@ -8,22 +8,22 @@
 #include "NumberlikeArray.hh"
 
 /*
-* A BigUnsigned object represents a nonnegative integer of size
-* limited only by available memory.  A BigUnsigned can be
-* created from and converted back to most integral types,
-* and many math operations are defined on BigUnsigneds.
-*
-* The number is stored as a series of blocks in a
-* dynamically allocated array.  It is as if the number
-* were written digit by digit in base 2 ^ N, **where N is the
-* number of bits in an unsigned long.**
-*
-* The memory-management details that used to be in here have
-* been moved into NumberlikeArray, which BigUnsigned now derives from.
-* `(NlA)' means that member(s) are declared identically in NumberlikeArray.
-* Such members are either redeclared here to make them public or are
-* here, commented out, for reference.
-*/
+ * A BigUnsigned object represents a nonnegative integer of size
+ * limited only by available memory.  A BigUnsigned can be
+ * created from and converted back to most integral types,
+ * and many math operations are defined on BigUnsigneds.
+ *
+ * The number is stored as a series of blocks in a
+ * dynamically allocated array.  It is as if the number
+ * were written digit by digit in base 2 ^ N, **where N is the
+ * number of bits in an unsigned long.**
+ *
+ * The memory-management details that used to be in here have
+ * been moved into NumberlikeArray, which BigUnsigned now derives from.
+ * `(NlA)' means that member(s) are declared identically in NumberlikeArray.
+ * Such members are either redeclared here to make them public or are
+ * here, commented out, for reference.
+ */
 
 class BigUnsigned : protected NumberlikeArray<unsigned long> {
 
@@ -117,43 +117,43 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	bool operator > (const BigUnsigned &x) const { return compareTo(x) == greater; }
 
 	/*
-	* BigUnsigned and BigInteger both provide three kinds of operators.
-	* Here ``big-integer'' refers to BigInteger or BigUnsigned.
-	*
-	* (1) Overloaded ``return-by-value'' operators:
-	*     +, -, *, /, %, unary -.
-	* Big-integer code using these operators looks identical to
-	* code using the primitive integer types.  These operators take
-	* one or two big-integer inputs and return a big-integer result,
-	* which can then be assigned to a BigInteger variable or used
-	* in an expression.  Example:
-	*     BigInteger a(1), b = 1;
-	*     BigInteger c = a + b;
-	*
-	* (2) Overloaded assignment operators:
-	*     +=, -=, *=, /=, %=, &=, |=, ^=, ++, --, flipSign.
-	* Again, these are used on big integers just like on ints.
-	* They take one writable big integer that both provides an
-	* operand and receives a result.  The first eight also take
-	* a second read-only operand.  Example:
-	*     BigInteger a(1), b(1);
-	*     a += b;
-	*
-	* (3) ``Put-here'' operations: `add', `subtract', etc.
-	* Using a return-by-value or assignment operator generally involves
-	* copy constructions and/or assignments.  The ``put-here'' operations
-	* require none, but they are more of a hassle to use.  Most take two
-	* read-only operands and save the result in the calling object `*this',
-	* whose previous value is ignored.  `divideWithRemainder' is an exception.
-	* <<< NOTE >>>: Put-here operations do not return a value: they don't need to!!
-	* Examples:
-	*     BigInteger a(43), b(7), c, d;
-	*     c = a + b;   // Now c == 50.
-	*     c.add(a, b); // Same effect but without the two bulk-copies.
-	*     c.divideWithRemainder(b, d); // 50 / 7; now d == 7 (quotient) and c == 1 (remainder).
-	*     a.add(a, b); // ``Aliased'' calls now do the right thing using a
-	*              // temporary copy, but see note on divideWithRemainder.
-	*/
+	 * BigUnsigned and BigInteger both provide three kinds of operators.
+	 * Here ``big-integer'' refers to BigInteger or BigUnsigned.
+	 *
+	 * (1) Overloaded ``return-by-value'' operators:
+	 *     +, -, *, /, %, unary -.
+	 * Big-integer code using these operators looks identical to
+	 * code using the primitive integer types.  These operators take
+	 * one or two big-integer inputs and return a big-integer result,
+	 * which can then be assigned to a BigInteger variable or used
+	 * in an expression.  Example:
+	 *     BigInteger a(1), b = 1;
+	 *     BigInteger c = a + b;
+	 *
+	 * (2) Overloaded assignment operators:
+	 *     +=, -=, *=, /=, %=, &=, |=, ^=, ++, --, flipSign.
+	 * Again, these are used on big integers just like on ints.
+	 * They take one writable big integer that both provides an
+	 * operand and receives a result.  The first eight also take
+	 * a second read-only operand.  Example:
+	 *     BigInteger a(1), b(1);
+	 *     a += b;
+	 *
+	 * (3) ``Put-here'' operations: `add', `subtract', etc.
+	 * Using a return-by-value or assignment operator generally involves
+	 * copy constructions and/or assignments.  The ``put-here'' operations
+	 * require none, but they are more of a hassle to use.  Most take two
+	 * read-only operands and save the result in the calling object `*this',
+	 * whose previous value is ignored.  `divideWithRemainder' is an exception.
+	 * <<< NOTE >>>: Put-here operations do not return a value: they don't need to!!
+	 * Examples:
+	 *     BigInteger a(43), b(7), c, d;
+	 *     c = a + b;   // Now c == 50.
+	 *     c.add(a, b); // Same effect but without the two bulk-copies.
+	 *     c.divideWithRemainder(b, d); // 50 / 7; now d == 7 (quotient) and c == 1 (remainder).
+	 *     a.add(a, b); // ``Aliased'' calls now do the right thing using a
+	 *              // temporary copy, but see note on divideWithRemainder.
+	 */
 
 	// PUT-HERE OPERATIONS
 	public:
@@ -162,14 +162,14 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	void subtract(const BigUnsigned &a, const BigUnsigned &b); // Subtraction
 	void multiply(const BigUnsigned &a, const BigUnsigned &b); // Multiplication
 	/* Divisive stuff
-	* `a.divideWithRemainder(b, q)' is like `q = a / b, a %= b'.
-	* Semantics similar to Donald E. Knuth's are used for / and %,
-	* and these differ from the semantics of primitive-type
-	* / and % under division by zero.
-	* Look in `BigUnsigned.cc' for details.
-	* `a.divideWithRemainder(b, a)' causes an exception: it doesn't make
-	* sense to write quotient and remainder into the same variable.
-	*/
+	 * `a.divideWithRemainder(b, q)' is like `q = a / b, a %= b'.
+	 * Semantics similar to Donald E. Knuth's are used for / and %,
+	 * and these differ from the semantics of primitive-type
+	 * / and % under division by zero.
+	 * Look in `BigUnsigned.cc' for details.
+	 * `a.divideWithRemainder(b, a)' causes an exception: it doesn't make
+	 * sense to write quotient and remainder into the same variable.
+	 */
 	void divideWithRemainder(const BigUnsigned &b, BigUnsigned &q);
 	void divide(const BigUnsigned &a, const BigUnsigned &b) {
 		BigUnsigned a2(a);
@@ -243,8 +243,8 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 
 // NORMAL OPERATORS
 /* These create an object to hold the result and invoke
-* the appropriate put-here operation on it, passing
-* this and x.  The new object is then returned. */
+ * the appropriate put-here operation on it, passing
+ * this and x.  The new object is then returned. */
 inline BigUnsigned BigUnsigned::operator +(const BigUnsigned &x) const {
 	BigUnsigned ans;
 	ans.add(*this, x);

@@ -1,9 +1,9 @@
 /*
-* Matt McCutchen's Big Integer Library
-*
-* Sample program demonstrating the most important features of the Big
-* Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ *
+ * Sample program demonstrating the most important features of the Big
+ * Integer Library
+ */
 
 // Standard libraries
 #include <string>
@@ -23,14 +23,14 @@ int main() {
 		a = b; // From int to BigInteger...
 		b = a; // ...and back, no casts required!
 		/*
-		* If a were too big for an int you'd get a runtime exception.
-		* The Big Integer Library throws C-strings (that is,
-		* `const char *'s) when something goes wrong.  It's a good idea
-		* to catch them; the `try/catch' construct wrapping all this
-		* code is an example of how to do this.  Some C++ compilers need
-		* a special command-line option to compile code that uses
-		* exceptions.
-		*/
+		 * If a were too big for an int you'd get a runtime exception.
+		 * The Big Integer Library throws C-strings (that is,
+		 * `const char *'s) when something goes wrong.  It's a good idea
+		 * to catch them; the `try/catch' construct wrapping all this
+		 * code is an example of how to do this.  Some C++ compilers need
+		 * a special command-line option to compile code that uses
+		 * exceptions.
+		 */
 
 		BigInteger c(a); // Copy a BigInteger.
 
@@ -53,14 +53,14 @@ int main() {
 		std::cout << f << std::endl;
 
 		/*
-		* Let's do some math!
-		*
-		* The Big Integer Library provides lots of overloaded operators
-		* and corresponding assignment operators.  So you can do `a + b'
-		* with BigIntegers just as with normal integers.  The named
-		* methods `add', `divideWithRemainder', etc. are more advanced
-		* ``put-here operations''; see `BigUnsigned.hh' for details.
-		*/
+		 * Let's do some math!
+		 *
+		 * The Big Integer Library provides lots of overloaded operators
+		 * and corresponding assignment operators.  So you can do `a + b'
+		 * with BigIntegers just as with normal integers.  The named
+		 * methods `add', `divideWithRemainder', etc. are more advanced
+		 * ``put-here operations''; see `BigUnsigned.hh' for details.
+		 */
 		BigInteger g(314159), h(265);
 		// All five ``return-by-value'' arithmetic operators.
 		std::cout << (g + h) << '\n' << (g - h) << '\n' << (g * h)
@@ -82,9 +82,9 @@ int main() {
 		}
 
 		/*
-		* If you want to experiment with the library,
-		* you can add your own test code here.
-		*/
+		 * If you want to experiment with the library,
+		 * you can add your own test code here.
+		 */
 		// std::cout << "Beginning of custom test code:" << std::endl;
 
 	} catch(char const* err) {
@@ -121,4 +121,4 @@ Running the sample program produces this output:
 314^9 = 29673367320587092457984
 314^10 = 9317437338664347031806976
 
-*/
+ */

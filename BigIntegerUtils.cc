@@ -1,15 +1,15 @@
 /*
-* Matt McCutchen's Big Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ */
 
 #include "BigIntegerUtils.hh"
 #include "BigUnsignedInABase.hh"
 
 /*
-* This file includes:
-* (1) `std::string <=> BigUnsigned/BigInteger' conversion routines easier than `BigUnsignedInABase'
-* (2) << and >> operators for BigUnsigned/BigInteger, std::istream/std::ostream
-*/
+ * This file includes:
+ * (1) `std::string <=> BigUnsigned/BigInteger' conversion routines easier than `BigUnsignedInABase'
+ * (2) << and >> operators for BigUnsigned/BigInteger, std::istream/std::ostream
+ */
 
 std::string easyBUtoString(const BigUnsigned &x) {
 	return std::string(BigUnsignedInABase(x, 10));

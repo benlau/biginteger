@@ -1,14 +1,14 @@
 /*
-* Matt McCutchen's Big Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ */
 
 /*
-* This mechanism prevents files from being included twice.
-* Each file gets its own `id' (here `NUMBERLIKEARRAY').
-* When `#include'd, this file checks whether its `id' has
-* already been flagged.  If not, it flags the `id' and
-* loads the declarations.
-*/
+ * This mechanism prevents files from being included twice.
+ * Each file gets its own `id' (here `NUMBERLIKEARRAY').
+ * When `#include'd, this file checks whether its `id' has
+ * already been flagged.  If not, it flags the `id' and
+ * loads the declarations.
+ */
 #ifndef NUMBERLIKEARRAY
 #define NUMBERLIKEARRAY
 
@@ -19,22 +19,22 @@
 #endif
 
 /*
-* A NumberlikeArray<Blk> object holds a dynamically
-* allocated array of Blk.  It provides certain basic
-* memory management features needed by both BigUnsigned
-* and BigUnsignedInABase, which are both derived from it.
-*
-* NumberlikeArray provides no information hiding, so make
-* sure you know what you are doing if you use it directly.
-* Classes derived from it will probably wish to pass on
-* some members of NumberlikeArray to their clients while
-* keeping some safe for themselves.  These classes should
-* use protected inheritance and manually make some members
-* public with declarations like this:
-*
-* public:
-*     NumberlikeArray< whatever >::getLength;
-*/
+ * A NumberlikeArray<Blk> object holds a dynamically
+ * allocated array of Blk.  It provides certain basic
+ * memory management features needed by both BigUnsigned
+ * and BigUnsignedInABase, which are both derived from it.
+ *
+ * NumberlikeArray provides no information hiding, so make
+ * sure you know what you are doing if you use it directly.
+ * Classes derived from it will probably wish to pass on
+ * some members of NumberlikeArray to their clients while
+ * keeping some safe for themselves.  These classes should
+ * use protected inheritance and manually make some members
+ * public with declarations like this:
+ *
+ * public:
+ *     NumberlikeArray< whatever >::getLength;
+ */
 
 template <class Blk>
 class NumberlikeArray {
@@ -49,18 +49,18 @@ class NumberlikeArray {
 	Blk *blk; // Dynamically allocated array of the blocks
 
 	/*
-	* Change made on 2005.01.06:
-	*
-	* If a zero-length NumberlikeArray is desired, no array is actually allocated.
-	* Instead, `blk' is set to `NULL', and `cap' and `len' are zero as usual.
-	*
-	* `blk' is never dereferenced if the array has zero length.  Furthermore,
-	* `delete NULL;' does nothing and causes no error. Therefore, we can use
-	* `NULL' as if it were a zero-length array from `new'.
-	*
-	* This is a great convenience because the only code that need be changed
-	* is the array allocation code.  All other code will still work fine.
-	*/
+	 * Change made on 2005.01.06:
+	 *
+	 * If a zero-length NumberlikeArray is desired, no array is actually allocated.
+	 * Instead, `blk' is set to `NULL', and `cap' and `len' are zero as usual.
+	 *
+	 * `blk' is never dereferenced if the array has zero length.  Furthermore,
+	 * `delete NULL;' does nothing and causes no error. Therefore, we can use
+	 * `NULL' as if it were a zero-length array from `new'.
+	 *
+	 * This is a great convenience because the only code that need be changed
+	 * is the array allocation code.  All other code will still work fine.
+	 */
 
 	// MANAGEMENT
 	NumberlikeArray(Index c) : cap(c), len(0) { // Creates a NumberlikeArray with a capacity
@@ -70,23 +70,23 @@ class NumberlikeArray {
 	void allocateAndCopy(Index c); // Ensures the array has at least the indicated capacity, preserving its contents
 
 	/*
-	* Default constructor.
-	*
-	* If a class derived from NumberlikeArray knows at initializer time what size array
-	* it wants, it can call the first constructor listed above in an initializer.
-	*
-	* Otherwise, this default constructor will be implicitly invoked, pointing `blk' to
-	* `NULL', a fake zero-length block array.  The derived class can allocate the desired
-	* array itself and overwrite `blk'; it need not `delete [] blk' first.
-	*
-	* This change fixes a memory leak reported by Milan Tomic on 2005.01.06.
-	* Integer-type-to-BigUnsigned (and BigInteger) conversion constructors have always
-	* allocated their own array of length 0 or 1 after seeing whether the input is zero.
-	* But when the NumberlikeArray transition occurred, these constructors contained an
-	* implicit initializer call to the old NumberlikeArray default constructor, which
-	* created a real `new'-allocated zero-length array.  This array would then be lost,
-	* causing a small but annoying memory leak.
-	*/
+	 * Default constructor.
+	 *
+	 * If a class derived from NumberlikeArray knows at initializer time what size array
+	 * it wants, it can call the first constructor listed above in an initializer.
+	 *
+	 * Otherwise, this default constructor will be implicitly invoked, pointing `blk' to
+	 * `NULL', a fake zero-length block array.  The derived class can allocate the desired
+	 * array itself and overwrite `blk'; it need not `delete [] blk' first.
+	 *
+	 * This change fixes a memory leak reported by Milan Tomic on 2005.01.06.
+	 * Integer-type-to-BigUnsigned (and BigInteger) conversion constructors have always
+	 * allocated their own array of length 0 or 1 after seeing whether the input is zero.
+	 * But when the NumberlikeArray transition occurred, these constructors contained an
+	 * implicit initializer call to the old NumberlikeArray default constructor, which
+	 * created a real `new'-allocated zero-length array.  This array would then be lost,
+	 * causing a small but annoying memory leak.
+	 */
 	NumberlikeArray() : cap(0), len(0) {
 		blk = NULL;
 	}
@@ -113,21 +113,21 @@ class NumberlikeArray {
 };
 
 /*
-* =================================
-* BELOW THIS POINT are template definitions; above are declarations.
-*
-* Definitions would ordinarily belong in a file NumberlikeArray.cc so that they would
-* be compiled once into NumberlikeArray.o and then linked.
-*
-* However, because of the way templates are usually implemented,
-* template ``definitions'' are treated as declarations by the compiler.
-* When someone uses an instance of the template, definitions are generated,
-* and the linker is smart enough to toss duplicate definitions for the same
-* instance generated by different files.
-*
-* Thus, the template ``definitions'' for NumberlikeArray must appear in this header file
-* so other files including NumberlikeArray will be able to generate real definitions.
-*/
+ * =================================
+ * BELOW THIS POINT are template definitions; above are declarations.
+ *
+ * Definitions would ordinarily belong in a file NumberlikeArray.cc so that they would
+ * be compiled once into NumberlikeArray.o and then linked.
+ *
+ * However, because of the way templates are usually implemented,
+ * template ``definitions'' are treated as declarations by the compiler.
+ * When someone uses an instance of the template, definitions are generated,
+ * and the linker is smart enough to toss duplicate definitions for the same
+ * instance generated by different files.
+ *
+ * Thus, the template ``definitions'' for NumberlikeArray must appear in this header file
+ * so other files including NumberlikeArray will be able to generate real definitions.
+ */
 
 template <class Blk>
 const unsigned int NumberlikeArray<Blk>::N = 8 * sizeof(Blk);

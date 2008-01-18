@@ -1,6 +1,6 @@
 /*
-* Matt McCutchen's Big Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ */
 
 #ifndef BIGINTEGER
 #define BIGINTEGER
@@ -8,22 +8,22 @@
 #include "BigUnsigned.hh"
 
 /*
-* A BigInteger object represents a signed integer of size
-* limited only by available memory.  A BigInteger can be
-* created from and converted back to most integral types,
-* and many math operations are defined on BigIntegers.
-*
-* The number is stored as a series of blocks in a
-* dynamically allocated array.  It is as if the number
-* were written digit by digit in base 2 ^ N, **where N is the
-* number of bits in an unsigned long.**
-*
-* This class is derived from BigUnsigned, which represents
-* a large nonnegative integer.  BigUnsigned should be studied
-* first, as only new or different things are declared here.
-* Some things are redeclared so that they use the BigInteger
-* versions of methods, rather than the BigUnsigned versions.
-*/
+ * A BigInteger object represents a signed integer of size
+ * limited only by available memory.  A BigInteger can be
+ * created from and converted back to most integral types,
+ * and many math operations are defined on BigIntegers.
+ *
+ * The number is stored as a series of blocks in a
+ * dynamically allocated array.  It is as if the number
+ * were written digit by digit in base 2 ^ N, **where N is the
+ * number of bits in an unsigned long.**
+ *
+ * This class is derived from BigUnsigned, which represents
+ * a large nonnegative integer.  BigUnsigned should be studied
+ * first, as only new or different things are declared here.
+ * Some things are redeclared so that they use the BigInteger
+ * versions of methods, rather than the BigUnsigned versions.
+ */
 
 class BigInteger : public BigUnsigned {
 
@@ -91,21 +91,21 @@ class BigInteger : public BigUnsigned {
 
 	// PUT-HERE OPERATIONS
 	/* These store the result of the operation on the arguments into this.
-	* a.add(b, c) is equivalent to, but faster than, a = b + c.
-	* See explanation of "put-here operations" in BigUnsigned.cc . */
+	 * a.add(b, c) is equivalent to, but faster than, a = b + c.
+	 * See explanation of "put-here operations" in BigUnsigned.cc . */
 	public:
 	void add     (const BigInteger &a, const BigInteger &b); // Addition
 	void subtract(const BigInteger &a, const BigInteger &b); // Subtraction
 	void multiply(const BigInteger &a, const BigInteger &b); // Multiplication
 	/* Divisive stuff
-	* `a.divideWithRemainder(b, q)' is like `q = a / b, a %= b'.
-	* Semantics similar to Donald E. Knuth's are used for / and %,
-	* and these usually differ from the semantics of primitive-type
-	* / and % when negatives and/or zeroes are involved.
-	* Look in `BigInteger.cc' for details.
-	* `a.divideWithRemainder(b, a)' causes an exception: it doesn't make
-	* sense to write quotient and remainder into the same variable.
-	*/
+	 * `a.divideWithRemainder(b, q)' is like `q = a / b, a %= b'.
+	 * Semantics similar to Donald E. Knuth's are used for / and %,
+	 * and these usually differ from the semantics of primitive-type
+	 * / and % when negatives and/or zeroes are involved.
+	 * Look in `BigInteger.cc' for details.
+	 * `a.divideWithRemainder(b, a)' causes an exception: it doesn't make
+	 * sense to write quotient and remainder into the same variable.
+	 */
 	void divideWithRemainder(const BigInteger &b, BigInteger &q);
 	void divide(const BigInteger &a, const BigInteger &b) {
 		BigInteger a2(a);
@@ -163,8 +163,8 @@ inline BigInteger::Sign BigInteger::getSign() const { return sign; }
 
 // NORMAL OPERATORS
 /* These create an object to hold the result and invoke
-* the appropriate put-here operation on it, passing
-* this and x.  The new object is then returned. */
+ * the appropriate put-here operation on it, passing
+ * this and x.  The new object is then returned. */
 inline BigInteger BigInteger::operator +(const BigInteger &x) const {
 	BigInteger ans;
 	ans.add(*this, x);

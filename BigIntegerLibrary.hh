@@ -1,6 +1,6 @@
 /*
-* Matt McCutchen's Big Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ */
 
 // This header file includes all the other header files.
 

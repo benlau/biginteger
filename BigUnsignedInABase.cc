@@ -1,15 +1,15 @@
 /*
-* Matt McCutchen's Big Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ */
 
 /*
-* Milan Tomic had trouble compiling this file on Microsoft
-* Visual C++ 6 because, in the libraries that come with
-* Visual C++ 6, the `std::string::push_back' method apparently
-* does not exist.  To get around the problem, I rewrote
-* `BigUnsignedInABase::operator std::string' (at the bottom
-* of this file) so it doesn't use `push_back'.
-*/
+ * Milan Tomic had trouble compiling this file on Microsoft
+ * Visual C++ 6 because, in the libraries that come with
+ * Visual C++ 6, the `std::string::push_back' method apparently
+ * does not exist.  To get around the problem, I rewrote
+ * `BigUnsignedInABase::operator std::string' (at the bottom
+ * of this file) so it doesn't use `push_back'.
+ */
 
 #include "BigUnsignedInABase.hh"
 

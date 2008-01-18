@@ -1,6 +1,6 @@
 /*
-* Matt McCutchen's Big Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ */
 
 #ifndef BIGINTEGERUTILS
 #define BIGINTEGERUTILS
@@ -10,10 +10,10 @@
 #include <iostream>
 
 /*
-* This file includes:
-* (1) `std::string <=> BigUnsigned/BigInteger' conversion routines easier than `BigUnsignedInABase'
-* (2) << and >> operators for BigUnsigned/BigInteger, std::istream/std::ostream
-*/
+ * This file includes:
+ * (1) `std::string <=> BigUnsigned/BigInteger' conversion routines easier than `BigUnsignedInABase'
+ * (2) << and >> operators for BigUnsigned/BigInteger, std::istream/std::ostream
+ */
 
 // Conversion routines.  Base 10 only.
 std::string easyBUtoString(const BigUnsigned &x);
@@ -33,23 +33,23 @@ std::ostream &operator <<(std::ostream &os, const BigUnsigned &x);
 std::ostream &operator <<(std::ostream &os, const BigInteger &x);
 
 /*
-* =================================
-* BELOW THIS POINT are template definitions; above are declarations.  See `NumberlikeArray.hh'.
-*/
+ * =================================
+ * BELOW THIS POINT are template definitions; above are declarations.  See `NumberlikeArray.hh'.
+ */
 
 /*
-* Converts binary data to a BigInteger.
-* Pass an array `data', its length, and the desired sign.
-*
-* Elements of `data' may be of any type `T' that has the following
-* two properties (this includes almost all integral types):
-*
-* (1) `sizeof(T)' correctly gives the amount of binary data in one
-* value of `T' and is a factor of `sizeof(Blk)'.
-*
-* (2) When a value of `T' is casted to a `Blk', the low bytes of
-* the result contain the desired binary data.
-*/
+ * Converts binary data to a BigInteger.
+ * Pass an array `data', its length, and the desired sign.
+ *
+ * Elements of `data' may be of any type `T' that has the following
+ * two properties (this includes almost all integral types):
+ *
+ * (1) `sizeof(T)' correctly gives the amount of binary data in one
+ * value of `T' and is a factor of `sizeof(Blk)'.
+ *
+ * (2) When a value of `T' is casted to a `Blk', the low bytes of
+ * the result contain the desired binary data.
+ */
 template <class T>
 BigInteger easyDataToBI(const T* data, BigInteger::Index length, BigInteger::Sign sign) {
 	// really ceiling(numBytes / sizeof(BigInteger::Blk))

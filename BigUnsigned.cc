@@ -1,28 +1,28 @@
 /*
-* Matt McCutchen's Big Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ */
 
 #include "BigUnsigned.hh"
 
 // The "management" routines that used to be here are now in NumberlikeArray.hh.
 
 /*
-* The steps for construction of a BigUnsigned
-* from an integral value x are as follows:
-* 1. If x is zero, create an empty BigUnsigned and stop.
-* 2. If x is negative, throw an exception.
-* 3. Allocate a one-block number array.
-* 4. If x is of a signed type, convert x to the unsigned
-*    type of the same length.
-* 5. Expand x to a Blk, and store it in the number array.
-*
-* Since 2005.01.06, NumberlikeArray uses `NULL' rather
-* than a real array if one of zero length is needed.
-* These constructors implicitly call NumberlikeArray's
-* default constructor, which sets `blk = NULL, cap = len = 0'.
-* So if the input number is zero, they can just return.
-* See remarks in `NumberlikeArray.hh'.
-*/
+ * The steps for construction of a BigUnsigned
+ * from an integral value x are as follows:
+ * 1. If x is zero, create an empty BigUnsigned and stop.
+ * 2. If x is negative, throw an exception.
+ * 3. Allocate a one-block number array.
+ * 4. If x is of a signed type, convert x to the unsigned
+ *    type of the same length.
+ * 5. Expand x to a Blk, and store it in the number array.
+ *
+ * Since 2005.01.06, NumberlikeArray uses `NULL' rather
+ * than a real array if one of zero length is needed.
+ * These constructors implicitly call NumberlikeArray's
+ * default constructor, which sets `blk = NULL, cap = len = 0'.
+ * So if the input number is zero, they can just return.
+ * See remarks in `NumberlikeArray.hh'.
+ */
 
 BigUnsigned::BigUnsigned(unsigned long x) {
 	if (x == 0)
@@ -95,15 +95,15 @@ BigUnsigned::BigUnsigned(short x) {
 
 // CONVERTERS
 /*
-* The steps for conversion of a BigUnsigned to an
-* integral type are as follows:
-* 1. If the BigUnsigned is zero, return zero.
-* 2. If it is more than one block long or its lowest
-*    block has bits set out of the range of the target
-*    type, throw an exception.
-* 3. Otherwise, convert the lowest block to the
-*    target type and return it.
-*/
+ * The steps for conversion of a BigUnsigned to an
+ * integral type are as follows:
+ * 1. If the BigUnsigned is zero, return zero.
+ * 2. If it is more than one block long or its lowest
+ *    block has bits set out of the range of the target
+ *    type, throw an exception.
+ * 3. Otherwise, convert the lowest block to the
+ *    target type and return it.
+ */
 
 namespace {
 	// These masks are used to test whether a Blk has bits
@@ -197,26 +197,26 @@ BigUnsigned::CmpRes BigUnsigned::compareTo(const BigUnsigned &x) const {
 // PUT-HERE OPERATIONS
 
 /*
-* Below are implementations of the four basic arithmetic operations
-* for `BigUnsigned's.  Their purpose is to use a mechanism that can
-* calculate the sum, difference, product, and quotient/remainder of
-* two individual blocks in order to calculate the sum, difference,
-* product, and quotient/remainder of two multi-block BigUnsigned
-* numbers.
-*
-* As alluded to in the comment before class `BigUnsigned',
-* these algorithms bear a remarkable similarity (in purpose, if
-* not in implementation) to the way humans operate on big numbers.
-* The built-in `+', `-', `*', `/' and `%' operators are analogous
-* to elementary-school ``math facts'' and ``times tables''; the
-* four routines below are analogous to ``long division'' and its
-* relatives.  (Only a computer can ``memorize'' a times table with
-* 18446744073709551616 entries!  (For 32-bit blocks.))
-*
-* The discovery of these four algorithms, called the ``classical
-* algorithms'', marked the beginning of the study of computer science.
-* See Section 4.3.1 of Knuth's ``The Art of Computer Programming''.
-*/
+ * Below are implementations of the four basic arithmetic operations
+ * for `BigUnsigned's.  Their purpose is to use a mechanism that can
+ * calculate the sum, difference, product, and quotient/remainder of
+ * two individual blocks in order to calculate the sum, difference,
+ * product, and quotient/remainder of two multi-block BigUnsigned
+ * numbers.
+ *
+ * As alluded to in the comment before class `BigUnsigned',
+ * these algorithms bear a remarkable similarity (in purpose, if
+ * not in implementation) to the way humans operate on big numbers.
+ * The built-in `+', `-', `*', `/' and `%' operators are analogous
+ * to elementary-school ``math facts'' and ``times tables''; the
+ * four routines below are analogous to ``long division'' and its
+ * relatives.  (Only a computer can ``memorize'' a times table with
+ * 18446744073709551616 entries!  (For 32-bit blocks.))
+ *
+ * The discovery of these four algorithms, called the ``classical
+ * algorithms'', marked the beginning of the study of computer science.
+ * See Section 4.3.1 of Knuth's ``The Art of Computer Programming''.
+ */
 
 /*
  * On most calls to put-here operations, it's safe to read the inputs little by
@@ -355,63 +355,63 @@ void BigUnsigned::subtract(const BigUnsigned &a, const BigUnsigned &b) {
 }
 
 /*
-* About the multiplication and division algorithms:
-*
-* I searched unsucessfully for fast built-in operations like the `b_0'
-* and `c_0' Knuth describes in Section 4.3.1 of ``The Art of Computer
-* Programming'' (replace `place' by `Blk'):
-*
-*    ``b_0[:] multiplication of a one-place integer by another one-place
-*      integer, giving a two-place answer;
-*
-*    ``c_0[:] division of a two-place integer by a one-place integer,
-*      provided that the quotient is a one-place integer, and yielding
-*      also a one-place remainder.''
-*
-* I also missed his note that ``[b]y adjusting the word size, if
-* necessary, nearly all computers will have these three operations
-* available'', so I gave up on trying to use algorithms similar to his.
-* A future version of the library might include such algorithms; I
-* would welcome contributions from others for this.
-*
-* I eventually decided to use bit-shifting algorithms.  To multiply `a'
-* and `b', we zero out the result.  Then, for each `1' bit in `a', we
-* shift `b' left the appropriate amount and add it to the result.
-* Similarly, to divide `a' by `b', we shift `b' left varying amounts,
-* repeatedly trying to subtract it from `a'.  When we succeed, we note
-* the fact by setting a bit in the quotient.  While these algorithms
-* have the same O(n^2) time complexity as Knuth's, the ``constant factor''
-* is likely to be larger.
-*
-* Because I used these algorithms, which require single-block addition
-* and subtraction rather than single-block multiplication and division,
-* the innermost loops of all four routines are very similar.  Study one
-* of them and all will become clear.
-*/
+ * About the multiplication and division algorithms:
+ *
+ * I searched unsucessfully for fast built-in operations like the `b_0'
+ * and `c_0' Knuth describes in Section 4.3.1 of ``The Art of Computer
+ * Programming'' (replace `place' by `Blk'):
+ *
+ *    ``b_0[:] multiplication of a one-place integer by another one-place
+ *      integer, giving a two-place answer;
+ *
+ *    ``c_0[:] division of a two-place integer by a one-place integer,
+ *      provided that the quotient is a one-place integer, and yielding
+ *      also a one-place remainder.''
+ *
+ * I also missed his note that ``[b]y adjusting the word size, if
+ * necessary, nearly all computers will have these three operations
+ * available'', so I gave up on trying to use algorithms similar to his.
+ * A future version of the library might include such algorithms; I
+ * would welcome contributions from others for this.
+ *
+ * I eventually decided to use bit-shifting algorithms.  To multiply `a'
+ * and `b', we zero out the result.  Then, for each `1' bit in `a', we
+ * shift `b' left the appropriate amount and add it to the result.
+ * Similarly, to divide `a' by `b', we shift `b' left varying amounts,
+ * repeatedly trying to subtract it from `a'.  When we succeed, we note
+ * the fact by setting a bit in the quotient.  While these algorithms
+ * have the same O(n^2) time complexity as Knuth's, the ``constant factor''
+ * is likely to be larger.
+ *
+ * Because I used these algorithms, which require single-block addition
+ * and subtraction rather than single-block multiplication and division,
+ * the innermost loops of all four routines are very similar.  Study one
+ * of them and all will become clear.
+ */
 
 /*
-* This is a little inline function used by both the multiplication
-* routine and the division routine.
-*
-* `getShiftedBlock' returns the `x'th block of `num << y'.
-* `y' may be anything from 0 to N - 1, and `x' may be anything from
-* 0 to `num.len'.
-*
-* Two things contribute to this block:
-*
-* (1) The `N - y' low bits of `num.blk[x]', shifted `y' bits left.
-*
-* (2) The `y' high bits of `num.blk[x-1]', shifted `N - y' bits right.
-*
-* But we must be careful if `x == 0' or `x == num.len', in
-* which case we should use 0 instead of (2) or (1), respectively.
-*
-* If `y == 0', then (2) contributes 0, as it should.  However,
-* in some computer environments, for a reason I cannot understand,
-* `a >> b' means `a >> (b % N)'.  This means `num.blk[x-1] >> (N - y)'
-* will return `num.blk[x-1]' instead of the desired 0 when `y == 0';
-* the test `y == 0' handles this case specially.
-*/
+ * This is a little inline function used by both the multiplication
+ * routine and the division routine.
+ *
+ * `getShiftedBlock' returns the `x'th block of `num << y'.
+ * `y' may be anything from 0 to N - 1, and `x' may be anything from
+ * 0 to `num.len'.
+ *
+ * Two things contribute to this block:
+ *
+ * (1) The `N - y' low bits of `num.blk[x]', shifted `y' bits left.
+ *
+ * (2) The `y' high bits of `num.blk[x-1]', shifted `N - y' bits right.
+ *
+ * But we must be careful if `x == 0' or `x == num.len', in
+ * which case we should use 0 instead of (2) or (1), respectively.
+ *
+ * If `y == 0', then (2) contributes 0, as it should.  However,
+ * in some computer environments, for a reason I cannot understand,
+ * `a >> b' means `a >> (b % N)'.  This means `num.blk[x-1] >> (N - y)'
+ * will return `num.blk[x-1]' instead of the desired 0 when `y == 0';
+ * the test `y == 0' handles this case specially.
+ */
 inline BigUnsigned::Blk getShiftedBlock(const BigUnsigned &num,
 	BigUnsigned::Index x, unsigned int y) {
 	BigUnsigned::Blk part1 = (x == 0 || y == 0) ? 0 : (num.blk[x - 1] >> (BigUnsigned::N - y));
@@ -428,12 +428,12 @@ void BigUnsigned::multiply(const BigUnsigned &a, const BigUnsigned &b) {
 		return;
 	}
 	/*
-	* Overall method:
-	*
-	* Set this = 0.
-	* For each 1-bit of `a' (say the `i2'th bit of block `i'):
-	*    Add `b << (i blocks and i2 bits)' to *this.
-	*/
+	 * Overall method:
+	 *
+	 * Set this = 0.
+	 * For each 1-bit of `a' (say the `i2'th bit of block `i'):
+	 *    Add `b << (i blocks and i2 bits)' to *this.
+	 */
 	// Variables for the calculation
 	Index i, j, k;
 	unsigned int i2;
@@ -452,23 +452,23 @@ void BigUnsigned::multiply(const BigUnsigned &a, const BigUnsigned &b) {
 			if ((a.blk[i] & (Blk(1) << i2)) == 0)
 				continue;
 			/*
-			* Add b to this, shifted left i blocks and i2 bits.
-			* j is the index in b, and k = i + j is the index in this.
-			*
-			* `getShiftedBlock', a short inline function defined above,
-			* is now used for the bit handling.  It replaces the more
-			* complex `bHigh' code, in which each run of the loop dealt
-			* immediately with the low bits and saved the high bits to
-			* be picked up next time.  The last run of the loop used to
-			* leave leftover high bits, which were handled separately.
-			* Instead, this loop runs an additional time with j == b.len.
-			* These changes were made on 2005.01.11.
-			*/
+			 * Add b to this, shifted left i blocks and i2 bits.
+			 * j is the index in b, and k = i + j is the index in this.
+			 *
+			 * `getShiftedBlock', a short inline function defined above,
+			 * is now used for the bit handling.  It replaces the more
+			 * complex `bHigh' code, in which each run of the loop dealt
+			 * immediately with the low bits and saved the high bits to
+			 * be picked up next time.  The last run of the loop used to
+			 * leave leftover high bits, which were handled separately.
+			 * Instead, this loop runs an additional time with j == b.len.
+			 * These changes were made on 2005.01.11.
+			 */
 			for (j = 0, k = i, carryIn = false; j <= b.len; j++, k++) {
 				/*
-				* The body of this loop is very similar to the body of the first loop
-				* in `add', except that this loop does a `+=' instead of a `+'.
-				*/
+				 * The body of this loop is very similar to the body of the first loop
+				 * in `add', except that this loop does a `+=' instead of a `+'.
+				 */
 				temp = blk[k] + getShiftedBlock(b, j, i2);
 				carryOut = (temp < blk[k]);
 				if (carryIn) {
@@ -492,22 +492,22 @@ void BigUnsigned::multiply(const BigUnsigned &a, const BigUnsigned &b) {
 }
 
 /*
-* DIVISION WITH REMAINDER
-* The functionality of divide, modulo, and %= is included in this one monstrous call,
-* which deserves some explanation.
-*
-* The division *this / b is performed.
-* Afterwards, q has the quotient, and *this has the remainder.
-* Thus, a call is like q = *this / b, *this %= b.
-*
-* This seemingly bizarre pattern of inputs and outputs has a justification.  The
-* ``put-here operations'' are supposed to be fast.  Therefore, they accept inputs
-* and provide outputs in the most convenient places so that no value ever needs
-* to be copied in its entirety.  That way, the client can perform exactly the
-* copying it needs depending on where the inputs are and where it wants the output.
-* A better name for this function might be "modWithQuotient", but I would rather
-* not change the name now.
-*/
+ * DIVISION WITH REMAINDER
+ * The functionality of divide, modulo, and %= is included in this one monstrous call,
+ * which deserves some explanation.
+ *
+ * The division *this / b is performed.
+ * Afterwards, q has the quotient, and *this has the remainder.
+ * Thus, a call is like q = *this / b, *this %= b.
+ *
+ * This seemingly bizarre pattern of inputs and outputs has a justification.  The
+ * ``put-here operations'' are supposed to be fast.  Therefore, they accept inputs
+ * and provide outputs in the most convenient places so that no value ever needs
+ * to be copied in its entirety.  That way, the client can perform exactly the
+ * copying it needs depending on where the inputs are and where it wants the output.
+ * A better name for this function might be "modWithQuotient", but I would rather
+ * not change the name now.
+ */
 void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	/*
 	 * Defending against aliased calls is a bit tricky because we are
@@ -529,58 +529,58 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	}
 
 	/*
-	* Note that the mathematical definition of mod (I'm trusting Knuth) is somewhat
-	* different from the way the normal C++ % operator behaves in the case of division by 0.
-	* This function does it Knuth's way.
-	*
-	* We let a / 0 == 0 (it doesn't matter) and a % 0 == a, no exceptions thrown.
-	* This allows us to preserve both Knuth's demand that a mod 0 == a
-	* and the useful property that (a / b) * b + (a % b) == a.
-	*/
+	 * Note that the mathematical definition of mod (I'm trusting Knuth) is somewhat
+	 * different from the way the normal C++ % operator behaves in the case of division by 0.
+	 * This function does it Knuth's way.
+	 *
+	 * We let a / 0 == 0 (it doesn't matter) and a % 0 == a, no exceptions thrown.
+	 * This allows us to preserve both Knuth's demand that a mod 0 == a
+	 * and the useful property that (a / b) * b + (a % b) == a.
+	 */
 	if (b.len == 0) {
 		q.len = 0;
 		return;
 	}
 
 	/*
-	* If *this.len < b.len, then *this < b, and we can be sure that b doesn't go into
-	* *this at all.  The quotient is 0 and *this is already the remainder (so leave it alone).
-	*/
+	 * If *this.len < b.len, then *this < b, and we can be sure that b doesn't go into
+	 * *this at all.  The quotient is 0 and *this is already the remainder (so leave it alone).
+	 */
 	if (len < b.len) {
 		q.len = 0;
 		return;
 	}
 
 	/*
-	* At this point we know *this > b > 0.  (Whew!)
-	*/
+	 * At this point we know *this > b > 0.  (Whew!)
+	 */
 
 	/*
-	* Overall method:
-	*
-	* For each appropriate i and i2, decreasing:
-	*    Try to subtract (b << (i blocks and i2 bits)) from *this.
-	*        (`work2' holds the result of this subtraction.)
-	*    If the result is nonnegative:
-	*        Turn on bit i2 of block i of the quotient q.
-	*        Save the result of the subtraction back into *this.
-	*    Otherwise:
-	*        Bit i2 of block i remains off, and *this is unchanged.
-	* 
-	* Eventually q will contain the entire quotient, and *this will
-	* be left with the remainder.
-	*
-	* We use work2 to temporarily store the result of a subtraction.
-	* work2[x] corresponds to blk[x], not blk[x+i], since 2005.01.11.
-	* If the subtraction is successful, we copy work2 back to blk.
-	* (There's no `work1'.  In a previous version, when division was
-	* coded for a read-only dividend, `work1' played the role of
-	* the here-modifiable `*this' and got the remainder.)
-	*
-	* We never touch the i lowest blocks of either blk or work2 because
-	* they are unaffected by the subtraction: we are subtracting
-	* (b << (i blocks and i2 bits)), which ends in at least `i' zero blocks.
-	*/
+	 * Overall method:
+	 *
+	 * For each appropriate i and i2, decreasing:
+	 *    Try to subtract (b << (i blocks and i2 bits)) from *this.
+	 *        (`work2' holds the result of this subtraction.)
+	 *    If the result is nonnegative:
+	 *        Turn on bit i2 of block i of the quotient q.
+	 *        Save the result of the subtraction back into *this.
+	 *    Otherwise:
+	 *        Bit i2 of block i remains off, and *this is unchanged.
+	 * 
+	 * Eventually q will contain the entire quotient, and *this will
+	 * be left with the remainder.
+	 *
+	 * We use work2 to temporarily store the result of a subtraction.
+	 * work2[x] corresponds to blk[x], not blk[x+i], since 2005.01.11.
+	 * If the subtraction is successful, we copy work2 back to blk.
+	 * (There's no `work1'.  In a previous version, when division was
+	 * coded for a read-only dividend, `work1' played the role of
+	 * the here-modifiable `*this' and got the remainder.)
+	 *
+	 * We never touch the i lowest blocks of either blk or work2 because
+	 * they are unaffected by the subtraction: we are subtracting
+	 * (b << (i blocks and i2 bits)), which ends in at least `i' zero blocks.
+	 */
 	// Variables for the calculation
 	Index i, j, k;
 	unsigned int i2;
@@ -588,18 +588,18 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	bool borrowIn, borrowOut;
 
 	/*
-	* Make sure we have an extra zero block just past the value.
-	*
-	* When we attempt a subtraction, we might shift `b' so
-	* its first block begins a few bits left of the dividend,
-	* and then we'll try to compare these extra bits with
-	* a nonexistent block to the left of the dividend.  The
-	* extra zero block ensures sensible behavior; we need
-	* an extra block in `work2' for exactly the same reason.
-	*
-	* See below `divideWithRemainder' for the interesting and
-	* amusing story of this section of code.
-	*/
+	 * Make sure we have an extra zero block just past the value.
+	 *
+	 * When we attempt a subtraction, we might shift `b' so
+	 * its first block begins a few bits left of the dividend,
+	 * and then we'll try to compare these extra bits with
+	 * a nonexistent block to the left of the dividend.  The
+	 * extra zero block ensures sensible behavior; we need
+	 * an extra block in `work2' for exactly the same reason.
+	 *
+	 * See below `divideWithRemainder' for the interesting and
+	 * amusing story of this section of code.
+	 */
 	Index origLen = len; // Save real length.
 	// 2006.05.03: Copy the number and then change the length!
 	allocateAndCopy(len + 1); // Get the space.
@@ -627,13 +627,13 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 		while (i2 > 0) {
 			i2--;
 			/*
-			* Subtract b, shifted left i blocks and i2 bits, from *this,
-			* and store the answer in work2.  In the for loop, `k == i + j'.
-			*
-			* Compare this to the middle section of `multiply'.  They
-			* are in many ways analogous.  See especially the discussion
-			* of `getShiftedBlock'.
-			*/
+			 * Subtract b, shifted left i blocks and i2 bits, from *this,
+			 * and store the answer in work2.  In the for loop, `k == i + j'.
+			 *
+			 * Compare this to the middle section of `multiply'.  They
+			 * are in many ways analogous.  See especially the discussion
+			 * of `getShiftedBlock'.
+			 */
 			for (j = 0, k = i, borrowIn = false; j <= b.len; j++, k++) {
 				temp = blk[k] - getShiftedBlock(b, j, i2);
 				borrowOut = (temp > blk[k]);
@@ -652,15 +652,15 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 				work2[k] = blk[k] - 1;
 			}
 			/*
-			* If the subtraction was performed successfully (!borrowIn),
-			* set bit i2 in block i of the quotient.
-			*
-			* Then, copy the portion of work2 filled by the subtraction
-			* back to *this.  This portion starts with block i and ends--
-			* where?  Not necessarily at block `i + b.len'!  Well, we
-			* increased k every time we saved a block into work2, so
-			* the region of work2 we copy is just [i, k).
-			*/
+			 * If the subtraction was performed successfully (!borrowIn),
+			 * set bit i2 in block i of the quotient.
+			 *
+			 * Then, copy the portion of work2 filled by the subtraction
+			 * back to *this.  This portion starts with block i and ends--
+			 * where?  Not necessarily at block `i + b.len'!  Well, we
+			 * increased k every time we saved a block into work2, so
+			 * the region of work2 we copy is just [i, k).
+			 */
 			if (!borrowIn) {
 				q.blk[i] |= (Blk(1) << i2);
 				while (k > i) {
@@ -681,45 +681,45 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 
 }
 /*
-* The out-of-bounds accesses story:
-* 
-* On 2005.01.06 or 2005.01.07 (depending on your time zone),
-* Milan Tomic reported out-of-bounds memory accesses in
-* the Big Integer Library.  To investigate the problem, I
-* added code to bounds-check every access to the `blk' array
-* of a `NumberlikeArray'.
-*
-* This gave me warnings that fell into two categories of false
-* positives.  The bounds checker was based on length, not
-* capacity, and in two places I had accessed memory that I knew
-* was inside the capacity but that wasn't inside the length:
-* 
-* (1) The extra zero block at the left of `*this'.  Earlier
-* versions said `allocateAndCopy(len + 1); blk[len] = 0;'
-* but did not increment `len'.
-*
-* (2) The entire digit array in the conversion constructor
-* ``BigUnsignedInABase(BigUnsigned)''.  It was allocated with
-* a conservatively high capacity, but the length wasn't set
-* until the end of the constructor.
-*
-* To simplify matters, I changed both sections of code so that
-* all accesses occurred within the length.  The messages went
-* away, and I told Milan that I couldn't reproduce the problem,
-* sending a development snapshot of the bounds-checked code.
-*
-* Then, on 2005.01.09-10, he told me his debugger still found
-* problems, specifically at the line `delete [] work2'.
-* It was `work2', not `blk', that was causing the problems;
-* this possibility had not occurred to me at all.  In fact,
-* the problem was that `work2' needed an extra block just
-* like `*this'.  Go ahead and laugh at me for finding (1)
-* without seeing what was actually causing the trouble.  :-)
-*
-* The 2005.01.11 version fixes this problem.  I hope this is
-* the last of my memory-related bloopers.  So this is what
-* starts happening to your C++ code if you use Java too much!
-*/
+ * The out-of-bounds accesses story:
+ * 
+ * On 2005.01.06 or 2005.01.07 (depending on your time zone),
+ * Milan Tomic reported out-of-bounds memory accesses in
+ * the Big Integer Library.  To investigate the problem, I
+ * added code to bounds-check every access to the `blk' array
+ * of a `NumberlikeArray'.
+ *
+ * This gave me warnings that fell into two categories of false
+ * positives.  The bounds checker was based on length, not
+ * capacity, and in two places I had accessed memory that I knew
+ * was inside the capacity but that wasn't inside the length:
+ * 
+ * (1) The extra zero block at the left of `*this'.  Earlier
+ * versions said `allocateAndCopy(len + 1); blk[len] = 0;'
+ * but did not increment `len'.
+ *
+ * (2) The entire digit array in the conversion constructor
+ * ``BigUnsignedInABase(BigUnsigned)''.  It was allocated with
+ * a conservatively high capacity, but the length wasn't set
+ * until the end of the constructor.
+ *
+ * To simplify matters, I changed both sections of code so that
+ * all accesses occurred within the length.  The messages went
+ * away, and I told Milan that I couldn't reproduce the problem,
+ * sending a development snapshot of the bounds-checked code.
+ *
+ * Then, on 2005.01.09-10, he told me his debugger still found
+ * problems, specifically at the line `delete [] work2'.
+ * It was `work2', not `blk', that was causing the problems;
+ * this possibility had not occurred to me at all.  In fact,
+ * the problem was that `work2' needed an extra block just
+ * like `*this'.  Go ahead and laugh at me for finding (1)
+ * without seeing what was actually causing the trouble.  :-)
+ *
+ * The 2005.01.11 version fixes this problem.  I hope this is
+ * the last of my memory-related bloopers.  So this is what
+ * starts happening to your C++ code if you use Java too much!
+ */
 
 // Bitwise and
 void BigUnsigned::bitAnd(const BigUnsigned &a, const BigUnsigned &b) {

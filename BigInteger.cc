@@ -1,6 +1,6 @@
 /*
-* Matt McCutchen's Big Integer Library
-*/
+ * Matt McCutchen's Big Integer Library
+ */
 
 #include "BigInteger.hh"
 
@@ -44,22 +44,22 @@ BigInteger::BigInteger(const BigUnsigned &x, Sign s) : BigUnsigned(x) {
 }
 
 /*
-* The steps for construction of a BigInteger
-* from an integral value x are as follows:
-* 1. If x is zero, create an empty BigInteger and stop.
-* 2. Allocate a one-block number array.
-* 3. If x is positive (or of an unsigned type), set the
-*    sign of the BigInteger to positive.
-* 4. If x is of a signed type and is negative, set the
-*    sign of the BigInteger to negative.
-* 5. If x is of a signed type, convert x (or -x if x < 0)
-*    to the unsigned type of the same length.
-* 6. Expand x (or the result of step 5) to a Blk,
-*    and store it in the number array.
-*
-* See remarks in `BigUnsigned.cc' and `NumberlikeArray.hh'
-* about new handling of zero-length arrays.
-*/
+ * The steps for construction of a BigInteger
+ * from an integral value x are as follows:
+ * 1. If x is zero, create an empty BigInteger and stop.
+ * 2. Allocate a one-block number array.
+ * 3. If x is positive (or of an unsigned type), set the
+ *    sign of the BigInteger to positive.
+ * 4. If x is of a signed type and is negative, set the
+ *    sign of the BigInteger to negative.
+ * 5. If x is of a signed type, convert x (or -x if x < 0)
+ *    to the unsigned type of the same length.
+ * 6. Expand x (or the result of step 5) to a Blk,
+ *    and store it in the number array.
+ *
+ * See remarks in `BigUnsigned.cc' and `NumberlikeArray.hh'
+ * about new handling of zero-length arrays.
+ */
 
 BigInteger::BigInteger(unsigned long x) {
 	if (x == 0)
@@ -150,23 +150,23 @@ BigInteger::BigInteger(short x) {
 
 // CONVERTERS
 /*
-* The steps for conversion of a BigInteger to an
-* integral type are as follows:
-* 1. If the BigInteger is zero, return zero.
-* 2. If the BigInteger is positive:
-*    3. If it is more than one block long or its lowest
-*       block has bits set out of the range of the target
-*       type, throw an exception.
-*    4. Otherwise, convert the lowest block to the
-*       target type and return it.
-* 5. If the BigInteger is negative:
-*    6. If the target type is unsigned, throw an exception.
-*    7. If it is more than one block long or its lowest
-*       block has bits set out of the range of the target
-*       type, throw an exception.
-*    8. Otherwise, convert the lowest block to the
-*       target type, negate it, and return it.
-*/
+ * The steps for conversion of a BigInteger to an
+ * integral type are as follows:
+ * 1. If the BigInteger is zero, return zero.
+ * 2. If the BigInteger is positive:
+ *    3. If it is more than one block long or its lowest
+ *       block has bits set out of the range of the target
+ *       type, throw an exception.
+ *    4. Otherwise, convert the lowest block to the
+ *       target type and return it.
+ * 5. If the BigInteger is negative:
+ *    6. If the target type is unsigned, throw an exception.
+ *    7. If it is more than one block long or its lowest
+ *       block has bits set out of the range of the target
+ *       type, throw an exception.
+ *    8. Otherwise, convert the lowest block to the
+ *       target type, negate it, and return it.
+ */
 
 namespace {
 	// These masks are used to test whether a Blk has bits
@@ -412,27 +412,27 @@ void BigInteger::multiply(const BigInteger &a, const BigInteger &b) {
 }
 
 /*
-* DIVISION WITH REMAINDER
-* Please read the comments before the definition of
-* `BigUnsigned::divideWithRemainder' in `BigUnsigned.cc' for lots of
-* information you should know before reading this function.
-*
-* Following Knuth, I decree that x / y is to be
-* 0 if y==0 and floor(real-number x / y) if y!=0.
-* Then x % y shall be x - y*(integer x / y).
-*
-* Note that x = y * (x / y) + (x % y) always holds.
-* In addition, (x % y) is from 0 to y - 1 if y > 0,
-* and from -(|y| - 1) to 0 if y < 0.  (x % y) = x if y = 0.
-*
-* Examples: (q = a / b, r = a % b)
-*	a	b	q	r
-*	===	===	===	===
-*	4	3	1	1
-*	-4	3	-2	2
-*	4	-3	-2	-2
-*	-4	-3	1	-1
-*/
+ * DIVISION WITH REMAINDER
+ * Please read the comments before the definition of
+ * `BigUnsigned::divideWithRemainder' in `BigUnsigned.cc' for lots of
+ * information you should know before reading this function.
+ *
+ * Following Knuth, I decree that x / y is to be
+ * 0 if y==0 and floor(real-number x / y) if y!=0.
+ * Then x % y shall be x - y*(integer x / y).
+ *
+ * Note that x = y * (x / y) + (x % y) always holds.
+ * In addition, (x % y) is from 0 to y - 1 if y > 0,
+ * and from -(|y| - 1) to 0 if y < 0.  (x % y) = x if y = 0.
+ *
+ * Examples: (q = a / b, r = a % b)
+ *	a	b	q	r
+ *	===	===	===	===
+ *	4	3	1	1
+ *	-4	3	-2	2
+ *	4	-3	-2	-2
+ *	-4	-3	1	-1
+ */
 void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 	// Defend against aliased calls;
 	// same idea as in BigUnsigned::divideWithRemainder .
@@ -469,25 +469,25 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 		// Decrease the magnitude of the dividend by one.
 		BigUnsigned::operator --();
 		/*
-		* We tinker with the dividend before and with the
-		* quotient and remainder after so that the result
-		* comes out right.  To see why it works, consider the following
-		* list of examples, where A is the magnitude-decreased
-		* a, Q and R are the results of BigUnsigned division
-		* with remainder on A and |b|, and q and r are the
-		* final results we want:
-		*
-		*	a	A	b	Q	R	q	r
-		*	-3	-2	3	0	2	-1	0
-		*	-4	-3	3	1	0	-2	2
-		*	-5	-4	3	1	1	-2	1
-		*	-6	-5	3	1	2	-2	0
-		*
-		* It appears that we need a total of 3 corrections:
-		* Decrease the magnitude of a to get A.  Increase the
-		* magnitude of Q to get q (and make it negative).
-		* Find r = (b - 1) - R and give it the desired sign.
-		*/
+		 * We tinker with the dividend before and with the
+		 * quotient and remainder after so that the result
+		 * comes out right.  To see why it works, consider the following
+		 * list of examples, where A is the magnitude-decreased
+		 * a, Q and R are the results of BigUnsigned division
+		 * with remainder on A and |b|, and q and r are the
+		 * final results we want:
+		 *
+		 *	a	A	b	Q	R	q	r
+		 *	-3	-2	3	0	2	-1	0
+		 *	-4	-3	3	1	0	-2	2
+		 *	-5	-4	3	1	1	-2	1
+		 *	-6	-5	3	1	2	-2	0
+		 *
+		 * It appears that we need a total of 3 corrections:
+		 * Decrease the magnitude of a to get A.  Increase the
+		 * magnitude of Q to get q (and make it negative).
+		 * Find r = (b - 1) - R and give it the desired sign.
+		 */
 	}
 
 	// Divide the magnitudes.
