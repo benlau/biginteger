@@ -19,7 +19,7 @@ int main() {
 	try {
 		BigInteger a; // a is 0
 		int b = 535;
-		
+
 		a = b; // From int to BigInteger...
 		b = a; // ...and back, no casts required!
 		/*
@@ -31,27 +31,27 @@ int main() {
 		* a special command-line option to compile code that uses
 		* exceptions.
 		*/
-		
+
 		BigInteger c(a); // Copy a BigInteger.
-		
+
 		// d is -314159265.  The `int' literal is converted to a
 		// BigInteger.
 		BigInteger d(-314159265);
-		
+
 		// This won't compile because the number is too big to be an
 		// integer literal.
 		//BigInteger e(3141592653589793238462643383279);
-		
+
 		// Instead you can convert the number from a string.
 		std::string s("3141592653589793238462643383279");
 		BigInteger f = easyStringToBI(s);
-		
+
 		// You can convert the other way too.
 		std::string s2 = easyBItoString(f); 
-		
+
 		// f is stringified and send to std::cout.
 		std::cout << f << std::endl;
-		
+
 		/*
 		* Let's do some math!
 		*
@@ -65,14 +65,14 @@ int main() {
 		// All five ``return-by-value'' arithmetic operators.
 		std::cout << (g + h) << '\n' << (g - h) << '\n' << (g * h)
 			<< '\n' << (g / h) << '\n' << (g % h) << std::endl;
-		
+
 		BigUnsigned i(0xFF0000FF), j(0x0000FFFF);
 		// All five ``return-by-value'' bitwise operators.
 		std::cout.flags(std::ios::hex | std::ios::showbase);
 		std::cout << (i & j) << '\n' << (i | j) << '\n' << (i ^ j) << '\n'
 			<< (j << 21) << '\n' << (j >> 10) << '\n';
 		std::cout.flags(std::ios::dec);
-		
+
 		// Let's do some heavy lifting and calculate powers of 314.
 		int maxPower = 10;
 		BigUnsigned x(1), big314(314);
@@ -80,18 +80,18 @@ int main() {
 			std::cout << "314^" << power << " = " << x << std::endl;
 			x *= big314; // A BigInteger assignment operator
 		}
-		
+
 		/*
 		* If you want to experiment with the library,
 		* you can add your own test code here.
 		*/
 		// std::cout << "Beginning of custom test code:" << std::endl;
-		
+
 	} catch(char const* err) {
 		std::cout << "The library threw an exception:\n"
 			<< err << std::endl;
 	}
-	
+
 	return 0;
 }
 

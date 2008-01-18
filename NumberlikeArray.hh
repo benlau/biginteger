@@ -39,15 +39,15 @@
 template <class Blk>
 class NumberlikeArray {
 	public:
-	
+
 	typedef unsigned int Index; // Type for the index of a block in the array
 	static const unsigned int N; // The number of bits in a block, defined below.
-	
+
 	// FIELDS
 	Index cap; // The current allocated capacity of this NumberlikeArray (in blocks)
 	Index len; // The actual length of the value stored in this NumberlikeArray (in blocks)
 	Blk *blk; // Dynamically allocated array of the blocks
-	
+
 	/*
 	* Change made on 2005.01.06:
 	*
@@ -61,14 +61,14 @@ class NumberlikeArray {
 	* This is a great convenience because the only code that need be changed
 	* is the array allocation code.  All other code will still work fine.
 	*/
-	
+
 	// MANAGEMENT
 	NumberlikeArray(Index c) : cap(c), len(0) { // Creates a NumberlikeArray with a capacity
 		blk = (cap > 0) ? (new Blk[cap]) : NULL;
 	}
 	void allocate(Index c); // Ensures the array has at least the indicated capacity, maybe discarding contents
 	void allocateAndCopy(Index c); // Ensures the array has at least the indicated capacity, preserving its contents
-	
+
 	/*
 	* Default constructor.
 	*
@@ -96,20 +96,20 @@ class NumberlikeArray {
 	~NumberlikeArray() { // Destructor
 		delete [] blk; // Does nothing and causes no error if `blk' is null.
 	}
-	
+
 	// PICKING APART
 	// These accessors can be used to get the pieces of the value
 	Index getCapacity() const { return cap; }
 	Index getLength() const { return len; }
 	Blk getBlock(Index i) const { return blk[i]; };
 	bool isEmpty() const { return len == 0; }
-	
+
 	// Equality comparison: checks if arrays have same length and matching values
 	// Derived classes may wish to override these if differing arrays can
 	// sometimes be considered equivalent.
 	bool operator ==(const NumberlikeArray<Blk> &x) const;
 	bool operator !=(const NumberlikeArray<Blk> &x) const { return !operator ==(x);	}
-	
+
 };
 
 /*

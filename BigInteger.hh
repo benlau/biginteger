@@ -26,15 +26,15 @@
 */
 
 class BigInteger : public BigUnsigned {
-	
+
 	// TYPES & CONSTANTS
 	public:
 	enum Sign { negative = -1, zero = 0, positive = 1 }; // Enumeration for the sign of a BigInteger
-	
+
 	// FIELDS
 	protected:
 	Sign sign; // The sign of this BigInteger
-	
+
 	// MANAGEMENT
 	protected:
 	BigInteger(Sign s, Index c) : BigUnsigned(0, c), sign(s) {}; // Creates a BigInteger with a sign and capacity
@@ -60,7 +60,7 @@ class BigInteger : public BigUnsigned {
 	BigInteger(         short x);
 	// Note that a BigInteger can be converted to a BigUnsigned
 	// automatically; this takes its absolute value.
-	
+
 	// CONVERTERS to integral types
 	public:
 	operator unsigned long () const;
@@ -69,12 +69,12 @@ class BigInteger : public BigUnsigned {
 	operator          int  () const;
 	operator unsigned short() const;
 	operator          short() const;
-	
+
 	// PICKING APART
 	// These accessors can be used to get the pieces of the number
 	public:
 	Sign getSign() const;
-	
+
 	// COMPARISONS
 	public:
 	// Compares this to x like Perl's <=>
@@ -88,7 +88,7 @@ class BigInteger : public BigUnsigned {
 	bool operator <=(const BigInteger &x) const { return compareTo(x) != greater; }
 	bool operator >=(const BigInteger &x) const { return compareTo(x) != less   ; }
 	bool operator > (const BigInteger &x) const { return compareTo(x) == greater; }
-	
+
 	// PUT-HERE OPERATIONS
 	/* These store the result of the operation on the arguments into this.
 	* a.add(b, c) is equivalent to, but faster than, a = b + c.
@@ -125,7 +125,7 @@ class BigInteger : public BigUnsigned {
 	// redefined for BigIntegers.  Calling one of these on
 	// a BigInteger will convert it to a BigUnsigned,
 	// which takes its absolute value.
-	
+
 	// NORMAL OPERATORS
 	// These perform the operation on this (to the left of the operator)
 	// and x (to the right of the operator) and return a new BigInteger with the result.
@@ -136,7 +136,7 @@ class BigInteger : public BigUnsigned {
 	BigInteger operator /(const BigInteger &x) const; // Division
 	BigInteger operator %(const BigInteger &x) const; // Modular reduction
 	BigInteger operator -(                   ) const; // Negative
-	
+
 	// ASSIGNMENT OPERATORS
 	// These perform the operation on this and x, storing the result into this.
 	public:
@@ -146,7 +146,7 @@ class BigInteger : public BigUnsigned {
 	void operator /=(const BigInteger &x); // Division
 	void operator %=(const BigInteger &x); // Modular reduction
 	void flipSign();                       // Negative
-	
+
 	// INCREMENT/DECREMENT OPERATORS
 	// These increase or decrease the number by 1.  To discourage side effects,
 	// these do not return *this, so prefix and postfix behave the same.
@@ -155,7 +155,7 @@ class BigInteger : public BigUnsigned {
 	void operator ++(int); // Postfix decrement
 	void operator --(   ); // Prefix  increment
 	void operator --(int); // Postfix decrement
-	
+
 };
 
 // PICKING APART

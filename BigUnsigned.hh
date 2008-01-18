@@ -26,14 +26,14 @@
 */
 
 class BigUnsigned : protected NumberlikeArray<unsigned long> {
-	
+
 	// TYPES & CONSTANTS
 	public:
 	enum CmpRes { less = -1, equal = 0, greater = 1 }; // Enumeration for the result of a comparison
 	typedef unsigned long Blk; // The number block type that BigUnsigneds are built from
 	typedef NumberlikeArray<Blk>::Index Index; // (NlA) Type for the index of a block in the array
 	NumberlikeArray<Blk>::N; // Number of bits in a Blk
-	
+
 	/*
 	// FIELDS
 	protected:
@@ -41,34 +41,34 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	Index len; // (NlA) The actual length of the number stored in this BigUnsigned (in blocks)
 	Blk *blk; // (NlA) Dynamically allocated array of the number blocks
 	*/
-	
+
 	// MANAGEMENT
 	protected:
 	// These members generally defer to those in NumberlikeArray, possibly with slight changes.
 	// It might be nice if one could request that constructors be inherited in C++.
-	
+
 	BigUnsigned(int, Index c) : NumberlikeArray<Blk>(0, c) {} // Creates a BigUnsigned with a capacity
-	
+
 	void zapLeadingZeros() { // Decreases len to eliminate leading zeros
 		while (len > 0 && blk[len - 1] == 0)
 			len--;
 	}
-	
+
 	//void allocate(Index c); // (NlA) Ensures the number array has at least the indicated capacity, maybe discarding contents
 	//void allocateAndCopy(Index c); // (NlA) Ensures the number array has at least the indicated capacity, preserving its contents
-	
+
 	public:
 	BigUnsigned() : NumberlikeArray<Blk>() {} // Default constructor (value is 0)
 	BigUnsigned(const BigUnsigned &x) : NumberlikeArray<Blk>(x) {} // Copy constructor
-	
+
 	void operator=(const BigUnsigned &x) { // Assignment operator
 		NumberlikeArray<Blk>::operator =(x);
 	}
-	
+
 	BigUnsigned(const Blk *b, Index l) : NumberlikeArray<Blk>(b, l) { // Constructor from an array of blocks
 		zapLeadingZeros();
 	}
-	
+
 	// Constructors from integral types
 	BigUnsigned(unsigned long  x);
 	BigUnsigned(         long  x);
@@ -77,7 +77,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	BigUnsigned(unsigned short x);
 	BigUnsigned(         short x);
 	~BigUnsigned() {} // Destructor
-	
+
 	// CONVERTERS to integral types
 	public:
 	operator unsigned long () const;
@@ -86,7 +86,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	operator          int  () const;
 	operator unsigned short() const;
 	operator          short() const;
-	
+
 	// PICKING APART
 	// These accessors can be used to get the pieces of the number
 	public:
@@ -97,7 +97,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	Blk getBlock(Index i) const { return i >= len ? 0 : blk[i]; }
 	// Note how we replace one level of abstraction with another.  Isn't that neat?
 	bool isZero() const { return NumberlikeArray<Blk>::isEmpty(); } // Often convenient for loops
-	
+
 	// COMPARISONS
 	public:
 	// Compares this to x like Perl's <=>
@@ -154,7 +154,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	*     a.add(a, b); // ``Aliased'' calls now do the right thing using a
 	*              // temporary copy, but see note on divideWithRemainder.
 	*/
-	
+
 	// PUT-HERE OPERATIONS
 	public:
 	/* These 3: Two read-only operands as arguments.  Result left in *this. */
@@ -192,7 +192,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	void bitXor(const BigUnsigned &a, const BigUnsigned &b); // Bitwise XOR
 	void bitShiftLeft(const BigUnsigned &a, unsigned int b); // Bitwise left shift
 	void bitShiftRight(const BigUnsigned &a, unsigned int b); // Bitwise right shift
-	
+
 	// NORMAL OPERATORS
 	// These perform the operation on this (to the left of the operator)
 	// and x (to the right of the operator) and return a new BigUnsigned with the result.
@@ -210,7 +210,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	// Additional operators in an attempt to avoid overloading tangles.
 	BigUnsigned operator <<(int b) const;
 	BigUnsigned operator >>(int b) const;
-	
+
 	// ASSIGNMENT OPERATORS
 	// These perform the operation on this and x, storing the result into this.
 	public:
@@ -227,7 +227,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	// Additional operators in an attempt to avoid overloading tangles.
 	void operator <<=(int b);
 	void operator >>=(int b);
-	
+
 	// INCREMENT/DECREMENT OPERATORS
 	// These increase or decrease the number by 1.  To discourage side effects,
 	// these do not return *this, so prefix and postfix behave the same.
@@ -236,7 +236,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	void operator ++(int); // Postfix decrement
 	void operator --(   ); // Prefix  increment
 	void operator --(int); // Postfix decrement
-	
+
 	// Helper function that needs access to BigUnsigned internals
 	friend Blk getShiftedBlock(const BigUnsigned &num, Index x, unsigned int y);
 };

@@ -443,7 +443,7 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 		divideWithRemainder(tmpB, q);
 		return;
 	}
-	
+
 	// Division by zero gives quotient 0 and remainder *this
 	if (b.sign == zero) {
 		q.len = 0;
@@ -456,9 +456,9 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 		q.sign = zero;
 		return;
 	}
-	
+
 	// Here *this != 0, b != 0.
-	
+
 	// Do the operands have the same sign?
 	if (sign == b.sign) {
 		// Yes: easy case.  Quotient is zero or positive.
@@ -489,10 +489,10 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 		* Find r = (b - 1) - R and give it the desired sign.
 		*/
 	}
-	
+
 	// Divide the magnitudes.
 	BigUnsigned::divideWithRemainder(b, q);
-	
+
 	if (sign != b.sign) {
 		// More for the harder case (as described):
 		// Increase the magnitude of the quotient by one.
@@ -502,16 +502,16 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 		BigUnsigned::subtract(b, temp);
 		BigUnsigned::operator --();
 	}
-	
+
 	// Sign of the remainder is always the sign of the divisor b.
 	sign = b.sign;
-	
+
 	// Set signs to zero as necessary.  (Thanks David Allen!)
 	if (len == 0)
 		sign = zero;
 	if (q.len == 0)
 		q.sign = zero;
-	
+
 	// WHEW!!!
 }
 

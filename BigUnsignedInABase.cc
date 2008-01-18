@@ -35,17 +35,17 @@ BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 	// Save the base.
 	// This pattern is seldom seen in C++, but the analogous ``this.'' is common in Java.
 	this->base = base;
-	
+
 	// Get an upper bound on how much space we need
 	int maxBitLenOfX = x.getLength() * BigUnsigned::N;
 	int minBitsPerDigit = bitLen(base) - 1;
 	int maxDigitLenOfX = ceilingDiv(maxBitLenOfX, minBitsPerDigit);
 	len = maxDigitLenOfX; // Another change to comply with `staying in bounds'; see `BigUnsigned::divideWithRemainder'.
 	allocate(len); // Get the space
-	
+
 	BigUnsigned x2(x), buBase(base);
 	Index digitNum = 0;
-	
+
 	while (!x2.isZero()) {
 		// Get last digit.  This is like `lastDigit = x2 % buBase, x2 /= buBase'.
 		BigUnsigned lastDigit(x2);
@@ -55,7 +55,7 @@ BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 		// Move on.  We can't run out of room: we figured it out above.
 		digitNum++;
 	}
-	
+
 	// Save the actual length.
 	len = digitNum;
 }
@@ -78,12 +78,12 @@ BigUnsignedInABase::BigUnsignedInABase(const std::string &s, Base base) {
 	// Save the base.
 	// This pattern is seldom seen in C++, but the analogous ``this.'' is common in Java.
 	this->base = base;
-	
+
 	// `s.length()' is a `size_t', while `len' is a `NumberlikeArray::Index',
 	// also known as an `unsigned int'.  Some compilers warn without this cast.
 	len = Index(s.length());
 	allocate(len);
-	
+
 	Index digitNum, symbolNumInString;
 	for (digitNum = 0; digitNum < len; digitNum++) {
 		symbolNumInString = len - 1 - digitNum;

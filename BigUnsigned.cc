@@ -527,7 +527,7 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 		divideWithRemainder(tmpB, q);
 		return;
 	}
-	
+
 	/*
 	* Note that the mathematical definition of mod (I'm trusting Knuth) is somewhat
 	* different from the way the normal C++ % operator behaves in the case of division by 0.
@@ -541,7 +541,7 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 		q.len = 0;
 		return;
 	}
-	
+
 	/*
 	* If *this.len < b.len, then *this < b, and we can be sure that b doesn't go into
 	* *this at all.  The quotient is 0 and *this is already the remainder (so leave it alone).
@@ -550,11 +550,11 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 		q.len = 0;
 		return;
 	}
-	
+
 	/*
 	* At this point we know *this > b > 0.  (Whew!)
 	*/
-	
+
 	/*
 	* Overall method:
 	*
@@ -586,7 +586,7 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	unsigned int i2;
 	Blk temp;
 	bool borrowIn, borrowOut;
-	
+
 	/*
 	* Make sure we have an extra zero block just past the value.
 	*
@@ -605,17 +605,17 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	allocateAndCopy(len + 1); // Get the space.
 	len++; // Increase the length.
 	blk[origLen] = 0; // Zero the extra block.
-	
+
 	// work2 holds part of the result of a subtraction; see above.
 	Blk *work2 = new Blk[len];
-	
+
 	// Set preliminary length for quotient and make room
 	q.len = origLen - b.len + 1;
 	q.allocate(q.len);
 	// Zero out the quotient
 	for (i = 0; i < q.len; i++)
 		q.blk[i] = 0;
-	
+
 	// For each possible left-shift of b in blocks...
 	i = q.len;
 	while (i > 0) {
@@ -678,7 +678,7 @@ void BigUnsigned::divideWithRemainder(const BigUnsigned &b, BigUnsigned &q) {
 	// Deallocate temporary array.
 	// (Thanks to Brad Spencer for noticing my accidental omission of this!)
 	delete [] work2;
-	
+
 }
 /*
 * The out-of-bounds accesses story:
