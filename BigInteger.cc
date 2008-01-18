@@ -311,7 +311,7 @@ BigInteger::CmpRes BigInteger::compareTo(const BigInteger &x) const {
 // then call one of BigUnsigned's put-heres.
 
 // See remarks about aliased calls in BigUnsigned.cc .
-#define DOTR_ALIASED(cond, op) \
+#define DTRT_ALIASED(cond, op) \
 	if (cond) { \
 		BigInteger tmpThis; \
 		tmpThis.op; \
@@ -321,7 +321,7 @@ BigInteger::CmpRes BigInteger::compareTo(const BigInteger &x) const {
 
 // Addition
 void BigInteger::add(const BigInteger &a, const BigInteger &b) {
-	DOTR_ALIASED(this == &a || this == &b, add(a, b));
+	DTRT_ALIASED(this == &a || this == &b, add(a, b));
 	// If one argument is zero, copy the other.
 	if (a.sign == zero)
 		operator =(b);
@@ -358,7 +358,7 @@ void BigInteger::add(const BigInteger &a, const BigInteger &b) {
 void BigInteger::subtract(const BigInteger &a, const BigInteger &b) {
 	// Notice that this routine is identical to BigInteger::add,
 	// if one replaces b.sign by its opposite.
-	DOTR_ALIASED(this == &a || this == &b, subtract(a, b));
+	DTRT_ALIASED(this == &a || this == &b, subtract(a, b));
 	// If a is zero, copy b and flip its sign.  If b is zero, copy a.
 	if (a.sign == zero) {
 		BigUnsigned::operator =(b);
@@ -397,7 +397,7 @@ void BigInteger::subtract(const BigInteger &a, const BigInteger &b) {
 
 // Multiplication
 void BigInteger::multiply(const BigInteger &a, const BigInteger &b) {
-	DOTR_ALIASED(this == &a || this == &b, multiply(a, b));
+	DTRT_ALIASED(this == &a || this == &b, multiply(a, b));
 	// If one object is zero, copy zero and return.
 	if (a.sign == zero || b.sign == zero) {
 		sign = zero;
@@ -517,7 +517,7 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 
 // Negation
 void BigInteger::negate(const BigInteger &a) {
-	DOTR_ALIASED(this == &a, negate(a));
+	DTRT_ALIASED(this == &a, negate(a));
 	// Copy a's magnitude
 	BigUnsigned::operator =(a);
 	// Copy the opposite of a.sign
