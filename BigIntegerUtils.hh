@@ -1,5 +1,5 @@
-#ifndef BIGINTEGERUTILS
-#define BIGINTEGERUTILS
+#ifndef BIGINTEGERUTILS_H
+#define BIGINTEGERUTILS_H
 
 #include "BigInteger.hh"
 #include <string>

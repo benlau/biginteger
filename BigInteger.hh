@@ -1,5 +1,5 @@
-#ifndef BIGINTEGER
-#define BIGINTEGER
+#ifndef BIGINTEGER_H
+#define BIGINTEGER_H
 
 #include "BigUnsigned.hh"
 

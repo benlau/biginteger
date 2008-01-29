@@ -1,5 +1,5 @@
-#ifndef BIGUNSIGNEDINABASE
-#define BIGUNSIGNEDINABASE
+#ifndef BIGUNSIGNEDINABASE_H
+#define BIGUNSIGNEDINABASE_H
 
 #include "NumberlikeArray.hh"
 #include "BigUnsigned.hh"

@@ -5,8 +5,8 @@
  * already been flagged.  If not, it flags the `id' and
  * loads the declarations.
  */
-#ifndef NUMBERLIKEARRAY
-#define NUMBERLIKEARRAY
+#ifndef NUMBERLIKEARRAY_H
+#define NUMBERLIKEARRAY_H
 
 // An essential memory-management constant.
 // I wish this were built into C++ just as it is in Java.

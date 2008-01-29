@@ -1,5 +1,5 @@
-#ifndef BIGUNSIGNED
-#define BIGUNSIGNED
+#ifndef BIGUNSIGNED_H
+#define BIGUNSIGNED_H
 
 #include "NumberlikeArray.hh"
 
