@@ -34,7 +34,7 @@
 
 template <class Blk>
 class NumberlikeArray {
-	public:
+public:
 
 	typedef unsigned int Index; // Type for the index of a block in the array
 	static const unsigned int N; // The number of bits in a block, defined below.

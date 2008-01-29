@@ -24,17 +24,17 @@
 class BigInteger : public BigUnsigned {
 
 	// TYPES & CONSTANTS
-	public:
+public:
 	enum Sign { negative = -1, zero = 0, positive = 1 }; // Enumeration for the sign of a BigInteger
 
 	// FIELDS
-	protected:
+protected:
 	Sign sign; // The sign of this BigInteger
 
 	// MANAGEMENT
-	protected:
+protected:
 	BigInteger(Sign s, Index c) : BigUnsigned(0, c), sign(s) {}; // Creates a BigInteger with a sign and capacity
-	public:
+public:
 
 	BigInteger() : BigUnsigned(), sign(zero) {} // Default constructor (value is 0)
 	BigInteger(const BigInteger &x) : BigUnsigned(x), sign(x.sign) {}; // Copy constructor
@@ -58,7 +58,7 @@ class BigInteger : public BigUnsigned {
 	// automatically; this takes its absolute value.
 
 	// CONVERTERS to integral types
-	public:
+public:
 	operator unsigned long () const;
 	operator          long () const;
 	operator unsigned int  () const;
@@ -68,11 +68,11 @@ class BigInteger : public BigUnsigned {
 
 	// PICKING APART
 	// These accessors can be used to get the pieces of the number
-	public:
+public:
 	Sign getSign() const;
 
 	// COMPARISONS
-	public:
+public:
 	// Compares this to x like Perl's <=>
 	CmpRes compareTo(const BigInteger &x) const;
 	// Normal comparison operators
@@ -89,7 +89,7 @@ class BigInteger : public BigUnsigned {
 	/* These store the result of the operation on the arguments into this.
 	 * a.add(b, c) is equivalent to, but faster than, a = b + c.
 	 * See explanation of "put-here operations" in BigUnsigned.cc . */
-	public:
+public:
 	void add     (const BigInteger &a, const BigInteger &b); // Addition
 	void subtract(const BigInteger &a, const BigInteger &b); // Subtraction
 	void multiply(const BigInteger &a, const BigInteger &b); // Multiplication
@@ -125,7 +125,7 @@ class BigInteger : public BigUnsigned {
 	// NORMAL OPERATORS
 	// These perform the operation on this (to the left of the operator)
 	// and x (to the right of the operator) and return a new BigInteger with the result.
-	public:
+public:
 	BigInteger operator +(const BigInteger &x) const; // Addition
 	BigInteger operator -(const BigInteger &x) const; // Subtraction
 	BigInteger operator *(const BigInteger &x) const; // Multiplication
@@ -135,7 +135,7 @@ class BigInteger : public BigUnsigned {
 
 	// ASSIGNMENT OPERATORS
 	// These perform the operation on this and x, storing the result into this.
-	public:
+public:
 	void operator +=(const BigInteger &x); // Addition
 	void operator -=(const BigInteger &x); // Subtraction
 	void operator *=(const BigInteger &x); // Multiplication
@@ -146,7 +146,7 @@ class BigInteger : public BigUnsigned {
 	// INCREMENT/DECREMENT OPERATORS
 	// These increase or decrease the number by 1.  To discourage side effects,
 	// these do not return *this, so prefix and postfix behave the same.
-	public:
+public:
 	void operator ++(   ); // Prefix  increment
 	void operator ++(int); // Postfix decrement
 	void operator --(   ); // Prefix  increment

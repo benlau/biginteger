@@ -35,16 +35,16 @@
 class BigUnsignedInABase : protected NumberlikeArray<unsigned short> {
 
 	// TYPES
-	public:
+public:
 	typedef unsigned short Digit; // The digit type that BigUnsignedInABases are built from
 	typedef Digit Base;
 
 	// FIELDS
-	protected:
+protected:
 	Base base; // The base of this BigUnsignedInABase
 
 	// MANAGEMENT
-	protected:
+protected:
 	// These members generally defer to those in NumberlikeArray, possibly with slight changes.
 	// It might be nice if one could request that constructors be inherited in C++.
 
@@ -58,7 +58,7 @@ class BigUnsignedInABase : protected NumberlikeArray<unsigned short> {
 	//void allocate(Index c); // (NlA) Ensures the number array has at least the indicated capacity, maybe discarding contents
 	//void allocateAndCopy(Index c); // (NlA) Ensures the number array has at least the indicated capacity, preserving its contents
 
-	public:
+public:
 	BigUnsignedInABase() : NumberlikeArray<Digit>(), base(2) {} // Default constructor (value is 0 in base 2)
 	BigUnsignedInABase(const BigUnsignedInABase &x) : NumberlikeArray<Digit>(x), base(x.base) {} // Copy constructor
 
@@ -96,7 +96,7 @@ class BigUnsignedInABase : protected NumberlikeArray<unsigned short> {
 
 	// PICKING APART
 	// These accessors can be used to get the pieces of the number
-	public:
+public:
 	Base getBase() const { return base; }
 	NumberlikeArray<Digit>::getCapacity; // (NlA)
 	NumberlikeArray<Digit>::getLength; // (NlA)
@@ -107,7 +107,7 @@ class BigUnsignedInABase : protected NumberlikeArray<unsigned short> {
 	bool isZero() const { return NumberlikeArray<Digit>::isEmpty(); } // Often convenient for loops
 
 	// EQUALITY TEST
-	public:
+public:
 	// Equality test
 	bool operator ==(const BigUnsignedInABase &x) const {
 		return base == x.base && NumberlikeArray<Digit>::operator ==(x);

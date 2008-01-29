@@ -24,7 +24,7 @@
 class BigUnsigned : protected NumberlikeArray<unsigned long> {
 
 	// TYPES & CONSTANTS
-	public:
+public:
 	enum CmpRes { less = -1, equal = 0, greater = 1 }; // Enumeration for the result of a comparison
 	typedef unsigned long Blk; // The number block type that BigUnsigneds are built from
 	typedef NumberlikeArray<Blk>::Index Index; // (NlA) Type for the index of a block in the array
@@ -32,14 +32,14 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 
 	/*
 	// FIELDS
-	protected:
+protected:
 	Index cap; // (NlA) The current allocated capacity of this BigUnsigned (in blocks)
 	Index len; // (NlA) The actual length of the number stored in this BigUnsigned (in blocks)
 	Blk *blk; // (NlA) Dynamically allocated array of the number blocks
 	*/
 
 	// MANAGEMENT
-	protected:
+protected:
 	// These members generally defer to those in NumberlikeArray, possibly with slight changes.
 	// It might be nice if one could request that constructors be inherited in C++.
 
@@ -53,7 +53,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	//void allocate(Index c); // (NlA) Ensures the number array has at least the indicated capacity, maybe discarding contents
 	//void allocateAndCopy(Index c); // (NlA) Ensures the number array has at least the indicated capacity, preserving its contents
 
-	public:
+public:
 	BigUnsigned() : NumberlikeArray<Blk>() {} // Default constructor (value is 0)
 	BigUnsigned(const BigUnsigned &x) : NumberlikeArray<Blk>(x) {} // Copy constructor
 
@@ -75,7 +75,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	~BigUnsigned() {} // Destructor
 
 	// CONVERTERS to integral types
-	public:
+public:
 	operator unsigned long () const;
 	operator          long () const;
 	operator unsigned int  () const;
@@ -85,7 +85,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 
 	// PICKING APART
 	// These accessors can be used to get the pieces of the number
-	public:
+public:
 	NumberlikeArray<Blk>::getCapacity;
 	NumberlikeArray<Blk>::getLength;
 	// Note that getBlock returns 0 if the block index is beyond the length of the number.
@@ -95,7 +95,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	bool isZero() const { return NumberlikeArray<Blk>::isEmpty(); } // Often convenient for loops
 
 	// COMPARISONS
-	public:
+public:
 	// Compares this to x like Perl's <=>
 	CmpRes compareTo(const BigUnsigned &x) const;
 	// Normal comparison operators
@@ -152,7 +152,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	 */
 
 	// PUT-HERE OPERATIONS
-	public:
+public:
 	/* These 3: Two read-only operands as arguments.  Result left in *this. */
 	void add(const BigUnsigned &a, const BigUnsigned &b); // Addition
 	void subtract(const BigUnsigned &a, const BigUnsigned &b); // Subtraction
@@ -192,7 +192,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	// NORMAL OPERATORS
 	// These perform the operation on this (to the left of the operator)
 	// and x (to the right of the operator) and return a new BigUnsigned with the result.
-	public:
+public:
 	BigUnsigned operator +(const BigUnsigned &x) const; // Addition
 	BigUnsigned operator -(const BigUnsigned &x) const; // Subtraction
 	BigUnsigned operator *(const BigUnsigned &x) const; // Multiplication
@@ -209,7 +209,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 
 	// ASSIGNMENT OPERATORS
 	// These perform the operation on this and x, storing the result into this.
-	public:
+public:
 	void operator +=(const BigUnsigned &x); // Addition
 	void operator -=(const BigUnsigned &x); // Subtraction
 	void operator *=(const BigUnsigned &x); // Multiplication
@@ -227,7 +227,7 @@ class BigUnsigned : protected NumberlikeArray<unsigned long> {
 	// INCREMENT/DECREMENT OPERATORS
 	// These increase or decrease the number by 1.  To discourage side effects,
 	// these do not return *this, so prefix and postfix behave the same.
-	public:
+public:
 	void operator ++(   ); // Prefix  increment
 	void operator ++(int); // Postfix decrement
 	void operator --(   ); // Prefix  increment
