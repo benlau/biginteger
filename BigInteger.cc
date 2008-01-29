@@ -1,7 +1,3 @@
-/*
- * Matt McCutchen's Big Integer Library
- */
-
 #include "BigInteger.hh"
 
 // MANAGEMENT

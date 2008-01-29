@@ -1,8 +1,4 @@
 /*
- * Matt McCutchen's Big Integer Library
- */
-
-/*
  * This mechanism prevents files from being included twice.
  * Each file gets its own `id' (here `NUMBERLIKEARRAY').
  * When `#include'd, this file checks whether its `id' has

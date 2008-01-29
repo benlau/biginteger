@@ -1,6 +1,4 @@
 /*
- * Matt McCutchen's Big Integer Library
- *
  * Sample program demonstrating the most important features of the Big
  * Integer Library
  */

@@ -1,7 +1,3 @@
-/*
- * Matt McCutchen's Big Integer Library
- */
-
 #include "BigUnsigned.hh"
 
 // The "management" routines that used to be here are now in NumberlikeArray.hh.

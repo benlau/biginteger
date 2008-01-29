@@ -1,8 +1,4 @@
 /*
- * Matt McCutchen's Big Integer Library
- */
-
-/*
  * Milan Tomic had trouble compiling this file on Microsoft
  * Visual C++ 6 because, in the libraries that come with
  * Visual C++ 6, the `std::string::push_back' method apparently
