@@ -625,8 +625,17 @@ void BigUnsigned::bitXor(const BigUnsigned &a, const BigUnsigned &b) {
 	zapLeadingZeros();
 }
 
-void BigUnsigned::bitShiftLeft(const BigUnsigned &a, unsigned int b) {
+void BigUnsigned::bitShiftLeft(const BigUnsigned &a, int b) {
 	DTRT_ALIASED(this == &a, bitShiftLeft(a, b));
+	if (b < 0) {
+		if (b << 1 == 0)
+			throw "BigUnsigned::bitShiftLeft: "
+				"Pathological shift amount not implemented";
+		else {
+			bitShiftRight(a, -b);
+			return;
+		}
+	}
 	Index shiftBlocks = b / N;
 	unsigned int shiftBits = b % N;
 	// + 1: room for high bits nudged left into another block
@@ -642,8 +651,17 @@ void BigUnsigned::bitShiftLeft(const BigUnsigned &a, unsigned int b) {
 		len--;
 }
 
-void BigUnsigned::bitShiftRight(const BigUnsigned &a, unsigned int b) {
+void BigUnsigned::bitShiftRight(const BigUnsigned &a, int b) {
 	DTRT_ALIASED(this == &a, bitShiftRight(a, b));
+	if (b < 0) {
+		if (b << 1 == 0)
+			throw "BigUnsigned::bitShiftRight: "
+				"Pathological shift amount not implemented";
+		else {
+			bitShiftLeft(a, -b);
+			return;
+		}
+	}
 	// This calculation is wacky, but expressing the shift as a left bit shift
 	// within each block lets us use getShiftedBlock.
 	Index rightShiftBlocks = (b + N - 1) / N;

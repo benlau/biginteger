@@ -166,8 +166,10 @@ public:
 	void bitAnd(const BigUnsigned &a, const BigUnsigned &b);
 	void bitOr(const BigUnsigned &a, const BigUnsigned &b);
 	void bitXor(const BigUnsigned &a, const BigUnsigned &b);
-	void bitShiftLeft(const BigUnsigned &a, unsigned int b);
-	void bitShiftRight(const BigUnsigned &a, unsigned int b);
+	/* Negative shift amounts translate to opposite-direction shifts,
+	 * except for -2^(8*sizeof(int)-1) which is unimplemented. */
+	void bitShiftLeft(const BigUnsigned &a, int b);
+	void bitShiftRight(const BigUnsigned &a, int b);
 
 	/* `a.divideWithRemainder(b, q)' is like `q = a / b, a %= b'.
 	 * / and % use semantics similar to Knuth's, which differ from the
@@ -191,10 +193,6 @@ public:
 	BigUnsigned operator &(const BigUnsigned &x) const;
 	BigUnsigned operator |(const BigUnsigned &x) const;
 	BigUnsigned operator ^(const BigUnsigned &x) const;
-	BigUnsigned operator <<(unsigned int b) const;
-	BigUnsigned operator >>(unsigned int b) const;
-	// Additional operators in an attempt to avoid overloading tangles.
-	// XXX Why exactly are these needed?
 	BigUnsigned operator <<(int b) const;
 	BigUnsigned operator >>(int b) const;
 
@@ -207,10 +205,6 @@ public:
 	void operator &=(const BigUnsigned &x);
 	void operator |=(const BigUnsigned &x);
 	void operator ^=(const BigUnsigned &x);
-	void operator <<=(unsigned int b);
-	void operator >>=(unsigned int b);
-	// Additional operators in an attempt to avoid overloading tangles.
-	// XXX Why exactly are these needed?
 	void operator <<=(int b);
 	void operator >>=(int b);
 
@@ -251,12 +245,14 @@ inline BigUnsigned BigUnsigned::operator *(const BigUnsigned &x) const {
 	return ans;
 }
 inline BigUnsigned BigUnsigned::operator /(const BigUnsigned &x) const {
+	if (x.isZero()) throw "BigUnsigned::operator /: division by zero";
 	BigUnsigned q, r;
 	r = *this;
 	r.divideWithRemainder(x, q);
 	return q;
 }
 inline BigUnsigned BigUnsigned::operator %(const BigUnsigned &x) const {
+	if (x.isZero()) throw "BigUnsigned::operator %: division by zero";
 	BigUnsigned q, r;
 	r = *this;
 	r.divideWithRemainder(x, q);
@@ -277,25 +273,15 @@ inline BigUnsigned BigUnsigned::operator ^(const BigUnsigned &x) const {
 	ans.bitXor(*this, x);
 	return ans;
 }
-inline BigUnsigned BigUnsigned::operator <<(unsigned int b) const {
+inline BigUnsigned BigUnsigned::operator <<(int b) const {
 	BigUnsigned ans;
 	ans.bitShiftLeft(*this, b);
 	return ans;
 }
-inline BigUnsigned BigUnsigned::operator >>(unsigned int b) const {
+inline BigUnsigned BigUnsigned::operator >>(int b) const {
 	BigUnsigned ans;
 	ans.bitShiftRight(*this, b);
 	return ans;
-}
-inline BigUnsigned BigUnsigned::operator <<(int b) const {
-	if (b < 0)
-		throw "BigUnsigned::operator <<(int): Negative shift amounts are not allowed";
-	return *this << (unsigned int)(b);
-}
-inline BigUnsigned BigUnsigned::operator >>(int b) const {
-	if (b < 0)
-		throw "BigUnsigned::operator >>(int): Negative shift amounts are not allowed";
-	return *this >> (unsigned int)(b);
 }
 
 inline void BigUnsigned::operator +=(const BigUnsigned &x) {
@@ -308,6 +294,7 @@ inline void BigUnsigned::operator *=(const BigUnsigned &x) {
 	multiply(*this, x);
 }
 inline void BigUnsigned::operator /=(const BigUnsigned &x) {
+	if (x.isZero()) throw "BigUnsigned::operator /=: division by zero";
 	/* The following technique is slightly faster than copying *this first
 	 * when x is large. */
 	BigUnsigned q;
@@ -316,6 +303,7 @@ inline void BigUnsigned::operator /=(const BigUnsigned &x) {
 	*this = q;
 }
 inline void BigUnsigned::operator %=(const BigUnsigned &x) {
+	if (x.isZero()) throw "BigUnsigned::operator %=: division by zero";
 	BigUnsigned q;
 	// Mods *this by x.  Don't care about quotient left in q.
 	divideWithRemainder(x, q);
@@ -329,21 +317,11 @@ inline void BigUnsigned::operator |=(const BigUnsigned &x) {
 inline void BigUnsigned::operator ^=(const BigUnsigned &x) {
 	bitXor(*this, x);
 }
-inline void BigUnsigned::operator <<=(unsigned int b) {
+inline void BigUnsigned::operator <<=(int b) {
 	bitShiftLeft(*this, b);
 }
-inline void BigUnsigned::operator >>=(unsigned int b) {
-	bitShiftRight(*this, b);
-}
-inline void BigUnsigned::operator <<=(int b) {
-	if (b < 0)
-		throw "BigUnsigned::operator <<=(int): Negative shift amounts are not supported";
-	*this <<= (unsigned int)(b);
-}
 inline void BigUnsigned::operator >>=(int b) {
-	if (b < 0)
-		throw "BigUnsigned::operator >>=(int): Negative shift amounts are not supported";
-	*this >>= (unsigned int)(b);
+	bitShiftRight(*this, b);
 }
 
 #endif

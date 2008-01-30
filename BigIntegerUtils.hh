@@ -5,21 +5,19 @@
 #include <string>
 #include <iostream>
 
-/*
- * This file includes:
- * (1) `std::string <=> BigUnsigned/BigInteger' conversion routines easier than `BigUnsignedInABase'
- * (2) << and >> operators for BigUnsigned/BigInteger, std::istream/std::ostream
- */
+/* This file provides:
+ * - Convenient std::string <-> BigUnsigned/BigInteger conversion routines
+ * - std::ostream << operators for BigUnsigned/BigInteger */
 
-// Conversion routines.  Base 10 only.
-std::string easyBUtoString(const BigUnsigned &x);
-std::string easyBItoString(const BigInteger &x);
-BigUnsigned easyStringToBU(const std::string &s);
-BigInteger easyStringToBI(const std::string &s);
+// std::string conversion routines.  Base 10 only.
+std::string bigUnsignedToString(const BigUnsigned &x);
+std::string bigIntegerToString(const BigInteger &x);
+BigUnsigned stringToBigUnsigned(const std::string &s);
+BigInteger stringToBigInteger(const std::string &s);
 
 // Creates a BigInteger from data such as `char's; read below for details.
 template <class T>
-BigInteger easyDataToBI(const T* data, BigInteger::Index length, BigInteger::Sign sign);
+BigInteger dataToBigInteger(const T* data, BigInteger::Index length, BigInteger::Sign sign);
 
 // Outputs x to os, obeying the flags `dec', `hex', `bin', and `showbase'.
 std::ostream &operator <<(std::ostream &os, const BigUnsigned &x);
@@ -28,10 +26,7 @@ std::ostream &operator <<(std::ostream &os, const BigUnsigned &x);
 // My somewhat arbitrary policy: a negative sign comes before a base indicator (like -0xFF).
 std::ostream &operator <<(std::ostream &os, const BigInteger &x);
 
-/*
- * =================================
- * BELOW THIS POINT are template definitions; above are declarations.  See `NumberlikeArray.hh'.
- */
+// BEGIN TEMPLATE DEFINITIONS.
 
 /*
  * Converts binary data to a BigInteger.
@@ -47,7 +42,7 @@ std::ostream &operator <<(std::ostream &os, const BigInteger &x);
  * the result contain the desired binary data.
  */
 template <class T>
-BigInteger easyDataToBI(const T* data, BigInteger::Index length, BigInteger::Sign sign) {
+BigInteger dataToBigInteger(const T* data, BigInteger::Index length, BigInteger::Sign sign) {
 	// really ceiling(numBytes / sizeof(BigInteger::Blk))
 	unsigned int pieceSizeInBits = 8 * sizeof(T);
 	unsigned int piecesPerBlock = sizeof(BigInteger::Blk) / sizeof(T);

@@ -1,74 +1,74 @@
-/*
- * Sample program demonstrating the most important features of the Big
- * Integer Library
- */
+// Sample program demonstrating the use of the Big Integer Library.
 
 // Standard libraries
 #include <string>
 #include <iostream>
 
-// For the BigInteger class itself.
-#include "BigInteger.hh"
-
-// For the 4 routines `easy BI/BU <=> string' and `iostream' integration.
-#include "BigIntegerUtils.hh"
+// `BigIntegerLibrary.hh' includes all of the library headers.
+#include "BigIntegerLibrary.hh"
 
 int main() {
+	/* The library throws `const char *' error messages when things go
+	 * wrong.  It's a good idea to catch them using a `try' block like this
+	 * one.  Your C++ compiler might need a command-line option to compile
+	 * code that uses exceptions. */
 	try {
 		BigInteger a; // a is 0
 		int b = 535;
 
-		a = b; // From int to BigInteger implicitly...
-		b = a.toInt(); // ...and back explicitly.
-		/*
-		 * If a were too big for an int you'd get a runtime exception.
-		 * The Big Integer Library throws C-strings (that is,
-		 * `const char *'s) when something goes wrong.  It's a good idea
-		 * to catch them; the `try/catch' construct wrapping all this
-		 * code is an example of how to do this.  Some C++ compilers need
-		 * a special command-line option to compile code that uses
-		 * exceptions.
-		 */
+		/* Any primitive integer can be converted implicitly to a
+		 * BigInteger. */
+		a = b;
+
+		/* The reverse conversion requires a method call (implicit
+		 * conversions were previously supported but caused trouble).
+		 * If a were too big for an int, the library would throw an
+		 * exception. */
+		b = a.toInt();
 
 		BigInteger c(a); // Copy a BigInteger.
 
-		// d is -314159265.  The `int' literal is converted to a
-		// BigInteger.
+		// The int literal is converted to a BigInteger.
 		BigInteger d(-314159265);
 
-		// This won't compile because the number is too big to be an
-		// integer literal.
+		/* This won't compile (at least on 32-bit machines) because the
+		 * number is too big to be a primitive integer literal, and
+		 * there's no such thing as a BigInteger literal. */
 		//BigInteger e(3141592653589793238462643383279);
 
 		// Instead you can convert the number from a string.
 		std::string s("3141592653589793238462643383279");
-		BigInteger f = easyStringToBI(s);
+		BigInteger f = stringToBigInteger(s);
 
 		// You can convert the other way too.
-		std::string s2 = easyBItoString(f); 
+		std::string s2 = bigIntegerToString(f); 
 
-		// f is stringified and send to std::cout.
+		// f is implicitly stringified and sent to std::cout.
 		std::cout << f << std::endl;
 
-		/*
-		 * Let's do some math!
-		 *
-		 * The Big Integer Library provides lots of overloaded operators
-		 * and corresponding assignment operators.  So you can do `a + b'
-		 * with BigIntegers just as with normal integers.  The named
-		 * methods `add', `divideWithRemainder', etc. are more advanced
-		 * ``put-here operations''; see `BigUnsigned.hh' for details.
-		 */
-		BigInteger g(314159), h(265);
-		// All five ``return-by-value'' arithmetic operators.
-		std::cout << (g + h) << '\n' << (g - h) << '\n' << (g * h)
-			<< '\n' << (g / h) << '\n' << (g % h) << std::endl;
+		/* Let's do some math!  The library overloads most of the
+		 * mathematical operators (including assignment operators) to
+		 * work on BigIntegers.  There are also ``copy-less''
+		 * operations; see `BigUnsigned.hh' for details. */
 
+		// Arithmetic operators
+		BigInteger g(314159), h(265);
+		std::cout << (g + h) << '\n'
+			<< (g - h) << '\n'
+			<< (g * h) << '\n'
+			<< (g / h) << '\n'
+			<< (g % h) << std::endl;
+
+		// Bitwise operators
 		BigUnsigned i(0xFF0000FF), j(0x0000FFFF);
-		// All five ``return-by-value'' bitwise operators.
+		// The library's << operator recognizes base flags.
 		std::cout.flags(std::ios::hex | std::ios::showbase);
-		std::cout << (i & j) << '\n' << (i | j) << '\n' << (i ^ j) << '\n'
-			<< (j << 21) << '\n' << (j >> 10) << '\n';
+		std::cout << (i & j) << '\n'
+			<< (i | j) << '\n'
+			<< (i ^ j) << '\n'
+			// Shift distances are ordinary unsigned ints.
+			<< (j << 21) << '\n'
+			<< (j >> 10) << '\n';
 		std::cout.flags(std::ios::dec);
 
 		// Let's do some heavy lifting and calculate powers of 314.
@@ -79,12 +79,12 @@ int main() {
 			x *= big314; // A BigInteger assignment operator
 		}
 
-		/*
-		 * If you want to experiment with the library,
-		 * you can add your own test code here.
-		 */
-		// std::cout << "Beginning of custom test code:" << std::endl;
+		// Some big-integer algorithms (albeit on small integers).
+		std::cout << gcd(BigUnsigned(60), 72) << '\n'
+			<< modinv(BigUnsigned(7), 11) << '\n'
+			<< modexp(BigUnsigned(314), 159, 2653) << std::endl;
 
+		// Add your own code here to experiment with the library.
 	} catch(char const* err) {
 		std::cout << "The library threw an exception:\n"
 			<< err << std::endl;
@@ -94,7 +94,7 @@ int main() {
 }
 
 /*
-Running the sample program produces this output:
+The original sample program produces this output:
 
 3141592653589793238462643383279
 314424
@@ -118,5 +118,8 @@ Running the sample program produces this output:
 314^8 = 94501169810786918656
 314^9 = 29673367320587092457984
 314^10 = 9317437338664347031806976
+12
+8
+1931
 
 */

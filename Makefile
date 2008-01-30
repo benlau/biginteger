@@ -1,26 +1,49 @@
-#
-# Matt McCutchen's Big Integer Library
-#
-
 # Mention default target.
-all :
+all:
 
 # Implicit rule to compile C++ files.  Modify to your taste.
-%.o : %.cc
+%.o: %.cc
 	g++ -c -O2 -Wall -Wextra -pedantic $<
 
 # Components of the library.
-library-objects = BigUnsigned.o BigInteger.o BigUnsignedInABase.o BigIntegerUtils.o
-library-headers = NumberlikeArray.hh BigUnsigned.hh BigUnsignedInABase.hh BigInteger.hh BigIntegerLibrary.hh
+library-objects = \
+	BigUnsigned.o \
+	BigInteger.o \
+	BigIntegerAlgorithms.o \
+	BigUnsignedInABase.o \
+	BigIntegerUtils.o \
+
+library-headers = \
+	NumberlikeArray.hh \
+	BigUnsigned.hh \
+	BigInteger.hh \
+	BigIntegerAlgorithms.hh \
+	BigUnsignedInABase.hh \
+	BigIntegerLibrary.hh \
 
 # To ``make the library'', make all its objects using the implicit rule.
-library : $(library-objects)
+library: $(library-objects)
 
-# Extra dependencies from `#include'.
-BigUnsigned.o : NumberlikeArray.hh BigUnsigned.hh
-BigInteger.o : NumberlikeArray.hh BigUnsigned.hh BigInteger.hh
-BigUnsignedInABase.o : NumberlikeArray.hh BigUnsigned.hh BigUnsignedInABase.hh
-BigIntegerUtils.o : NumberlikeArray.hh BigUnsigned.hh BigUnsignedInABase.hh BigInteger.hh
+# Conservatively assume that all the objects depend on all the headers.
+$(library-objects): $(library-headers)
+
+# TESTSUITE
+# Compiling the testsuite.
+testsuite.o: $(library-headers)
+testsuite: testsuite.o $(library-objects)
+	g++ $^ -o $@
+# Extract the expected output from the testsuite source.
+testsuite.expected: testsuite.cc
+	sed -nre 's,^.*//,,p' $< >$@
+# Run the testsuite.
+.PHONY: test
+test: testsuite testsuite.expected
+	./testsuite >testsuite.out
+	@if diff -u testsuite.expected testsuite.out; then\
+		echo 'All tests passed.';\
+	else\
+		echo >&2 'At least one test failed!'; exit 1;\
+	fi
 
 # The rules below build a program that uses the library.  They are preset to
 # build ``sample'' from ``sample.cc''.  You can change the name(s) of the
@@ -37,7 +60,7 @@ $(program-objects) : $(library-headers)
 
 # How to link the program.  The implicit rule covers individual objects.
 $(program) : $(program-objects) $(library-objects)
-	g++ $(program-objects) $(library-objects) -o $(program)
+	g++ $^ -o $@
 
 # Delete all generated files we know about.
 clean :
