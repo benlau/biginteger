@@ -1,4 +1,4 @@
-// This header file includes all the other header files.
+// This header file includes all of the library header files.
 
 #include "NumberlikeArray.hh"
 #include "BigUnsigned.hh"

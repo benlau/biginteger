@@ -3,81 +3,99 @@
 
 #include "BigUnsigned.hh"
 
-/*
- * A BigInteger object represents a signed integer of size
- * limited only by available memory.  A BigInteger can be
- * created from and converted back to most integral types,
- * and many math operations are defined on BigIntegers.
+/* A BigInteger object represents a signed integer of size limited only by
+ * available memory.  BigUnsigneds support most mathematical operators and can
+ * be converted to and from most primitive integer types.
  *
- * The number is stored as a series of blocks in a
- * dynamically allocated array.  It is as if the number
- * were written digit by digit in base 2 ^ N, **where N is the
- * number of bits in an unsigned long.**
- *
- * This class is derived from BigUnsigned, which represents
- * a large nonnegative integer.  BigUnsigned should be studied
- * first, as only new or different things are declared here.
- * Some things are redeclared so that they use the BigInteger
- * versions of methods, rather than the BigUnsigned versions.
- */
+ * A BigInteger is just an aggregate of a BigUnsigned and a sign.  (It is no
+ * longer derived from BigUnsigned because that led to harmful implicit
+ * conversions.) */
+class BigInteger {
 
-class BigInteger : public BigUnsigned {
-
-	// TYPES & CONSTANTS
 public:
-	enum Sign { negative = -1, zero = 0, positive = 1 }; // Enumeration for the sign of a BigInteger
+	typedef BigUnsigned::Blk Blk;
+	typedef BigUnsigned::Index Index;
+	typedef BigUnsigned::CmpRes CmpRes;
+	static const CmpRes
+		less    = BigUnsigned::less   ,
+		equal   = BigUnsigned::equal  ,
+		greater = BigUnsigned::greater;
+	// Enumeration for the sign of a BigInteger.
+	enum Sign { negative = -1, zero = 0, positive = 1 };
 
-	// FIELDS
 protected:
-	Sign sign; // The sign of this BigInteger
+	Sign sign;
+	BigUnsigned mag;
 
-	// MANAGEMENT
-protected:
-	BigInteger(Sign s, Index c) : BigUnsigned(0, c), sign(s) {}; // Creates a BigInteger with a sign and capacity
 public:
+	// Constructs zero.
+	BigInteger() : sign(zero), mag() {}
 
-	BigInteger() : BigUnsigned(), sign(zero) {} // Default constructor (value is 0)
-	BigInteger(const BigInteger &x) : BigUnsigned(x), sign(x.sign) {}; // Copy constructor
-	void operator=(const BigInteger &x); // Assignment operator
-	BigInteger(const Blk *b, Index l) : BigUnsigned(b, l) { // Constructor from an array of blocks
-		sign = (len == 0) ? zero : positive;
+	// Copy constructor
+	BigInteger(const BigInteger &x) : sign(x.sign), mag(x.mag) {};
+
+	// Assignment operator
+	void operator=(const BigInteger &x);
+
+	// Constructor that copies from a given array of blocks with a sign.
+	BigInteger(const Blk *b, Index blen, Sign s);
+
+	// Nonnegative constructor that copies from a given array of blocks.
+	BigInteger(const Blk *b, Index blen) : mag(b, blen) {
+		sign = mag.isZero() ? zero : positive;
 	}
-	BigInteger(const Blk *b, Index l, Sign s); // Constructor from an array of blocks and a sign
-	BigInteger(const BigUnsigned &x) : BigUnsigned(x) { // Constructor from a BigUnsigned
-		sign = (len == 0) ? zero : positive;
+
+	// Constructor from a BigUnsigned and a sign
+	BigInteger(const BigUnsigned &x, Sign s);
+
+	// Nonnegative constructor from a BigUnsigned
+	BigInteger(const BigUnsigned &x) : mag(x) {
+		sign = mag.isZero() ? zero : positive;
 	}
-	BigInteger(const BigUnsigned &x, Sign s); // Constructor from a BigUnsigned and a sign
-	// Constructors from integral types
+
+	// Constructors from primitive integer types
 	BigInteger(unsigned long  x);
 	BigInteger(         long  x);
 	BigInteger(unsigned int   x);
 	BigInteger(         int   x);
 	BigInteger(unsigned short x);
 	BigInteger(         short x);
-	// Note that a BigInteger can be converted to a BigUnsigned
-	// automatically; this takes its absolute value.
 
-	// CONVERTERS to integral types
+	/* Converters to primitive integer types
+	 * The implicit conversion operators caused trouble, so these are now
+	 * named. */
+	unsigned long  toUnsignedLong () const;
+	long           toLong         () const;
+	unsigned int   toUnsignedInt  () const;
+	int            toInt          () const;
+	unsigned short toUnsignedShort() const;
+	short          toShort        () const;
+protected:
+	// Helper
+	template <class X> X convertToUnsignedPrimitive() const;
+	template <class X, class UX> X convertToSignedPrimitive() const;
 public:
-	operator unsigned long () const;
-	operator          long () const;
-	operator unsigned int  () const;
-	operator          int  () const;
-	operator unsigned short() const;
-	operator          short() const;
 
-	// PICKING APART
-	// These accessors can be used to get the pieces of the number
-public:
-	Sign getSign() const;
+	// ACCESSORS
+	Sign getSign() const { return sign; }
+	/* The client can't do any harm by holding a read-only reference to the
+	 * magnitude. */
+	const BigUnsigned &getMagnitude() const { return mag; }
+
+	// Some accessors that go through to the magnitude
+	Index getLength() const { return mag.getLength(); }
+	Index getCapacity() const { return mag.getCapacity(); }
+	Blk getBlock(Index i) const { return mag.getBlock(i); }
+	bool isZero() const { return sign == zero; } // A bit special
 
 	// COMPARISONS
-public:
+
 	// Compares this to x like Perl's <=>
 	CmpRes compareTo(const BigInteger &x) const;
-	// Normal comparison operators
+
+	// Ordinary comparison operators
 	bool operator ==(const BigInteger &x) const {
-		return sign == x.sign && BigUnsigned::operator ==(x);
+		return sign == x.sign && mag == x.mag;
 	}
 	bool operator !=(const BigInteger &x) const { return !operator ==(x); };
 	bool operator < (const BigInteger &x) const { return compareTo(x) == less   ; }
@@ -85,77 +103,39 @@ public:
 	bool operator >=(const BigInteger &x) const { return compareTo(x) != less   ; }
 	bool operator > (const BigInteger &x) const { return compareTo(x) == greater; }
 
-	// PUT-HERE OPERATIONS
-	/* These store the result of the operation on the arguments into this.
-	 * a.add(b, c) is equivalent to, but faster than, a = b + c.
-	 * See explanation of "put-here operations" in BigUnsigned.cc . */
-public:
-	void add     (const BigInteger &a, const BigInteger &b); // Addition
-	void subtract(const BigInteger &a, const BigInteger &b); // Subtraction
-	void multiply(const BigInteger &a, const BigInteger &b); // Multiplication
-	/* Divisive stuff
-	 * `a.divideWithRemainder(b, q)' is like `q = a / b, a %= b'.
-	 * Semantics similar to Donald E. Knuth's are used for / and %,
-	 * and these usually differ from the semantics of primitive-type
-	 * / and % when negatives and/or zeroes are involved.
-	 * Look in `BigInteger.cc' for details.
-	 * `a.divideWithRemainder(b, a)' causes an exception: it doesn't make
-	 * sense to write quotient and remainder into the same variable.
-	 */
+	// OPERATORS -- See the discussion in BigUnsigned.hh.
+	void add     (const BigInteger &a, const BigInteger &b);
+	void subtract(const BigInteger &a, const BigInteger &b);
+	void multiply(const BigInteger &a, const BigInteger &b);
+	/* See the comment on BigUnsigned::divideWithRemainder.  Semantics
+	 * differ from those of primitive integers when negatives and/or zeros
+	 * are involved. */
 	void divideWithRemainder(const BigInteger &b, BigInteger &q);
-	void divide(const BigInteger &a, const BigInteger &b) {
-		BigInteger a2(a);
-		a2.divideWithRemainder(b, *this);
-		// quotient now in *this
-		// don't care about remainder left in a2
-	}
-	void modulo(const BigInteger &a, const BigInteger &b) {
-		*this = a;
-		BigInteger q;
-		divideWithRemainder(b, q);
-		// remainder now in *this
-		// don't care about quotient left in q
-	}
-	void negate(const BigInteger &a); // Negative
-	// Some operations are inherently unsigned and are not
-	// redefined for BigIntegers.  Calling one of these on
-	// a BigInteger will convert it to a BigUnsigned,
-	// which takes its absolute value.
+	void negate(const BigInteger &a);
+	
+	/* Bitwise operators are not provided for BigIntegers.  Use
+	 * getMagnitude to get the magnitude and operate on that instead. */
 
-	// NORMAL OPERATORS
-	// These perform the operation on this (to the left of the operator)
-	// and x (to the right of the operator) and return a new BigInteger with the result.
-public:
-	BigInteger operator +(const BigInteger &x) const; // Addition
-	BigInteger operator -(const BigInteger &x) const; // Subtraction
-	BigInteger operator *(const BigInteger &x) const; // Multiplication
-	BigInteger operator /(const BigInteger &x) const; // Division
-	BigInteger operator %(const BigInteger &x) const; // Modular reduction
-	BigInteger operator -(                   ) const; // Negative
+	BigInteger operator +(const BigInteger &x) const;
+	BigInteger operator -(const BigInteger &x) const;
+	BigInteger operator *(const BigInteger &x) const;
+	BigInteger operator /(const BigInteger &x) const;
+	BigInteger operator %(const BigInteger &x) const;
+	BigInteger operator -() const;
 
-	// ASSIGNMENT OPERATORS
-	// These perform the operation on this and x, storing the result into this.
-public:
-	void operator +=(const BigInteger &x); // Addition
-	void operator -=(const BigInteger &x); // Subtraction
-	void operator *=(const BigInteger &x); // Multiplication
-	void operator /=(const BigInteger &x); // Division
-	void operator %=(const BigInteger &x); // Modular reduction
-	void flipSign();                       // Negative
+	void operator +=(const BigInteger &x);
+	void operator -=(const BigInteger &x);
+	void operator *=(const BigInteger &x);
+	void operator /=(const BigInteger &x);
+	void operator %=(const BigInteger &x);
+	void flipSign();
 
 	// INCREMENT/DECREMENT OPERATORS
-	// These increase or decrease the number by 1.  To discourage side effects,
-	// these do not return *this, so prefix and postfix behave the same.
-public:
-	void operator ++(   ); // Prefix  increment
-	void operator ++(int); // Postfix decrement
-	void operator --(   ); // Prefix  increment
-	void operator --(int); // Postfix decrement
-
+	void operator ++(   );
+	void operator ++(int);
+	void operator --(   );
+	void operator --(int);
 };
-
-// PICKING APART
-inline BigInteger::Sign BigInteger::getSign() const { return sign; }
 
 // NORMAL OPERATORS
 /* These create an object to hold the result and invoke
@@ -177,14 +157,16 @@ inline BigInteger BigInteger::operator *(const BigInteger &x) const {
 	return ans;
 }
 inline BigInteger BigInteger::operator /(const BigInteger &x) const {
-	BigInteger ans;
-	ans.divide(*this, x);
-	return ans;
+	BigInteger q, r;
+	r = *this;
+	r.divideWithRemainder(x, q);
+	return q;
 }
 inline BigInteger BigInteger::operator %(const BigInteger &x) const {
-	BigInteger ans;
-	ans.modulo(*this, x);
-	return ans;
+	BigInteger q, r;
+	r = *this;
+	r.divideWithRemainder(x, q);
+	return r;
 }
 inline BigInteger BigInteger::operator -() const {
 	BigInteger ans;

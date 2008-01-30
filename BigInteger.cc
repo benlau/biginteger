@@ -1,8 +1,5 @@
 #include "BigInteger.hh"
 
-// MANAGEMENT
-
-// Assignment operator
 void BigInteger::operator =(const BigInteger &x) {
 	// Calls like a = a have no effect
 	if (this == &x)
@@ -10,274 +7,135 @@ void BigInteger::operator =(const BigInteger &x) {
 	// Copy sign
 	sign = x.sign;
 	// Copy the rest
-	BigUnsigned::operator =(x);
+	mag = x.mag;
 }
 
-// Constructor from an array of blocks and a sign
-BigInteger::BigInteger(const Blk *b, Index l, Sign s) : BigUnsigned(b, l) {
+BigInteger::BigInteger(const Blk *b, Index blen, Sign s) : mag(b, blen) {
 	switch (s) {
-		case zero:
-		case positive:
-		case negative:
-		sign = (len == 0) ? zero : s;
+	case zero:
+	case positive:
+	case negative:
+		sign = mag.isZero() ? zero : s;
 		break;
-		default:
+	default:
+		throw "BigInteger::BigInteger(const Blk *, Index, Sign): Invalid sign";
+	}
+}
+
+BigInteger::BigInteger(const BigUnsigned &x, Sign s) : mag(x) {
+	switch (s) {
+	case zero:
+	case positive:
+	case negative:
+		sign = mag.isZero() ? zero : s;
+		break;
+	default:
 		throw "BigInteger::BigInteger(Blk *, Index, Sign): Invalid sign";
 	}
 }
 
-// Constructor from a BigUnsigned and a sign
-BigInteger::BigInteger(const BigUnsigned &x, Sign s) : BigUnsigned(x) {
-	switch (s) {
-		case zero:
-		case positive:
-		case negative:
-		sign = (len == 0) ? zero : s;
-		break;
-		default:
-		throw "BigInteger::BigInteger(Blk *, Index, Sign): Invalid sign";
-	}
+/* CONSTRUCTION FROM PRIMITIVE INTEGERS
+ * Same idea as in BigUnsigned.cc, except that negative input results in a
+ * negative BigInteger instead of an exception. */
+
+// Done longhand to let us use initialization.
+BigInteger::BigInteger(unsigned long x) : mag(x) {
+	sign = mag.isZero() ? zero : positive;
+}
+BigInteger::BigInteger(unsigned int x) : mag(x) {
+	sign = mag.isZero() ? zero : positive;
+}
+BigInteger::BigInteger(unsigned short x) : mag(x) {
+	sign = mag.isZero() ? zero : positive;
 }
 
-/*
- * The steps for construction of a BigInteger
- * from an integral value x are as follows:
- * 1. If x is zero, create an empty BigInteger and stop.
- * 2. Allocate a one-block number array.
- * 3. If x is positive (or of an unsigned type), set the
- *    sign of the BigInteger to positive.
- * 4. If x is of a signed type and is negative, set the
- *    sign of the BigInteger to negative.
- * 5. If x is of a signed type, convert x (or -x if x < 0)
- *    to the unsigned type of the same length.
- * 6. Expand x (or the result of step 5) to a Blk,
- *    and store it in the number array.
- *
- * See remarks in `BigUnsigned.cc' and `NumberlikeArray.hh'
- * about new handling of zero-length arrays.
- */
-
-BigInteger::BigInteger(unsigned long x) {
-	if (x == 0)
-		sign = zero; // NumberlikeArray did the rest
-	else {
-		cap = 1;
-		blk = new Blk[1];
-		sign = positive;
-		len = 1;
-		blk[0] = Blk(x);
-	}
-}
-
-BigInteger::BigInteger(long x) {
-	if (x > 0) {
-		cap = 1;
-		blk = new Blk[1];
-		sign = positive;
-		len = 1;
-		blk[0] = Blk(x);
-	} else if (x < 0) {
-		cap = 1;
-		blk = new Blk[1];
-		sign = negative;
-		len = 1;
-		blk[0] = Blk(-x);
-	} else
-	sign = zero;
-}
-
-BigInteger::BigInteger(unsigned int x) {
-	if (x == 0)
-		sign = zero;
-	else {
-		cap = 1;
-		blk = new Blk[1];
-		sign = positive;
-		len = 1;
-		blk[0] = Blk(x);
-	}
-}
-
-BigInteger::BigInteger(int x) {
-	if (x > 0) {
-		cap = 1;
-		blk = new Blk[1];
-		sign = positive;
-		len = 1;
-		blk[0] = Blk(x);
-	} else if (x < 0) {
-		cap = 1;
-		blk = new Blk[1];
-		sign = negative;
-		len = 1;
-		blk[0] = Blk(-x);
-	} else
-	sign = zero;
-}
-
-BigInteger::BigInteger(unsigned short x) {
-	if (x == 0)
-		sign = zero;
-	else {
-		cap = 1;
-		blk = new Blk[1];
-		sign = positive;
-		len = 1;
-		blk[0] = Blk(x);
-	}
-}
-
-BigInteger::BigInteger(short x) {
-	if (x > 0) {
-		cap = 1;
-		blk = new Blk[1];
-		sign = positive;
-		len = 1;
-		blk[0] = Blk(x);
-	} else if (x < 0) {
-		cap = 1;
-		blk = new Blk[1];
-		sign = negative;
-		len = 1;
-		blk[0] = Blk(-x);
-	} else
-	sign = zero;
-}
-
-// CONVERTERS
-/*
- * The steps for conversion of a BigInteger to an
- * integral type are as follows:
- * 1. If the BigInteger is zero, return zero.
- * 2. If the BigInteger is positive:
- *    3. If it is more than one block long or its lowest
- *       block has bits set out of the range of the target
- *       type, throw an exception.
- *    4. Otherwise, convert the lowest block to the
- *       target type and return it.
- * 5. If the BigInteger is negative:
- *    6. If the target type is unsigned, throw an exception.
- *    7. If it is more than one block long or its lowest
- *       block has bits set out of the range of the target
- *       type, throw an exception.
- *    8. Otherwise, convert the lowest block to the
- *       target type, negate it, and return it.
- */
+// For signed input, determine the desired magnitude and sign separately.
 
 namespace {
-	// These masks are used to test whether a Blk has bits
-	// set out of the range of a smaller integral type.  Note
-	// that this range is not considered to include the sign bit.
-	const BigUnsigned::Blk  lMask = ~0 >> 1;
-	const BigUnsigned::Blk uiMask = (unsigned int)(~0);
-	const BigUnsigned::Blk  iMask = uiMask >> 1;
-	const BigUnsigned::Blk usMask = (unsigned short)(~0);
-	const BigUnsigned::Blk  sMask = usMask >> 1;
-}
-
-BigInteger::operator unsigned long() const {
-	switch (sign) {
-		case zero:
-		return 0;
-		case positive:
-		if (len == 1)
-			return blk[0];
-		else
-			throw "BigInteger operator unsigned long() const: Value is too big for an unsigned long";
-		case negative:
-		throw "BigInteger operator unsigned long() const: Cannot convert a negative integer to an unsigned type";
-		default:
-		throw "BigInteger: Internal error";
+	template <class X, class UX>
+	BigInteger::Blk magOf(X x) {
+		/* UX(...) cast needed to stop short(-2^15), which negates to
+		 * itself, from sign-extending in the conversion to Blk. */
+		return BigInteger::Blk(x < 0 ? UX(-x) : x);
+	}
+	template <class X>
+	BigInteger::Sign signOf(X x) {
+		return (x == 0) ? BigInteger::zero
+			: (x > 0) ? BigInteger::positive
+			: BigInteger::negative;
 	}
 }
 
-BigInteger::operator long() const {
-	switch (sign) {
-		case zero:
-		return 0;
-		case positive:
-		if (len == 1 && (blk[0] & ~lMask) == 0)
-			return long(blk[0]);
-		else
-			throw "BigInteger operator long() const: Value is too big for a long";
-		case negative:
-		if (len == 1 && (blk[0] & ~lMask) == 0)
-			return -long(blk[0]);
-		else
-			throw "BigInteger operator long() const: Value is too big for a long";
-		default:
-		throw "BigInteger: Internal error";
-	}
+BigInteger::BigInteger(long x) : sign(signOf(x)),
+	mag(magOf<long, unsigned long>(x)) {}
+BigInteger::BigInteger(int x) : sign(signOf(x)),
+	mag(magOf<int, unsigned int>(x)) {}
+BigInteger::BigInteger(short x) : sign(signOf(x)),
+	mag(magOf<short, unsigned short>(x)) {}
+
+// CONVERSION TO PRIMITIVE INTEGERS
+
+/* Reuse BigUnsigned's conversion to an unsigned primitive integer.
+ * The friend is a separate function rather than
+ * BigInteger::convertToUnsignedPrimitive to avoid requiring BigUnsigned to
+ * declare BigInteger. */
+template <class X>
+inline X convertBigUnsignedToPrimitiveAccess(const BigUnsigned &a) {
+	return a.convertToPrimitive<X>();
 }
 
-BigInteger::operator unsigned int() const {
-	switch (sign) {
-		case zero:
-		return 0;
-		case positive:
-		if (len == 1 && (blk[0] & ~uiMask) == 0)
-			return (unsigned int)(blk[0]);
-		else
-			throw "BigInteger operator unsigned int() const: Value is too big for an unsigned int";
-		case negative:
-		throw "BigInteger operator unsigned int() const: Cannot convert a negative integer to an unsigned type";
-		default:
-		throw "BigInteger: Internal error";
-	}
+template <class X>
+X BigInteger::convertToUnsignedPrimitive() const {
+	if (sign == negative)
+		throw "BigInteger::to<Primitive>: "
+			"Cannot convert a negative integer to an unsigned type";
+	else
+		return convertBigUnsignedToPrimitiveAccess<X>(mag);
 }
 
-BigInteger::operator int() const {
-	switch (sign) {
-		case zero:
+/* Similar to BigUnsigned::convertToPrimitive, but split into two cases for
+ * nonnegative and negative numbers. */
+template <class X, class UX>
+X BigInteger::convertToSignedPrimitive() const {
+	if (sign == zero)
 		return 0;
-		case positive:
-		if (len == 1 && (blk[0] & ~iMask) == 0)
-			return int(blk[0]);
-		else
-			throw "BigInteger operator int() const: Value is too big for an int";
-		case negative:
-		if (len == 1 && (blk[0] & ~iMask) == 0)
-			return -int(blk[0]);
-		else
-			throw "BigInteger operator int() const: Value is too big for an int";
-		default:
-		throw "BigInteger: Internal error";
+	else if (mag.getLength() == 1) {
+		// The single block might fit in an X.  Try the conversion.
+		Blk b = mag.getBlock(0);
+		if (sign == positive) {
+			X x = X(b);
+			if (x >= 0 && Blk(x) == b)
+				return x;
+		} else {
+			X x = -X(b);
+			/* UX(...) needed to avoid rejecting conversion of
+			 * -2^15 to a short. */
+			if (x < 0 && Blk(UX(-x)) == b)
+				return x;
+		}
+		// Otherwise fall through.
 	}
+	throw "BigInteger::to<Primitive>: "
+		"Value is too big to fit in the requested type";
 }
 
-BigInteger::operator unsigned short() const {
-	switch (sign) {
-		case zero:
-		return 0;
-		case positive:
-		if (len == 1 && (blk[0] & ~usMask) == 0)
-			return (unsigned short)(blk[0]);
-		else
-			throw "BigInteger operator unsigned short() const: Value is too big for an unsigned short";
-		case negative:
-		throw "BigInteger operator unsigned short() const: Cannot convert a negative integer to an unsigned type";
-		default:
-		throw "BigInteger: Internal error";
-	}
+unsigned long BigInteger::toUnsignedLong() const {
+	return convertToUnsignedPrimitive<unsigned long>();
 }
-
-BigInteger::operator short() const {
-	switch (sign) {
-		case zero:
-		return 0;
-		case positive:
-		if (len == 1 && (blk[0] & ~sMask) == 0)
-			return short(blk[0]);
-		else
-			throw "BigInteger operator short() const: Value is too big for a short";
-		case negative:
-		if (len == 1 && (blk[0] & ~sMask) == 0)
-			return -short(blk[0]);
-		else
-			throw "BigInteger operator short() const: Value is too big for a short";
-		default:
-		throw "BigInteger: Internal error";
-	}
+unsigned int BigInteger::toUnsignedInt() const {
+	return convertToUnsignedPrimitive<unsigned int>();
+}
+unsigned short BigInteger::toUnsignedShort() const {
+	return convertToUnsignedPrimitive<unsigned short>();
+}
+long BigInteger::toLong() const {
+	return convertToSignedPrimitive<long, unsigned long>();
+}
+int BigInteger::toInt() const {
+	return convertToSignedPrimitive<int, unsigned int>();
+}
+short BigInteger::toShort() const {
+	return convertToSignedPrimitive<short, unsigned short>();
 }
 
 // COMPARISON
@@ -289,22 +147,22 @@ BigInteger::CmpRes BigInteger::compareTo(const BigInteger &x) const {
 		return greater;
 	else switch (sign) {
 		// If the signs are the same...
-		case zero:
+	case zero:
 		return equal; // Two zeros are equal
-		case positive:
+	case positive:
 		// Compare the magnitudes
-		return BigUnsigned::compareTo(x);
-		case negative:
+		return mag.compareTo(x.mag);
+	case negative:
 		// Compare the magnitudes, but return the opposite result
-		return CmpRes(-BigUnsigned::compareTo(x));
-		default:
-		throw "BigInteger: Internal error";
+		return CmpRes(-mag.compareTo(x.mag));
+	default:
+		throw "BigInteger internal error";
 	}
 }
 
-// PUT-HERE OPERATIONS
-// These do some messing around to determine the sign of the result,
-// then call one of BigUnsigned's put-heres.
+/* COPY-LESS OPERATIONS
+ * These do some messing around to determine the sign of the result,
+ * then call one of BigUnsigned's copy-less operations. */
 
 // See remarks about aliased calls in BigUnsigned.cc .
 #define DTRT_ALIASED(cond, op) \
@@ -315,7 +173,6 @@ BigInteger::CmpRes BigInteger::compareTo(const BigInteger &x) const {
 		return; \
 	}
 
-// Addition
 void BigInteger::add(const BigInteger &a, const BigInteger &b) {
 	DTRT_ALIASED(this == &a || this == &b, add(a, b));
 	// If one argument is zero, copy the other.
@@ -327,37 +184,36 @@ void BigInteger::add(const BigInteger &a, const BigInteger &b) {
 	// common sign and add their magnitudes.
 	else if (a.sign == b.sign) {
 		sign = a.sign;
-		BigUnsigned::add(a, b);
+		mag.add(a.mag, b.mag);
 	} else {
 		// Otherwise, their magnitudes must be compared.
-		switch (a.BigUnsigned::compareTo(b)) {
+		switch (a.mag.compareTo(b.mag)) {
+		case equal:
 			// If their magnitudes are the same, copy zero.
-			case equal:
-			len = 0;
+			mag = 0;
 			sign = zero;
 			break;
 			// Otherwise, take the sign of the greater, and subtract
 			// the lesser magnitude from the greater magnitude.
-			case greater:
+		case greater:
 			sign = a.sign;
-			BigUnsigned::subtract(a, b);
+			mag.subtract(a.mag, b.mag);
 			break;
-			case less:
+		case less:
 			sign = b.sign;
-			BigUnsigned::subtract(b, a);
+			mag.subtract(b.mag, a.mag);
 			break;
 		}
 	}
 }
 
-// Subtraction
 void BigInteger::subtract(const BigInteger &a, const BigInteger &b) {
 	// Notice that this routine is identical to BigInteger::add,
 	// if one replaces b.sign by its opposite.
 	DTRT_ALIASED(this == &a || this == &b, subtract(a, b));
 	// If a is zero, copy b and flip its sign.  If b is zero, copy a.
 	if (a.sign == zero) {
-		BigUnsigned::operator =(b);
+		mag = b.mag;
 		// Take the negative of _b_'s, sign, not ours.
 		// Bug pointed out by Sam Larkin on 2005.03.30.
 		sign = Sign(-b.sign);
@@ -366,45 +222,44 @@ void BigInteger::subtract(const BigInteger &a, const BigInteger &b) {
 	// If their signs differ, take a.sign and add the magnitudes.
 	else if (a.sign != b.sign) {
 		sign = a.sign;
-		BigUnsigned::add(a, b);
+		mag.add(a.mag, b.mag);
 	} else {
 		// Otherwise, their magnitudes must be compared.
-		switch (a.BigUnsigned::compareTo(b)) {
+		switch (a.mag.compareTo(b.mag)) {
 			// If their magnitudes are the same, copy zero.
-			case equal:
-			len = 0;
+		case equal:
+			mag = 0;
 			sign = zero;
 			break;
 			// If a's magnitude is greater, take a.sign and
 			// subtract a from b.
-			case greater:
+		case greater:
 			sign = a.sign;
-			BigUnsigned::subtract(a, b);
+			mag.subtract(a.mag, b.mag);
 			break;
 			// If b's magnitude is greater, take the opposite
 			// of b.sign and subtract b from a.
-			case less:
+		case less:
 			sign = Sign(-b.sign);
-			BigUnsigned::subtract(b, a);
+			mag.subtract(b.mag, a.mag);
 			break;
 		}
 	}
 }
 
-// Multiplication
 void BigInteger::multiply(const BigInteger &a, const BigInteger &b) {
 	DTRT_ALIASED(this == &a || this == &b, multiply(a, b));
 	// If one object is zero, copy zero and return.
 	if (a.sign == zero || b.sign == zero) {
 		sign = zero;
-		len = 0;
+		mag = 0;
 		return;
 	}
 	// If the signs of the arguments are the same, the result
 	// is positive, otherwise it is negative.
 	sign = (a.sign == b.sign) ? positive : negative;
 	// Multiply the magnitudes.
-	BigUnsigned::multiply(a, b);
+	mag.multiply(a.mag, b.mag);
 }
 
 /*
@@ -442,13 +297,13 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 
 	// Division by zero gives quotient 0 and remainder *this
 	if (b.sign == zero) {
-		q.len = 0;
+		q.mag = 0;
 		q.sign = zero;
 		return;
 	}
 	// 0 / b gives quotient 0 and remainder 0
 	if (sign == zero) {
-		q.len = 0;
+		q.mag = 0;
 		q.sign = zero;
 		return;
 	}
@@ -463,7 +318,7 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 		// No: harder case.  Quotient is negative.
 		q.sign = negative;
 		// Decrease the magnitude of the dividend by one.
-		BigUnsigned::operator --();
+		mag--;
 		/*
 		 * We tinker with the dividend before and with the
 		 * quotient and remainder after so that the result
@@ -487,25 +342,24 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 	}
 
 	// Divide the magnitudes.
-	BigUnsigned::divideWithRemainder(b, q);
+	mag.divideWithRemainder(b.mag, q.mag);
 
 	if (sign != b.sign) {
 		// More for the harder case (as described):
 		// Increase the magnitude of the quotient by one.
-		q.BigUnsigned::operator ++();
+		q.mag++;
 		// Modify the remainder.
-		BigUnsigned temp(*this);
-		BigUnsigned::subtract(b, temp);
-		BigUnsigned::operator --();
+		mag.subtract(b.mag, mag);
+		mag--;
 	}
 
 	// Sign of the remainder is always the sign of the divisor b.
 	sign = b.sign;
 
 	// Set signs to zero as necessary.  (Thanks David Allen!)
-	if (len == 0)
+	if (mag.isZero())
 		sign = zero;
-	if (q.len == 0)
+	if (q.mag.isZero())
 		q.sign = zero;
 
 	// WHEW!!!
@@ -515,7 +369,7 @@ void BigInteger::divideWithRemainder(const BigInteger &b, BigInteger &q) {
 void BigInteger::negate(const BigInteger &a) {
 	DTRT_ALIASED(this == &a, negate(a));
 	// Copy a's magnitude
-	BigUnsigned::operator =(a);
+	mag = a.mag;
 	// Copy the opposite of a.sign
 	sign = Sign(-a.sign);
 }
@@ -524,21 +378,13 @@ void BigInteger::negate(const BigInteger &a) {
 
 // Prefix increment
 void BigInteger::operator ++() {
-	switch (sign) {
-		case zero:
-		allocate(1);
-		sign = positive;
-		len = 1;
-		blk[0] = 1;
-		break;
-		case positive:
-		BigUnsigned::operator ++();
-		break;
-		case negative:
-		BigUnsigned::operator --();
-		if (len == 0)
+	if (sign == negative) {
+		mag--;
+		if (mag == 0)
 			sign = zero;
-		break;
+	} else {
+		mag++;
+		sign = positive; // if not already
 	}
 }
 
@@ -549,21 +395,13 @@ void BigInteger::operator ++(int) {
 
 // Prefix decrement
 void BigInteger::operator --() {
-	switch (sign) {
-		case zero:
-		allocate(1);
-		sign = negative;
-		len = 1;
-		blk[0] = 1;
-		break;
-		case negative:
-		BigUnsigned::operator ++();
-		break;
-		case positive:
-		BigUnsigned::operator --();
-		if (len == 0)
+	if (sign == positive) {
+		mag--;
+		if (mag == 0)
 			sign = zero;
-		break;
+	} else {
+		mag++;
+		sign = negative;
 	}
 }
 

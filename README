@@ -2,9 +2,9 @@
                             C++ Big Integer Library
                           (see ChangeLog for version)
 
-                      http://www.kepreon.com/~matt/bigint/
+                        http://mattmccutchen.net/bigint/
 
-        Written and maintained by Matt McCutchen <hashproduct@gmail.com>
+       Written and maintained by Matt McCutchen <matt@mattmccutchen.net>
 
 You can use this library in a C++ program to do arithmetic on integers of size
 limited only by your computer's memory.  The library provides BigUnsigned and
@@ -23,6 +23,10 @@ The code in `sample.cc' demonstrates the most important features of the library.
 To get started quickly, read the code and explanations in that file and run it.
 If you want more detail or a feature not shown in `sample.cc', consult the
 consult the actual header and source files, which are heavily commented.
+
+The code is intended to be reasonably portable across computers and modern C++
+compilers; in particular, it uses whatever word size the computer provides
+(32-bit, 64-bit, or whatever).  Please report any portability problems.
 
 Compiling programs that use the library
 ---------------------------------------
@@ -44,8 +48,8 @@ generally fix all reported bugs.
 You are also welcome to request enhancements, but I am unlikely to do
 substantial amounts of work on enhancements at this point.  When I fix a bug you
 report or make an enhancement you request, I will generally credit you by name
-in the source code and/or the Change Log unless you request otherwise.  New
-versions of the library will be available at its Web site (above).
+in the Change Log unless you request otherwise.  New versions of the library
+will be available at its Web site (above).
 
 Note
 ----

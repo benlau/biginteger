@@ -36,7 +36,7 @@ BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 	int maxBitLenOfX = x.getLength() * BigUnsigned::N;
 	int minBitsPerDigit = bitLen(base) - 1;
 	int maxDigitLenOfX = ceilingDiv(maxBitLenOfX, minBitsPerDigit);
-	len = maxDigitLenOfX; // Another change to comply with `staying in bounds'; see `BigUnsigned::divideWithRemainder'.
+	len = maxDigitLenOfX; // Another change to comply with `staying in bounds'.
 	allocate(len); // Get the space
 
 	BigUnsigned x2(x), buBase(base);
@@ -47,7 +47,7 @@ BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
 		BigUnsigned lastDigit(x2);
 		lastDigit.divideWithRemainder(buBase, x2);
 		// Save the digit.
-		blk[digitNum] = Digit(lastDigit); // invokes `BigUnsigned ==> unsigned short' converter
+		blk[digitNum] = lastDigit.toUnsignedShort();
 		// Move on.  We can't run out of room: we figured it out above.
 		digitNum++;
 	}

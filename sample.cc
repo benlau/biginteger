@@ -18,8 +18,8 @@ int main() {
 		BigInteger a; // a is 0
 		int b = 535;
 
-		a = b; // From int to BigInteger...
-		b = a; // ...and back, no casts required!
+		a = b; // From int to BigInteger implicitly...
+		b = a.toInt(); // ...and back explicitly.
 		/*
 		 * If a were too big for an int you'd get a runtime exception.
 		 * The Big Integer Library throws C-strings (that is,
@@ -119,4 +119,4 @@ Running the sample program produces this output:
 314^9 = 29673367320587092457984
 314^10 = 9317437338664347031806976
 
- */
+*/

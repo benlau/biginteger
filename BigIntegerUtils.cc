@@ -12,8 +12,9 @@ std::string easyBUtoString(const BigUnsigned &x) {
 }
 
 std::string easyBItoString(const BigInteger &x) {
-	return (x.getSign() == BigInteger::negative) ?
-		(std::string("-") + easyBUtoString(x)) : (easyBUtoString(x));
+	return (x.getSign() == BigInteger::negative)
+		? (std::string("-") + easyBUtoString(x.getMagnitude()))
+		: (easyBUtoString(x.getMagnitude()));
 }
 
 BigUnsigned easyStringToBU(const std::string &s) {
@@ -51,6 +52,6 @@ std::ostream &operator <<(std::ostream &os, const BigUnsigned &x) {
 std::ostream &operator <<(std::ostream &os, const BigInteger &x) {
 	if (x.getSign() == BigInteger::negative)
 		os << '-';
-	os << (const BigUnsigned &)(x);
+	os << x.getMagnitude();
 	return os;
 }
