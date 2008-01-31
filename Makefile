@@ -34,16 +34,11 @@ testsuite: testsuite.o $(library-objects)
 	g++ $^ -o $@
 # Extract the expected output from the testsuite source.
 testsuite.expected: testsuite.cc
-	sed -nre 's,^.*//,,p' $< >$@
+	sed -nre 's,^.*//([^ ]),\1,p' $< >$@
 # Run the testsuite.
 .PHONY: test
 test: testsuite testsuite.expected
-	./testsuite >testsuite.out
-	@if diff -u testsuite.expected testsuite.out; then\
-		echo 'All tests passed.';\
-	else\
-		echo >&2 'At least one test failed!'; exit 1;\
-	fi
+	./run-testsuite
 
 # The rules below build a program that uses the library.  They are preset to
 # build ``sample'' from ``sample.cc''.  You can change the name(s) of the

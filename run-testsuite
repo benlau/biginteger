@@ -1,0 +1,27 @@
+#!/bin/bash
+
+bad=
+
+set -o pipefail
+if ! valgrind --error-exitcode=1 --leak-check=full \
+	./testsuite 2>&1 >testsuite.out | tee testsuite.err; then
+	echo >&2 'Memory errors!'
+	bad=1
+fi
+
+if grep 'LEAK SUMMARY' testsuite.err >/dev/null; then
+	echo >&2 'Memory leaks!'
+	bad=1
+fi
+
+if ! diff -u testsuite.expected testsuite.out; then
+	echo >&2 'Output is incorrect!'
+	bad=1
+fi
+
+if [ $bad ]; then
+	echo >&2 'Test suite failed!'
+	exit 1
+else
+	echo 'Test suite succeeded.'
+fi
