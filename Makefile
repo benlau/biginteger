@@ -27,14 +27,14 @@ library: $(library-objects)
 # Conservatively assume that all the objects depend on all the headers.
 $(library-objects): $(library-headers)
 
-# TESTSUITE
+# TESTSUITE (NOTE: Currently expects a 32-bit system)
 # Compiling the testsuite.
 testsuite.o: $(library-headers)
 testsuite: testsuite.o $(library-objects)
 	g++ $^ -o $@
 # Extract the expected output from the testsuite source.
 testsuite.expected: testsuite.cc
-	sed -nre 's,^.*//([^ ]),\1,p' $< >$@
+	nl -ba -p -s: $< | sed -nre 's,^ +([0-9]+):.*//([^ ]),Line \1: \2,p' >$@
 # Run the testsuite.
 .PHONY: test
 test: testsuite testsuite.expected
