@@ -2,9 +2,15 @@
 
 bad=
 
+if [ "$NO_VALGRIND" ]; then
+	cmd=(./testsuite)
+else
+	cmd=(valgrind --error-exitcode=1 --leak-check=full ./testsuite)
+fi
+
 set -o pipefail
-if ! valgrind --error-exitcode=1 --leak-check=full \
-	./testsuite 2>&1 >testsuite.out | tee testsuite.err; then
+# Stdout goes directly to testsuite.out; stderr goes down the pipe.
+if ! "${cmd[@]}" 2>&1 >testsuite.out | tee testsuite.err; then
 	echo >&2 'Memory errors!'
 	bad=1
 fi
