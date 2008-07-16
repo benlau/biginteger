@@ -81,7 +81,7 @@ protected:
 	template <class X> X convertToPrimitive      () const;
 public:
 
-	// ACCESSORS
+	// BIT/BLOCK ACCESSORS
 
 	// Expose these from NumberlikeArray directly.
 	NumberlikeArray<Blk>::getCapacity;
@@ -90,9 +90,20 @@ public:
 	/* Returns the requested block, or 0 if it is beyond the length (as if
 	 * the number had 0s infinitely to the left). */
 	Blk getBlock(Index i) const { return i >= len ? 0 : blk[i]; }
+	void setBlock(Index i, Blk newBlock);
 
 	// The number is zero if and only if the canonical length is zero.
 	bool isZero() const { return NumberlikeArray<Blk>::isEmpty(); }
+
+	/* Returns the length of the number in bits, i.e., zero if the number
+	 * is zero and otherwise one more than the largest value of bi for
+	 * which getBit(bi) returns true. */
+	Index bitLength() const;
+	// Get or set bit number bi, which has value 2^bi.
+	bool getBit(Index bi) const {
+		return (getBlock(bi / N) & (1 << (bi % N))) != 0;
+	}
+	void setBit(Index bi, bool newBit);
 
 	// COMPARISONS
 

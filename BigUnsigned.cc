@@ -19,6 +19,52 @@ long           BigUnsigned::toLong         () const { return convertToSignedPrim
 int            BigUnsigned::toInt          () const { return convertToSignedPrimitive<         int  >(); }
 short          BigUnsigned::toShort        () const { return convertToSignedPrimitive<         short>(); }
 
+// BIT/BLOCK ACCESSORS
+
+void BigUnsigned::setBlock(Index i, Blk newBlock) {
+	if (newBlock == 0) {
+		if (i < len) {
+			blk[i] = 0;
+			zapLeadingZeros();
+		}
+		// If i >= len, no effect.
+	} else {
+		if (i >= len) {
+			// The nonzero block extends the number.
+			allocateAndCopy(i+1);
+			// Zero any added blocks that we aren't setting.
+			for (Index j = len; j < i; j++)
+				blk[j] = 0;
+			len = i+1;
+		}
+		blk[i] = newBlock;
+	}
+}
+
+/* Evidently the compiler wants BigUnsigned:: on the return type because, at
+ * that point, it hasn't yet parsed the BigUnsigned:: on the name to get the
+ * proper scope. */
+BigUnsigned::Index BigUnsigned::bitLength() const {
+	if (isZero())
+		return 0;
+	else {
+		Blk leftmostBlock = getBlock(len - 1);
+		Index leftmostBlockLen = 0;
+		while (leftmostBlock != 0) {
+			leftmostBlock >>= 1;
+			leftmostBlockLen++;
+		}
+		return leftmostBlockLen + (len - 1) * N;
+	}
+}
+
+void BigUnsigned::setBit(Index bi, bool newBit) {
+	Index blockI = bi / N;
+	Blk block = getBlock(blockI), mask = 1 << (bi % N);
+	block = newBit ? (block | mask) : (block & ~mask);
+	setBlock(blockI, block);
+}
+
 // COMPARISON
 BigUnsigned::CmpRes BigUnsigned::compareTo(const BigUnsigned &x) const {
 	// A bigger length implies a bigger number.

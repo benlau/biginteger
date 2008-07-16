@@ -165,6 +165,56 @@ TEST(a % 123); //81
 
 TEST(BigUnsigned(5) / 0); //error
 
+// Block accessors
+BigUnsigned b;
+TEST(b); //0
+TEST(b.getBlock(0)); //0
+b.setBlock(1, 314);
+// Did b grow properly?  And did we zero intermediate blocks?
+TEST(check(b)); //1348619730944
+TEST(b.getLength()); //2
+TEST(b.getBlock(0)); //0
+TEST(b.getBlock(1)); //314
+// Did b shrink properly?
+b.setBlock(1, 0);
+TEST(check(b)); //0
+
+BigUnsigned bb(314);
+bb.setBlock(1, 159);
+// Make sure we used allocateAndCopy, not allocate
+TEST(bb.getBlock(0)); //314
+TEST(bb.getBlock(1)); //159
+// Blocks beyond the number should be zero regardless of whether they are
+// within the capacity.
+bb.add(1, 2);
+TEST(bb.getBlock(0)); //3
+TEST(bb.getBlock(1)); //0
+TEST(bb.getBlock(2)); //0
+TEST(bb.getBlock(314159)); //0
+
+// Bit accessors
+TEST(BigUnsigned(0).bitLength()); //0
+TEST(BigUnsigned(1).bitLength()); //1
+TEST(BigUnsigned(4095).bitLength()); //12
+TEST(BigUnsigned(4096).bitLength()); //13
+// 5 billion is between 2^32 (about 4 billion) and 2^33 (about 8 billion).
+TEST(stringToBigUnsigned("5000000000").bitLength()); //33
+
+// 25 is binary 11001.
+BigUnsigned bbb(25);
+TEST(bbb.getBit(4)); //1
+TEST(bbb.getBit(3)); //1
+TEST(bbb.getBit(2)); //0
+TEST(bbb.getBit(1)); //0
+TEST(bbb.getBit(0)); //1
+TEST(bbb.bitLength()); //5
+// Effectively add 2^32.
+bbb.setBit(32, true);
+TEST(bbb); //4294967321
+bbb.setBit(31, true);
+bbb.setBit(32, false);
+TEST(check(bbb)); //2147483673
+
 BigUnsigned p1 = BigUnsigned(3) * 5;
 TEST(p1); //15
 /* In this case, we would like g++ to implicitly promote the BigUnsigned to a
