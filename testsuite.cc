@@ -55,11 +55,13 @@ TEST(10); //10
 
 // TODO: Comprehensively test the general and special cases of each function.
 
-// Default constructors
+// === Default constructors ===
+
 TEST(check(BigUnsigned())); //0
 TEST(check(BigInteger())); //0
 
-// BigUnsigned conversion limits
+// === BigUnsigned conversion limits ===
+
 TEST(BigUnsigned(0).toUnsignedLong()); //0
 TEST(BigUnsigned(4294967295U).toUnsignedLong()); //4294967295
 TEST(stringToBigUnsigned("4294967296").toUnsignedLong()); //error
@@ -85,7 +87,8 @@ TEST(BigUnsigned(0).toShort()); //0
 TEST(BigUnsigned(32767).toShort()); //32767
 TEST(BigUnsigned(32768).toShort()); //error
 
-// BigInteger conversion limits
+// === BigInteger conversion limits ===
+
 TEST(BigInteger(-1).toUnsignedLong()); //error
 TEST(BigInteger(0).toUnsignedLong()); //0
 TEST(BigInteger(4294967295U).toUnsignedLong()); //4294967295
@@ -123,7 +126,8 @@ TEST(BigInteger(0).toShort()); //0
 TEST(BigInteger(32767).toShort()); //32767
 TEST(BigInteger(32768).toShort()); //error
 
-// Negative BigUnsigneds
+// === Negative BigUnsigneds ===
+
 // ...during construction
 TEST(BigUnsigned(short(-1))); //error
 TEST(BigUnsigned(pathologicalShort)); //error
@@ -131,6 +135,7 @@ TEST(BigUnsigned(-1)); //error
 TEST(BigUnsigned(pathologicalInt)); //error
 TEST(BigUnsigned(long(-1))); //error
 TEST(BigUnsigned(pathologicalLong)); //error
+
 // ...during subtraction
 TEST(BigUnsigned(5) - BigUnsigned(6)); //error
 TEST(stringToBigUnsigned("314159265358979323") - stringToBigUnsigned("314159265358979324")); //error
@@ -138,7 +143,8 @@ TEST(check(BigUnsigned(5) - BigUnsigned(5))); //0
 TEST(check(stringToBigUnsigned("314159265358979323") - stringToBigUnsigned("314159265358979323"))); //0
 TEST(check(stringToBigUnsigned("4294967296") - BigUnsigned(1))); //4294967295
 
-// Addition
+// === BigUnsigned addition ===
+
 TEST(check(BigUnsigned(0) + 0)); //0
 TEST(check(BigUnsigned(0) + 1)); //1
 // Ordinary carry
@@ -147,7 +153,8 @@ TEST(check(stringToBigUnsigned("8589934591" /* 2^33 - 1*/)
 // Creation of a new block
 TEST(check(BigUnsigned(0xFFFFFFFFU) + 1)); //4294967296
 
-// Subtraction
+// === BigUnsigned subtraction ===
+
 TEST(check(BigUnsigned(1) - 0)); //1
 TEST(check(BigUnsigned(1) - 1)); //0
 TEST(check(BigUnsigned(2) - 1)); //1
@@ -157,7 +164,8 @@ TEST(check(stringToBigUnsigned("12884901889")
 // Borrow that removes a block
 TEST(check(stringToBigUnsigned("4294967296") - 1)); //4294967295
 
-// Multiplication and division
+// === BigUnsigned multiplication and division ===
+
 BigUnsigned a = check(BigUnsigned(314159265) * 358979323);
 TEST(a); //112776680263877595
 TEST(a / 123); //916883579381118
@@ -165,7 +173,8 @@ TEST(a % 123); //81
 
 TEST(BigUnsigned(5) / 0); //error
 
-// Block accessors
+// === Block accessors ===
+
 BigUnsigned b;
 TEST(b); //0
 TEST(b.getBlock(0)); //0
@@ -192,7 +201,8 @@ TEST(bb.getBlock(1)); //0
 TEST(bb.getBlock(2)); //0
 TEST(bb.getBlock(314159)); //0
 
-// Bit accessors
+// === Bit accessors ===
+
 TEST(BigUnsigned(0).bitLength()); //0
 TEST(BigUnsigned(1).bitLength()); //1
 TEST(BigUnsigned(4095).bitLength()); //12
@@ -215,6 +225,8 @@ bbb.setBit(31, true);
 bbb.setBit(32, false);
 TEST(check(bbb)); //2147483673
 
+// === Combining BigUnsigned, BigInteger, and primitive integers ===
+
 BigUnsigned p1 = BigUnsigned(3) * 5;
 TEST(p1); //15
 /* In this case, we would like g++ to implicitly promote the BigUnsigned to a
@@ -226,6 +238,8 @@ TEST(p1); //15
  * have to live with this cast. */
 BigInteger p2 = BigInteger(BigUnsigned(3)) * -5;
 TEST(p2); //-15
+
+// === Test some previous bugs ===
 
 {
 	/* Test that BigInteger division sets the sign to zero.
