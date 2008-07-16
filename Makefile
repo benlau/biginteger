@@ -39,6 +39,9 @@ testsuite.expected: testsuite.cc
 .PHONY: test
 test: testsuite testsuite.expected
 	./run-testsuite
+testsuite-cleanfiles = \
+	testsuite.o testsuite testsuite.expected \
+	testsuite.out testsuite.err
 
 # The rules below build a program that uses the library.  They are preset to
 # build ``sample'' from ``sample.cc''.  You can change the name(s) of the
@@ -59,7 +62,7 @@ $(program) : $(program-objects) $(library-objects)
 
 # Delete all generated files we know about.
 clean :
-	rm -f $(library-objects) $(program-objects) $(program)
+	rm -f $(library-objects) $(testsuite-cleanfiles) $(program-objects) $(program)
 
 # I removed the *.tag dependency tracking system because it had few advantages
 # over manually entering all the dependencies.  If there were a portable,
