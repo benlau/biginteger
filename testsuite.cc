@@ -60,6 +60,32 @@ TEST(10); //10
 TEST(check(BigUnsigned())); //0
 TEST(check(BigInteger())); //0
 
+// === Block-array constructors ===
+
+BigUnsigned::Blk myBlocks[3];
+myBlocks[0] = 3;
+myBlocks[1] = 4;
+myBlocks[2] = 0;
+BigUnsigned bu(myBlocks, 3);
+TEST(check(bu)); //17179869187
+TEST(check(BigInteger(myBlocks, 3))); //17179869187
+TEST(check(BigInteger(bu         ))); //17179869187
+
+// For nonzero magnitude, reject zero and invalid signs.
+TEST(check(BigInteger(myBlocks, 3, BigInteger::positive))); //17179869187
+TEST(check(BigInteger(myBlocks, 3, BigInteger::negative))); //-17179869187
+TEST(check(BigInteger(myBlocks, 3, BigInteger::zero    ))); //error
+TEST(check(BigInteger(bu,          BigInteger::positive))); //17179869187
+TEST(check(BigInteger(bu,          BigInteger::negative))); //-17179869187
+TEST(check(BigInteger(bu,          BigInteger::zero    ))); //error
+
+// For zero magnitude, force the sign to zero without error.
+BigUnsigned::Blk myZeroBlocks[1];
+myZeroBlocks[0] = 0;
+TEST(check(BigInteger(myZeroBlocks, 1, BigInteger::positive))); //0
+TEST(check(BigInteger(myZeroBlocks, 1, BigInteger::negative))); //0
+TEST(check(BigInteger(myZeroBlocks, 1, BigInteger::zero    ))); //0
+
 // === BigUnsigned conversion limits ===
 
 TEST(BigUnsigned(0).toUnsignedLong()); //0

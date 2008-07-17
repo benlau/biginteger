@@ -13,11 +13,18 @@ void BigInteger::operator =(const BigInteger &x) {
 BigInteger::BigInteger(const Blk *b, Index blen, Sign s) : mag(b, blen) {
 	switch (s) {
 	case zero:
+		if (!mag.isZero())
+			throw "BigInteger::BigInteger(const Blk *, Index, Sign): Cannot use a sign of zero with a nonzero magnitude";
+		sign = zero;
+		break;
 	case positive:
 	case negative:
+		// If the magnitude is zero, force the sign to zero.
 		sign = mag.isZero() ? zero : s;
 		break;
 	default:
+		/* g++ seems to be optimizing out this case on the assumption
+		 * that the sign is a valid member of the enumeration.  Oh well. */
 		throw "BigInteger::BigInteger(const Blk *, Index, Sign): Invalid sign";
 	}
 }
@@ -25,12 +32,19 @@ BigInteger::BigInteger(const Blk *b, Index blen, Sign s) : mag(b, blen) {
 BigInteger::BigInteger(const BigUnsigned &x, Sign s) : mag(x) {
 	switch (s) {
 	case zero:
+		if (!mag.isZero())
+			throw "BigInteger::BigInteger(const BigUnsigned &, Sign): Cannot use a sign of zero with a nonzero magnitude";
+		sign = zero;
+		break;
 	case positive:
 	case negative:
+		// If the magnitude is zero, force the sign to zero.
 		sign = mag.isZero() ? zero : s;
 		break;
 	default:
-		throw "BigInteger::BigInteger(Blk *, Index, Sign): Invalid sign";
+		/* g++ seems to be optimizing out this case on the assumption
+		 * that the sign is a valid member of the enumeration.  Oh well. */
+		throw "BigInteger::BigInteger(const BigUnsigned &, Sign): Invalid sign";
 	}
 }
 
