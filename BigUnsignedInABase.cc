@@ -1,13 +1,19 @@
-/*
- * Milan Tomic had trouble compiling this file on Microsoft
- * Visual C++ 6 because, in the libraries that come with
- * Visual C++ 6, the `std::string::push_back' method apparently
- * does not exist.  To get around the problem, I rewrote
- * `BigUnsignedInABase::operator std::string' (at the bottom
- * of this file) so it doesn't use `push_back'.
- */
-
 #include "BigUnsignedInABase.hh"
+
+BigUnsignedInABase::BigUnsignedInABase(const Digit *d, Index l, Base base)
+	: NumberlikeArray<Digit>(d, l), base(base) {
+	// Check the base
+	if (base < 2)
+		throw "BigUnsignedInABase::BigUnsignedInABase(const Digit *, Index, Base): The base must be at least 2";
+
+	// Validate the digits.
+	for (Index i = 0; i < l; i++)
+		if (blk[i] >= base)
+			throw "BigUnsignedInABase::BigUnsignedInABase(const Digit *, Index, Base): A digit is too large for the specified base";
+
+	// Eliminate any leading zeros we may have been passed.
+	zapLeadingZeros();
+}
 
 namespace {
 	unsigned int bitLen(unsigned int x) {
@@ -24,12 +30,9 @@ namespace {
 }
 
 BigUnsignedInABase::BigUnsignedInABase(const BigUnsigned &x, Base base) {
-
 	// Check the base
 	if (base < 2)
 		throw "BigUnsignedInABase(BigUnsigned, Base): The base must be at least 2";
-	// Save the base.
-	// This pattern is seldom seen in C++, but the analogous ``this.'' is common in Java.
 	this->base = base;
 
 	// Get an upper bound on how much space we need
@@ -101,6 +104,7 @@ BigUnsignedInABase::operator std::string() const {
 		throw "BigUnsignedInABase ==> std::string: The default string conversion routines use the symbol set 0-9, A-Z and therefore support only up to base 36.  You tried a conversion with a base over 36; write your own string conversion routine.";
 	if (len == 0)
 		return std::string("0");
+	// Some compilers don't have push_back, so use a char * buffer instead.
 	char *s = new char[len + 1];
 	s[len] = '\0';
 	Index digitNum, symbolNumInString;
@@ -113,7 +117,6 @@ BigUnsignedInABase::operator std::string() const {
 			s[symbolNumInString] = char('A' + theDigit - 10);
 	}
 	std::string s2(s);
-	// 2006.05.03: This needs to be [] to match the allocation
 	delete [] s;
 	return s2;
 }
