@@ -19,13 +19,14 @@ void extendedEuclidean(BigInteger m, BigInteger n,
 		throw "BigInteger extendedEuclidean: Outputs are aliased";
 	BigInteger r1(1), s1(0), r2(0), s2(1), q;
 	/* Invariants:
-	 * r1*m + s1*n == m(orig)
-	 * r2*m + s2*n == n(orig) */
+	 * r1*m(orig) + s1*n(orig) == m(current)
+	 * r2*m(orig) + s2*n(orig) == n(current) */
 	for (;;) {
 		if (n.isZero()) {
 			r = r1; s = s1; g = m;
 			return;
 		}
+		// Subtract q times the second invariant from the first invariant.
 		m.divideWithRemainder(n, q);
 		r1 -= q*r2; s1 -= q*s2;
 
@@ -33,6 +34,7 @@ void extendedEuclidean(BigInteger m, BigInteger n,
 			r = r2; s = s2; g = n;
 			return;
 		}
+		// Subtract q times the first invariant from the second invariant.
 		n.divideWithRemainder(m, q);
 		r2 -= q*r1; s2 -= q*s1;
 	}
@@ -51,21 +53,17 @@ BigUnsigned modinv(const BigInteger &x, const BigUnsigned &n) {
 BigUnsigned modexp(const BigInteger &base, const BigUnsigned &exponent,
 		const BigUnsigned &modulus) {
 	BigUnsigned ans = 1, base2 = (base % modulus).getMagnitude();
-	BigUnsigned::Index i = exponent.getLength();
-	// For each block of the exponent, most to least significant...
+	BigUnsigned::Index i = exponent.bitLength();
+	// For each bit of the exponent, most to least significant...
 	while (i > 0) {
 		i--;
-		BigUnsigned::Blk eb = exponent.getBlock(i);
-		// For each bit, most to least significant...
-		for (BigUnsigned::Blk mask = ~((~BigUnsigned::Blk(0)) >> 1);
-				mask != 0; mask >>= 1) {
-			// Square and maybe multiply.
-			ans *= ans;
+		// Square.
+		ans *= ans;
+		ans %= modulus;
+		// And multiply if the bit is a 1.
+		if (exponent.getBit(i)) {
+			ans *= base2;
 			ans %= modulus;
-			if (eb & mask) {
-				ans *= base2;
-				ans %= modulus;
-			}
 		}
 	}
 	return ans;
