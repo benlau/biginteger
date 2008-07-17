@@ -29,5 +29,5 @@ if [ $bad ]; then
 	echo >&2 'Test suite failed!'
 	exit 1
 else
-	echo 'Test suite succeeded.'
+	echo 'Test suite passed.'
 fi
