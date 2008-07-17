@@ -6,6 +6,43 @@ roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]'
 format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the
 same day.  The topmost version listed is the one you have.
 
+Unreleased
+----------
+Dennis Yew pointed out serious problems with ambiguities and unwanted
+conversions when mixing BigInteger/BigUnsigned and primitive integers.  To fix
+these, I removed the implicit conversions from BigInteger/BigUnsigned to
+primitive integers and from BigInteger to BigUnsigned.  Removing the
+BigInteger-to-BigUnsigned conversion required changing BigInteger to have a
+BigUnsigned field instead of inheriting from it; this was a complex task but
+ultimately gave a saner design.  At the same time, I went through the entire
+codebase, making the formatting and comments prettier and reworking anything I
+thought was unclear.  I also added a testsuite (currently for 32-bit systems
+only); it doesn't yet cover the entire library but should help to ensure that
+things work the way they should.
+
+A number of changes from version 2007.07.07 break compatibility with existing
+code that uses the library, but updating that code should be pretty easy:
+- BigInteger can no longer be implicitly converted to BigUnsigned.  Use
+  getMagnitude() instead.
+- BigUnsigned and BigInteger can no longer be implicitly converted to primitive
+  integers.  Use the toInt() family of functions instead.
+- The easy* functions have been renamed to more mature names:
+  bigUnsignedToString, bigIntegerToString, stringToBigUnsigned,
+  stringToBigInteger, dataToBigInteger.
+- BigInteger no longer supports bitwise operations.  Get the magnitude with
+  getMagnitude() and operate on that instead.
+- The old {BigUnsigned,BigInteger}::{divide,modulo} copy-less options have been
+  removed.  Use divideWithRemainder instead.
+- Added a base argument to BigUnsignedInABase's digit-array constructor.  I
+  hope no one used that constructor in its broken state anyway.
+
+Other notable changes:
+- Added BigUnsigned functions setBlock, bitLength, getBit, setBit.
+- The bit-shifting operations now support negative shift amounts, which shift in
+  the other direction.
+- Added some big-integer algorithms in BigIntegerAlgorithms.hh: gcd,
+  extendedEuclidean, modinv, modexp.
+
 2007.07.07
 ----------
 Update the "Running the sample program produces this output:" comment in
