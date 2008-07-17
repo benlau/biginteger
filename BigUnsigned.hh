@@ -90,6 +90,7 @@ public:
 	/* Returns the requested block, or 0 if it is beyond the length (as if
 	 * the number had 0s infinitely to the left). */
 	Blk getBlock(Index i) const { return i >= len ? 0 : blk[i]; }
+	/* Sets the requested block.  The number grows or shrinks as necessary. */
 	void setBlock(Index i, Blk newBlock);
 
 	// The number is zero if and only if the canonical length is zero.
@@ -99,10 +100,13 @@ public:
 	 * is zero and otherwise one more than the largest value of bi for
 	 * which getBit(bi) returns true. */
 	Index bitLength() const;
-	// Get or set bit number bi, which has value 2^bi.
+	/* Get the state of bit bi, which has value 2^bi.  Bits beyond the
+	 * number's length are considered to be 0. */
 	bool getBit(Index bi) const {
 		return (getBlock(bi / N) & (1 << (bi % N))) != 0;
 	}
+	/* Sets the state of bit bi to newBit.  The number grows or shrinks as
+	 * necessary. */
 	void setBit(Index bi, bool newBit);
 
 	// COMPARISONS
@@ -337,7 +341,7 @@ inline void BigUnsigned::operator >>=(int b) {
 
 /* Templates for conversions of BigUnsigned to and from primitive integers.
  * BigInteger.cc needs to instantiate convertToPrimitive, and the uses in
- * BigUnsigned.cc didn't do the trick; I think gcc inlined convertToPrimitive
+ * BigUnsigned.cc didn't do the trick; I think g++ inlined convertToPrimitive
  * instead of generating linkable instantiations.  So for consistency, I put
  * all the templates here. */
 
