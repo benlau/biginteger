@@ -2,6 +2,10 @@
 
 bad=
 
+# If you encounter the following problem with Valgrind like I did:
+#     https://bugzilla.redhat.com/show_bug.cgi?id=455644
+# you can pass the environment variable NO_VALGRIND=1 to run the testsuite
+# without it.
 if [ "$NO_VALGRIND" ]; then
 	cmd=(./testsuite)
 else
