@@ -6,7 +6,7 @@ roughly corresponds to the release date of that version in `YYYY.MM.DD[.N]'
 format, where `.N' goes `.2', `.3', etc. if there are multiple versions on the
 same day.  The topmost version listed is the one you have.
 
-Unreleased
+2008.07.20
 ----------
 Dennis Yew pointed out serious problems with ambiguities and unwanted
 conversions when mixing BigInteger/BigUnsigned and primitive integers.  To fix
