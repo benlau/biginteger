@@ -36,8 +36,12 @@ The library consists of a folder full of C++ header files (`.hh') and source
 files (`.cc').  `#include' header files and compile with source files as
 necessary for your own programs.  A Makefile is included that compiles the
 library source files and the sample program and links them together; you can
-easily customize the Makefile to replace the sample with your own program, or
-you can write your own Makefile.
+easily customize the Makefile to replace the sample with your own program or use
+your own Makefile or IDE.
+
+NOTE: It is generally useless to ask me how to set up the library in your IDE
+because you know more about the IDE than I do (unless it's the Eclipse CDT
+<http://www.eclipse.org/cdt/>).
 
 Resources
 ---------
