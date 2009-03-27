@@ -311,6 +311,13 @@ TEST(p2); //-15
 	TEST(check(num)); //25
 }
 
+{
+	/* Test that BigUnsignedInABase(std::string) constructor rejects digits
+	 * too big for the specified base.
+	 * Bug reported by Niakam Kazemi. */
+	TEST(BigUnsignedInABase("f", 10)); //error
+}
+
 } catch (const char *err) {
 	cout << "UNCAUGHT ERROR: " << err << endl;
 }

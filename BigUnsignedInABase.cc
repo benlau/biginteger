@@ -95,6 +95,9 @@ BigUnsignedInABase::BigUnsignedInABase(const std::string &s, Base base) {
 			blk[digitNum] = theSymbol - 'a' + 10;
 		else
 			throw "BigUnsignedInABase(std::string, Base): Bad symbol in input.  Only 0-9, A-Z, a-z are accepted.";
+
+		if (blk[digitNum] >= base)
+			throw "BigUnsignedInABase::BigUnsignedInABase(const Digit *, Index, Base): A digit is too large for the specified base";
 	}
 	zapLeadingZeros();
 }
