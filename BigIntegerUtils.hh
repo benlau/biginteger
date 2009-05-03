@@ -65,7 +65,7 @@ BigInteger dataToBigInteger(const T* data, BigInteger::Index length, BigInteger:
 	// Create the BigInteger.
 	BigInteger x(blocks, numBlocks, sign);
 
-	delete blocks;
+	delete [] blocks;
 	return x;
 }
 
