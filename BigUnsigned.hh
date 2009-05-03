@@ -103,7 +103,7 @@ public:
 	/* Get the state of bit bi, which has value 2^bi.  Bits beyond the
 	 * number's length are considered to be 0. */
 	bool getBit(Index bi) const {
-		return (getBlock(bi / N) & (1 << (bi % N))) != 0;
+		return (getBlock(bi / N) & (Blk(1) << (bi % N))) != 0;
 	}
 	/* Sets the state of bit bi to newBit.  The number grows or shrinks as
 	 * necessary. */

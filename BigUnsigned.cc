@@ -60,7 +60,7 @@ BigUnsigned::Index BigUnsigned::bitLength() const {
 
 void BigUnsigned::setBit(Index bi, bool newBit) {
 	Index blockI = bi / N;
-	Blk block = getBlock(blockI), mask = 1 << (bi % N);
+	Blk block = getBlock(blockI), mask = Blk(1) << (bi % N);
 	block = newBit ? (block | mask) : (block & ~mask);
 	setBlock(blockI, block);
 }

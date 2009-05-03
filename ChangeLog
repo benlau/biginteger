@@ -8,6 +8,9 @@ same day.  The topmost version listed is the one you have.
 
 Unreleased
 ----------
+- BigUnsigned::{get,set}Bit: Change two remaining `1 <<' to `Blk(1) <<' to work
+  on systems where sizeof(unsigned int) != sizeof(Blk).  Bug reported by Brad
+  Spencer.
 - dataToBigInteger: Change a `delete' to `delete []' to avoid leaking memory.
   Bug reported by Nicolás Carrasco.
 
@@ -44,7 +47,7 @@ code that uses the library, but updating that code should be pretty easy:
 - The old {BigUnsigned,BigInteger}::{divide,modulo} copy-less options have been
   removed.  Use divideWithRemainder instead.
 - Added a base argument to BigUnsignedInABase's digit-array constructor.  I
-  hope no one used that constructor in its broken state anyway.
+  ope no one used that constructor in its broken state anyway.
 
 Other notable changes:
 - Added BigUnsigned functions setBlock, bitLength, getBit, setBit.
