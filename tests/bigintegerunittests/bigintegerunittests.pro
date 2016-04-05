@@ -14,21 +14,14 @@ CONFIG   -= app_bundle
 
 TEMPLATE = app
 
-INCLUDEPATH += ../..
+include(vendor/vendor.pri)
+include(../../biginteger.pri)
+
+CONFIG -= c++11
 
 SOURCES += bigintegerunittests.cpp \
-    ../../BigInteger.cc \
-    ../../BigIntegerAlgorithms.cc \
-    ../../BigIntegerUtils.cc \
-    ../../BigUnsigned.cc \
-    ../../BigUnsignedInABase.cc
+    main.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
-    ../../BigInteger.hh \
-    ../../BigIntegerAlgorithms.hh \
-    ../../BigIntegerLibrary.hh \
-    ../../BigIntegerUtils.hh \
-    ../../BigUnsigned.hh \
-    ../../BigUnsignedInABase.hh \
-    ../../NumberlikeArray.hh
+    bigintegerunittests.h

@@ -2,19 +2,7 @@
 #include <QtTest>
 #include "BigInteger.hh"
 #include "BigIntegerUtils.hh"
-
-class BigIntegerUnitTests : public QObject
-{
-    Q_OBJECT
-
-public:
-    BigIntegerUnitTests();
-
-private Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
-    void function();
-};
+#include "bigintegerunittests.h"
 
 BigIntegerUnitTests::BigIntegerUnitTests()
 {
@@ -56,6 +44,7 @@ void BigIntegerUnitTests::function()
     QVERIFY(result == "-1");
 }
 
-QTEST_APPLESS_MAIN(BigIntegerUnitTests)
+void BigIntegerUnitTests::qml()
+{
 
-#include "bigintegerunittests.moc"
+}
