@@ -25,3 +25,6 @@ DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 HEADERS += \
     bigintegerunittests.h
+
+DISTFILES += \
+    qml/tst_calculation.qml

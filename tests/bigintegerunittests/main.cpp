@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     TestRunner runner;
-//    runner.add(QString(SRCDIR) + "nnttv4");
     runner.add<BigIntegerUnitTests>();
+    runner.add(QString(SRCDIR) + "qml");
 
     bool error = runner.exec(app.arguments());
 
