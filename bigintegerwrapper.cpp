@@ -9,7 +9,40 @@ BigIntegerWrapper::BigIntegerWrapper(QObject *parent) : QObject(parent)
 
 }
 
-QString BigIntegerWrapper::multiply(const QString &a, const QString &b)
+QString BigIntegerWrapper::add(const QString &a, const QString &b) const
+{
+    BigInteger v1,v2,r;
+
+    v1 = stringToBigInteger(a.toStdString());
+    v2 = stringToBigInteger(b.toStdString());
+    r = v1 + v2;
+
+    return QString::fromStdString(bigIntegerToString(r));
+}
+
+QString BigIntegerWrapper::minus(const QString &a, const QString &b) const
+{
+    BigInteger v1,v2,r;
+
+    v1 = stringToBigInteger(a.toStdString());
+    v2 = stringToBigInteger(b.toStdString());
+    r = v1 - v2;
+
+    return QString::fromStdString(bigIntegerToString(r));
+}
+
+QString BigIntegerWrapper::divide(const QString &a, const QString &b) const
+{
+    BigInteger v1,v2,r;
+
+    v1 = stringToBigInteger(a.toStdString());
+    v2 = stringToBigInteger(b.toStdString());
+    r = v1 / v2;
+
+    return QString::fromStdString(bigIntegerToString(r));
+}
+
+QString BigIntegerWrapper::multiply(const QString &a, const QString &b) const
 {
     BigInteger v1,v2,r;
 

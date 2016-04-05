@@ -13,7 +13,14 @@ signals:
 
 public slots:
 
-    QString multiply(const QString& a, const QString& b);
+    QString multiply(const QString& a, const QString& b) const;
+
+    QString add(const QString& a, const QString& b) const;
+
+    QString minus(const QString& a, const QString& b) const;
+
+    QString divide(const QString& a, const QString& b) const;
+
 
 };
 
