@@ -4,10 +4,14 @@ QML BigInteger Library
 It is a library to provide BigInteger for QML.
 It is derived from the work by [ Matt McCutchen](https://mattmccutchen.net/bigint/), and relicensed as APACHE-2.0
 
+Installation
+============
+
+	qpm install com.github.benlau.biginteger
+
 API
 ===
 
-Package Name
 ```
 import BigInteger 1.0
 ```
