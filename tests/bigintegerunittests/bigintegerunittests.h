@@ -13,8 +13,8 @@ public:
 private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
-    void function();
-    void qml();
+
+    void basicCalculation();
 };
 
 #endif // BIGINTEGERUNITTESTS_H

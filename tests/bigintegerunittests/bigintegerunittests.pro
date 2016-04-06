@@ -17,8 +17,6 @@ TEMPLATE = app
 include(vendor/vendor.pri)
 include(../../biginteger.pri)
 
-CONFIG -= c++11
-
 SOURCES += bigintegerunittests.cpp \
     main.cpp
 DEFINES += SRCDIR=\\\"$$PWD/\\\"

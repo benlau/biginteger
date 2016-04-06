@@ -42,6 +42,77 @@ QString BigIntegerWrapper::divide(const QString &a, const QString &b) const
     return QString::fromStdString(bigIntegerToString(r));
 }
 
+QString BigIntegerWrapper::abs(const QString &value) const
+{
+    if (isNegative(value)) {
+        BigInteger v = stringToBigInteger(value.toStdString());
+        v.flipSign();
+        return QString::fromStdString(bigIntegerToString(v));
+    } else {
+        return  value;
+    }
+}
+
+bool BigIntegerWrapper::isNegative(const QString &value) const
+{
+    return value.size() > 0 && value[0] == QChar('-');
+}
+
+int BigIntegerWrapper::compare(const QString &a, const QString &b) const
+{
+    BigInteger v1,v2;
+
+    v1 = stringToBigInteger(a.toStdString());
+    v2 = stringToBigInteger(b.toStdString());
+
+    return v1.compareTo(v2);
+}
+
+bool BigIntegerWrapper::greater(const QString &a, const QString &b) const
+{
+    BigInteger v1,v2;
+
+    v1 = stringToBigInteger(a.toStdString());
+    v2 = stringToBigInteger(b.toStdString());
+
+    return v1 > v2;
+}
+
+bool BigIntegerWrapper::greaterOrEquals(const QString &a, const QString &b) const
+{
+    BigInteger v1,v2;
+
+    v1 = stringToBigInteger(a.toStdString());
+    v2 = stringToBigInteger(b.toStdString());
+
+    return v1 >= v2;
+}
+
+bool BigIntegerWrapper::lesser(const QString &a, const QString &b) const
+{
+    BigInteger v1,v2;
+
+    v1 = stringToBigInteger(a.toStdString());
+    v2 = stringToBigInteger(b.toStdString());
+
+    return v1 < v2;
+}
+
+bool BigIntegerWrapper::lesserOrEquals(const QString &a, const QString &b) const
+{
+    BigInteger v1,v2;
+
+    v1 = stringToBigInteger(a.toStdString());
+    v2 = stringToBigInteger(b.toStdString());
+
+    return v1 <= v2;
+}
+
+bool BigIntegerWrapper::equals(const QString &a, const QString &b) const
+{
+    return a == b;
+}
+
 QString BigIntegerWrapper::multiply(const QString &a, const QString &b) const
 {
     BigInteger v1,v2,r;

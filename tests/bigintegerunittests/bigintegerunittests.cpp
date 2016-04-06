@@ -16,7 +16,7 @@ void BigIntegerUnitTests::cleanupTestCase()
 {
 }
 
-void BigIntegerUnitTests::function()
+void BigIntegerUnitTests::basicCalculation()
 {
     BigInteger a,b,c;
     a = stringToBigInteger(std::string("3141592653589793238462643383279"));
@@ -42,9 +42,4 @@ void BigIntegerUnitTests::function()
 
     result = QString::fromStdString(bigIntegerToString(c));
     QVERIFY(result == "-1");
-}
-
-void BigIntegerUnitTests::qml()
-{
-
 }
