@@ -67,16 +67,16 @@ myBlocks[0] = 3;
 myBlocks[1] = 4;
 myBlocks[2] = 0;
 BigUnsigned bu(myBlocks, 3);
-TEST(check(bu)); //17179869187
-TEST(check(BigInteger(myBlocks, 3))); //17179869187
-TEST(check(BigInteger(bu         ))); //17179869187
+TEST(check(bu)); //73786976294838206467
+TEST(check(BigInteger(myBlocks, 3))); //73786976294838206467
+TEST(check(BigInteger(bu         ))); //73786976294838206467
 
 // For nonzero magnitude, reject zero and invalid signs.
-TEST(check(BigInteger(myBlocks, 3, BigInteger::positive))); //17179869187
-TEST(check(BigInteger(myBlocks, 3, BigInteger::negative))); //-17179869187
+TEST(check(BigInteger(myBlocks, 3, BigInteger::positive))); //73786976294838206467
+TEST(check(BigInteger(myBlocks, 3, BigInteger::negative))); //-73786976294838206467
 TEST(check(BigInteger(myBlocks, 3, BigInteger::zero    ))); //error
-TEST(check(BigInteger(bu,          BigInteger::positive))); //17179869187
-TEST(check(BigInteger(bu,          BigInteger::negative))); //-17179869187
+TEST(check(BigInteger(bu,          BigInteger::positive))); //73786976294838206467
+TEST(check(BigInteger(bu,          BigInteger::negative))); //-73786976294838206467
 TEST(check(BigInteger(bu,          BigInteger::zero    ))); //error
 
 // For zero magnitude, force the sign to zero without error.
@@ -90,11 +90,11 @@ TEST(check(BigInteger(myZeroBlocks, 1, BigInteger::zero    ))); //0
 
 TEST(BigUnsigned(0).toUnsignedLong()); //0
 TEST(BigUnsigned(4294967295U).toUnsignedLong()); //4294967295
-TEST(stringToBigUnsigned("4294967296").toUnsignedLong()); //error
+TEST(stringToBigUnsigned("18446744073709551616").toUnsignedLong()); //error
 
 TEST(BigUnsigned(0).toLong()); //0
 TEST(BigUnsigned(2147483647).toLong()); //2147483647
-TEST(BigUnsigned(2147483648U).toLong()); //error
+TEST(BigUnsigned(18446744073709551615U).toLong()); //error
 
 // int is the same as long on a 32-bit system
 TEST(BigUnsigned(0).toUnsignedInt()); //0
@@ -118,14 +118,14 @@ TEST(BigUnsigned(32768).toShort()); //error
 TEST(BigInteger(-1).toUnsignedLong()); //error
 TEST(BigInteger(0).toUnsignedLong()); //0
 TEST(BigInteger(4294967295U).toUnsignedLong()); //4294967295
-TEST(stringToBigInteger("4294967296").toUnsignedLong()); //error
+TEST(stringToBigInteger("18446744073709551616").toUnsignedLong()); //error
 
-TEST(stringToBigInteger("-2147483649").toLong()); //error
+TEST(stringToBigInteger("-9223372036854775809").toLong()); //error
 TEST(stringToBigInteger("-2147483648").toLong()); //-2147483648
 TEST(BigInteger(-2147483647).toLong()); //-2147483647
 TEST(BigInteger(0).toLong()); //0
-TEST(BigInteger(2147483647).toLong()); //2147483647
-TEST(BigInteger(2147483648U).toLong()); //error
+TEST(BigInteger(9223372036854775807).toLong()); //9223372036854775807
+TEST(BigInteger(9223372036854775808U).toLong()); //error
 
 // int is the same as long on a 32-bit system
 TEST(BigInteger(-1).toUnsignedInt()); //error
@@ -206,7 +206,7 @@ TEST(b); //0
 TEST(b.getBlock(0)); //0
 b.setBlock(1, 314);
 // Did b grow properly?  And did we zero intermediate blocks?
-TEST(check(b)); //1348619730944
+TEST(check(b)); //5792277639144799207424
 TEST(b.getLength()); //2
 TEST(b.getBlock(0)); //0
 TEST(b.getBlock(1)); //314
