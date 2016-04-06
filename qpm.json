@@ -1,6 +1,6 @@
 {
   "name": "com.github.benlau.biginteger",
-  "description": "",
+  "description": "BigInteger library for QML",
   "author": {
     "name": "Ben Lau",
     "email": "xbenlau@gmail.com"
