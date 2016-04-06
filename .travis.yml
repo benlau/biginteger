@@ -1,0 +1,14 @@
+language : cpp
+env:
+  - DISPLAY=:99.0
+compiler:
+  - gcc
+before_install:
+    - sudo apt-get update -qq
+    - apt-cache search qt5
+    - sudo apt-get install --force-yes valgrind
+    - sh -e /etc/init.d/xvfb start
+script:
+    - make
+    - make test
+  
