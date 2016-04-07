@@ -2,7 +2,11 @@ QML BigInteger Library
 ======================
 
 It is a library to provide BigInteger for QML.
-It is derived from the work by [ Matt McCutchen](https://mattmccutchen.net/bigint/), and relicensed as APACHE-2.0
+It is derived from the work by [Matt McCutchen](https://mattmccutchen.net/bigint/), and changed the licesne to APACHE-2.0.
+
+Only C++11 support has been added to the original work. 
+In case you only need to use BigInteger in Qt/C++ application, 
+you may just include all the *.cc files from this project.
 
 Installation
 ============
