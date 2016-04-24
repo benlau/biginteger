@@ -17,6 +17,9 @@ private Q_SLOTS:
     void basicCalculation();
 
     void pow();
+
+    void gcd();
+    void gcd_data();
 };
 
 #endif // BIGINTEGERUNITTESTS_H

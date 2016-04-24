@@ -79,3 +79,37 @@ void BigIntegerUnitTests::pow()
     QVERIFY(result == "647225717667958234512676373328684966608135637121798638546825574314018838197362232702277832316406382792759851833889013515631314023038087");
 
 }
+
+void BigIntegerUnitTests::gcd()
+{
+    QFETCH(QString, a);
+    QFETCH(QString, b);
+    QFETCH(QString, c);
+
+    BigInteger bigA, bigB, bigC;
+
+    bigA = stringToBigInteger(a.toStdString());
+    bigB = stringToBigInteger(b.toStdString());
+
+    bigC = BigIntegerMath::gcd(bigA, bigB);
+    QString result = QString::fromStdString(bigIntegerToString(bigC));
+
+    if (c != result) {
+        qDebug() << "Expected: " << c;
+        qDebug() << "Actual: " << result;
+    }
+    QVERIFY(c == result);
+}
+
+void BigIntegerUnitTests::gcd_data()
+{
+    QTest::addColumn<QString>("a");
+    QTest::addColumn<QString>("b");
+    QTest::addColumn<QString>("c");
+
+    QTest::newRow("") << "7" << "3" << "1";
+
+    QTest::newRow("") << "99999" << "100002" << "3";
+    QTest::newRow("") << "100002" << "99999" << "3";
+
+}
