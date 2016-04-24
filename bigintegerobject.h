@@ -1,6 +1,8 @@
 #pragma once
 #include <QObject>
 
+// QML Wrapper Object for BigInteger manipulation
+
 class BigIntegerObject : public QObject
 {
     Q_OBJECT

@@ -15,6 +15,8 @@ private Q_SLOTS:
     void cleanupTestCase();
 
     void basicCalculation();
+
+    void pow();
 };
 
 #endif // BIGINTEGERUNITTESTS_H
