@@ -20,6 +20,10 @@ private Q_SLOTS:
 
     void gcd();
     void gcd_data();
+
+    void fraction();
+    void fraction_data();
+
 };
 
 #endif // BIGINTEGERUNITTESTS_H

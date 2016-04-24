@@ -108,8 +108,44 @@ void BigIntegerUnitTests::gcd_data()
     QTest::addColumn<QString>("c");
 
     QTest::newRow("") << "7" << "3" << "1";
+    QTest::newRow("") << "-7" << "3" << "1";
 
     QTest::newRow("") << "99999" << "100002" << "3";
     QTest::newRow("") << "100002" << "99999" << "3";
 
+}
+
+void BigIntegerUnitTests::fraction()
+{
+    QFETCH(qreal, decimal);
+    QFETCH(QString, numerator);
+    QFETCH(QString, denominator);
+
+    BigInteger bigN(1), bigD(1);
+
+    BigIntegerMath::fraction(decimal, bigN, bigD);
+
+    QString rN, rD;
+
+    rN = QString::fromStdString(bigIntegerToString(bigN));
+    rD = QString::fromStdString(bigIntegerToString(bigD));
+
+    if (rN != numerator) {
+        qDebug() << "Different:" << rN << numerator;
+    }
+    QVERIFY(rN == numerator);
+    QVERIFY(rD == denominator);
+}
+
+void BigIntegerUnitTests::fraction_data()
+{
+    QTest::addColumn<qreal>("decimal");
+    QTest::addColumn<QString>("numerator");
+    QTest::addColumn<QString>("denominator");
+
+    QTest::newRow("") << 125.0 << "125" << "1";
+    QTest::newRow("") << 0.125 << "1" << "8";
+    QTest::newRow("") << 1.07 << "107" << "100";
+    QTest::newRow("") << -1.07 << "-107" << "100";
+    QTest::newRow("") << 0.0 << "0" << "1";
 }

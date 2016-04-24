@@ -1,5 +1,11 @@
+#include <QRegExp>
+#include <QtCore>
+#include <QString>
+#include <QRegExp>
+#include <QRegularExpressionMatch>
+#include <QRegularExpression>
 #include "bigintegermath.h"
-
+#include "BigIntegerUtils.hh"
 
 BigInteger BigIntegerMath::pow(const BigInteger &base, int exponent)
 {
@@ -30,8 +36,7 @@ BigInteger BigIntegerMath::pow(const BigInteger &base, int exponent)
     return result;
 }
 
-BigInteger BigIntegerMath::gcd(const BigInteger &a, const BigInteger &b)
-{
+static BigInteger _gcd(const BigInteger &a, const BigInteger &b) {
     if (a == 0) {
         return b;
     }
@@ -41,8 +46,57 @@ BigInteger BigIntegerMath::gcd(const BigInteger &a, const BigInteger &b)
     }
 
     if (a > b) {
-        return gcd(b , a % b);
+        return _gcd(b , a % b);
     } else {
-        return gcd(a , b % a);
+        return _gcd(a , b % a);
     }
+}
+
+BigInteger BigIntegerMath::gcd(const BigInteger &a, const BigInteger &b)
+{
+    BigInteger v1,v2;
+    v1 = a;
+    v2 = b;
+    if (v1 < 0) {
+        v1 = -v1;
+    }
+    if (v2 < 0) {
+        v2 = -v2;
+    }
+
+    return _gcd(v1,v2);
+}
+
+void BigIntegerMath::fraction(double input, BigInteger &numerator, BigInteger &denominator)
+{
+    static QRegularExpression re("\\.[0-9]+$");
+
+    QString str = QString::number(input);
+
+    QRegularExpressionMatch matcher;
+
+    str.indexOf(re, 0, &matcher);
+
+    if (!matcher.hasMatch()) {
+        numerator = qRound(input);
+        denominator = 1;
+    } else {
+
+        QString decimal = str.mid(matcher.capturedStart() + 1, matcher.capturedEnd());
+        QString integerPart = str.mid(0, matcher.capturedStart());
+        denominator = pow(BigInteger(10), decimal.size());
+
+        for (int i = 0 ; i < decimal.size() ; i++) {
+            integerPart += decimal.at(i);
+        }
+
+        numerator = stringToBigInteger(integerPart.toStdString());
+    }
+
+    BigInteger factor = gcd(numerator, denominator);
+    if (factor != 1) {
+        numerator /= factor;
+        denominator /= factor;
+    }
+
 }
