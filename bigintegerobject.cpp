@@ -1,15 +1,15 @@
 #include <QQmlEngine>
 #include <QtQml>
 #include "BigInteger.hh"
-#include "bigintegerwrapper.h"
+#include "bigintegerobject.h"
 #include "BigIntegerUtils.hh"
 
-BigIntegerWrapper::BigIntegerWrapper(QObject *parent) : QObject(parent)
+BigIntegerObject::BigIntegerObject(QObject *parent) : QObject(parent)
 {
 
 }
 
-QString BigIntegerWrapper::add(const QString &a, const QString &b) const
+QString BigIntegerObject::add(const QString &a, const QString &b) const
 {
     BigInteger v1,v2,r;
 
@@ -20,7 +20,7 @@ QString BigIntegerWrapper::add(const QString &a, const QString &b) const
     return QString::fromStdString(bigIntegerToString(r));
 }
 
-QString BigIntegerWrapper::minus(const QString &a, const QString &b) const
+QString BigIntegerObject::minus(const QString &a, const QString &b) const
 {
     BigInteger v1,v2,r;
 
@@ -31,7 +31,7 @@ QString BigIntegerWrapper::minus(const QString &a, const QString &b) const
     return QString::fromStdString(bigIntegerToString(r));
 }
 
-QString BigIntegerWrapper::divide(const QString &a, const QString &b) const
+QString BigIntegerObject::divide(const QString &a, const QString &b) const
 {
     BigInteger v1,v2,r;
 
@@ -42,7 +42,7 @@ QString BigIntegerWrapper::divide(const QString &a, const QString &b) const
     return QString::fromStdString(bigIntegerToString(r));
 }
 
-QString BigIntegerWrapper::abs(const QString &value) const
+QString BigIntegerObject::abs(const QString &value) const
 {
     if (isNegative(value)) {
         BigInteger v = stringToBigInteger(value.toStdString());
@@ -53,12 +53,12 @@ QString BigIntegerWrapper::abs(const QString &value) const
     }
 }
 
-bool BigIntegerWrapper::isNegative(const QString &value) const
+bool BigIntegerObject::isNegative(const QString &value) const
 {
     return value.size() > 0 && value[0] == QChar('-');
 }
 
-int BigIntegerWrapper::compare(const QString &a, const QString &b) const
+int BigIntegerObject::compare(const QString &a, const QString &b) const
 {
     BigInteger v1,v2;
 
@@ -68,7 +68,7 @@ int BigIntegerWrapper::compare(const QString &a, const QString &b) const
     return v1.compareTo(v2);
 }
 
-bool BigIntegerWrapper::greater(const QString &a, const QString &b) const
+bool BigIntegerObject::greater(const QString &a, const QString &b) const
 {
     BigInteger v1,v2;
 
@@ -78,7 +78,7 @@ bool BigIntegerWrapper::greater(const QString &a, const QString &b) const
     return v1 > v2;
 }
 
-bool BigIntegerWrapper::greaterOrEquals(const QString &a, const QString &b) const
+bool BigIntegerObject::greaterOrEquals(const QString &a, const QString &b) const
 {
     BigInteger v1,v2;
 
@@ -88,7 +88,7 @@ bool BigIntegerWrapper::greaterOrEquals(const QString &a, const QString &b) cons
     return v1 >= v2;
 }
 
-bool BigIntegerWrapper::lesser(const QString &a, const QString &b) const
+bool BigIntegerObject::lesser(const QString &a, const QString &b) const
 {
     BigInteger v1,v2;
 
@@ -98,7 +98,7 @@ bool BigIntegerWrapper::lesser(const QString &a, const QString &b) const
     return v1 < v2;
 }
 
-bool BigIntegerWrapper::lesserOrEquals(const QString &a, const QString &b) const
+bool BigIntegerObject::lesserOrEquals(const QString &a, const QString &b) const
 {
     BigInteger v1,v2;
 
@@ -108,12 +108,12 @@ bool BigIntegerWrapper::lesserOrEquals(const QString &a, const QString &b) const
     return v1 <= v2;
 }
 
-bool BigIntegerWrapper::equals(const QString &a, const QString &b) const
+bool BigIntegerObject::equals(const QString &a, const QString &b) const
 {
     return a == b;
 }
 
-QString BigIntegerWrapper::multiply(const QString &a, const QString &b) const
+QString BigIntegerObject::multiply(const QString &a, const QString &b) const
 {
     BigInteger v1,v2,r;
 
@@ -129,14 +129,14 @@ static QObject *provider(QQmlEngine *engine, QJSEngine *scriptEngine) {
     Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);
 
-    BigIntegerWrapper* object = new BigIntegerWrapper();
+    BigIntegerObject* object = new BigIntegerObject();
     return object;
 }
 
 class BigIntegerWrapperRegistrationHelper {
 public:
     BigIntegerWrapperRegistrationHelper() {
-        qmlRegisterSingletonType<BigIntegerWrapper>("BigInteger", 1, 0, "BigInteger", provider);
+        qmlRegisterSingletonType<BigIntegerObject>("BigInteger", 1, 0, "BigInteger", provider);
     }
 };
 

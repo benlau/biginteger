@@ -8,7 +8,7 @@ HEADERS += \
     $$PWD/BigUnsigned.hh \
     $$PWD/BigUnsignedInABase.hh \
     $$PWD/NumberlikeArray.hh \
-    $$PWD/bigintegerwrapper.h
+    $$PWD/bigintegerobject.h
 
 SOURCES += \
     $$PWD/BigInteger.cc \
@@ -16,4 +16,4 @@ SOURCES += \
     $$PWD/BigIntegerUtils.cc \
     $$PWD/BigUnsigned.cc \
     $$PWD/BigUnsignedInABase.cc \
-    $$PWD/bigintegerwrapper.cpp
+    $$PWD/bigintegerobject.cpp

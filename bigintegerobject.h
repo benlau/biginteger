@@ -1,13 +1,11 @@
-#ifndef BIGINTEGERWRAPPER_H
-#define BIGINTEGERWRAPPER_H
-
+#pragma once
 #include <QObject>
 
-class BigIntegerWrapper : public QObject
+class BigIntegerObject : public QObject
 {
     Q_OBJECT
 public:
-    explicit BigIntegerWrapper(QObject *parent = 0);
+    explicit BigIntegerObject(QObject *parent = 0);
 
 signals:
 
@@ -39,4 +37,3 @@ public slots:
 
 };
 
-#endif // BIGINTEGERWRAPPER_H
