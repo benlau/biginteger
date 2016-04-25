@@ -16,6 +16,8 @@ public slots:
 
     QString multiply(const QString& a, const QString& b) const;
 
+    QString multiply(const QString&a , const QStringList& fraction) const;
+
     QString add(const QString& a, const QString& b) const;
 
     QString minus(const QString& a, const QString& b) const;

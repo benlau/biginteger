@@ -7,6 +7,7 @@ TestCase {
 
     function test_multiply() {
         compare(BigInteger.multiply("3141592653589793238462643383279","3141592653589793238462643383279"), "9869604401089358618834490999872991420714831834895839696791841");
+        compare(BigInteger.multiply("134",[ "5", "7"]), "95");
     }
 
     function test_divide() {

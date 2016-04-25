@@ -162,6 +162,24 @@ QString BigIntegerObject::multiply(const QString &a, const QString &b) const
     return QString::fromStdString(bigIntegerToString(r));
 }
 
+QString BigIntegerObject::multiply(const QString &a, const QStringList &fraction) const
+{
+    if (fraction.size() != 2) {
+        qWarning() << "BigInteger::multiply(a, fraction) - Invalid fraction";
+        return a;
+    }
+
+    BigInteger numerator,denominator,value;
+
+    value = stringToBigInteger(a.toStdString());
+    numerator = stringToBigInteger(fraction.at(0).toStdString());
+    denominator = stringToBigInteger(fraction.at(1).toStdString());
+
+    value *= numerator;
+    value /= denominator;
+
+    return QString::fromStdString(bigIntegerToString(value));
+}
 
 static QObject *provider(QQmlEngine *engine, QJSEngine *scriptEngine) {
     Q_UNUSED(engine);
