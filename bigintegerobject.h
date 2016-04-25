@@ -1,5 +1,6 @@
 #pragma once
 #include <QObject>
+#include <QJSValue>
 
 // QML Wrapper Object for BigInteger manipulation
 
@@ -36,6 +37,12 @@ public slots:
     bool lesserOrEquals(const QString& a, const QString& b) const;
 
     bool equals(const QString& a, const QString& b) const;
+
+    QStringList fraction(qreal input) const;
+
+    QString gcd(const QString& a, const QString& b) const;
+
+    QString pow(const QString& a, int b) const;
 
 };
 

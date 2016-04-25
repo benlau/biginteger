@@ -38,4 +38,16 @@ TestCase {
         compare(BigInteger.abs("12312312381723121231231233") , "12312312381723121231231233");
     }
 
+    function test_gcd() {
+        compare(BigInteger.gcd("-7","3") , "1");
+    }
+
+    function test_pow() {
+        compare(BigInteger.pow("23","99") , "647225717667958234512676373328684966608135637121798638546825574314018838197362232702277832316406382792759851833889013515631314023038087");
+    }
+
+    function test_fraction() {
+        compare(BigInteger.fraction("0.125") , ["1","8"]);
+    }
+
 }
