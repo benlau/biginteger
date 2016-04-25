@@ -44,5 +44,10 @@ bool BigInteger.lesserOrEquals(string a, string b)
 
 bool BigInteger.equals(string a, string b)
 
+array fraction(qreal input)
+
+string gcd(string a, string b)
+
+string pow(string a, int b)
 
 

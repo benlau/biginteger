@@ -25,4 +25,5 @@ HEADERS += \
     bigintegerunittests.h
 
 DISTFILES += \
-    qml/tst_calculation.qml
+    qml/tst_calculation.qml \
+    ../../README.md
