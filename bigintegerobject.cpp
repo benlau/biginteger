@@ -198,6 +198,23 @@ QString BigIntegerObject::multiply(const QString &a, qreal b) const
     return res;
 }
 
+QString BigIntegerObject::multiply(const QString &a, QJSValue value) const
+{
+    if (value.isString()) {
+        return multiply(a, value.toString());
+    } else if (value.isNumber()) {
+        return multiply(a, value.toNumber());
+    } else if (value.isArray() || value.isObject()) {
+        QStringList fraction;
+        fraction << value.property(0).toString()
+                 << value.property(1).toString();
+        return multiply(a, fraction);
+    } else {
+        qWarning() << "BigIntegerObject::multiply() - unsupported data type";
+        return "NaN";
+    }
+}
+
 static QObject *provider(QQmlEngine *engine, QJSEngine *scriptEngine) {
     Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);

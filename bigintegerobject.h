@@ -10,15 +10,16 @@ class BigIntegerObject : public QObject
 public:
     explicit BigIntegerObject(QObject *parent = 0);
 
-signals:
-
-public slots:
-
     QString multiply(const QString& a, const QString& b) const;
 
     QString multiply(const QString&a , const QStringList& fraction) const;
 
     QString multiply(const QString& a, qreal b) const;
+
+signals:
+
+public slots:
+    QString multiply(const QString& a, QJSValue value) const;
 
     QString add(const QString& a, const QString& b) const;
 

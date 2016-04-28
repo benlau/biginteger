@@ -11,6 +11,7 @@ TestCase {
         compare(BigInteger.multiply("134", 0.714285 ), "95");
         compare(BigInteger.multiply("10", [8,10]), "8");
         compare(BigInteger.multiply("10", 0.8 ), "8");
+        compare(BigInteger.multiply("10", BigInteger.fraction(0.8) ), "8");
     }
 
     function test_divide() {
