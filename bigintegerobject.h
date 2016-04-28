@@ -1,6 +1,7 @@
 #pragma once
 #include <QObject>
 #include <QJSValue>
+#include "BigInteger.hh"
 
 // QML Wrapper Object for BigInteger manipulation
 
@@ -50,3 +51,4 @@ public slots:
 
 };
 
+QDebug operator<< (QDebug d, const BigInteger &bigInteger);
