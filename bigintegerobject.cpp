@@ -214,10 +214,3 @@ public:
 };
 
 static BigIntegerWrapperRegistrationHelper registerHelper;
-
-QDebug operator<<(QDebug d, const BigInteger &bigInteger)
-{
-    d << QString::fromStdString(bigIntegerToString(bigInteger));
-
-    return d;
-}

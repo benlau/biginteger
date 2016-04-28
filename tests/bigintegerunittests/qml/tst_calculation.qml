@@ -9,6 +9,8 @@ TestCase {
         compare(BigInteger.multiply("3141592653589793238462643383279","3141592653589793238462643383279"), "9869604401089358618834490999872991420714831834895839696791841");
         compare(BigInteger.multiply("134",[ "5", "7"]), "95");
         compare(BigInteger.multiply("134", 0.714285 ), "95");
+        compare(BigInteger.multiply("10", [8,10]), "8");
+        compare(BigInteger.multiply("10", 0.8 ), "8");
     }
 
     function test_divide() {
@@ -50,6 +52,8 @@ TestCase {
 
     function test_fraction() {
         compare(BigInteger.fraction("0.125") , ["1","8"]);
+        compare(BigInteger.fraction("0.8") , ["4","5"]);
+
     }
 
 }

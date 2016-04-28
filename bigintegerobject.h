@@ -1,7 +1,6 @@
 #pragma once
 #include <QObject>
 #include <QJSValue>
-#include "BigInteger.hh"
 
 // QML Wrapper Object for BigInteger manipulation
 
@@ -50,5 +49,3 @@ public slots:
     QString pow(const QString& a, int b) const;
 
 };
-
-QDebug operator<< (QDebug d, const BigInteger &bigInteger);

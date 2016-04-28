@@ -1,6 +1,7 @@
 #ifndef BIGINTEGERMATH_H
 #define BIGINTEGERMATH_H
 
+#include <QtCore>
 #include "BigInteger.hh"
 
 /// Math utility
@@ -15,5 +16,7 @@ public:
 
     static void fraction(double decimal, BigInteger& numerator, BigInteger& denominator);
 };
+
+QDebug operator<< (QDebug d, const BigInteger &bigInteger);
 
 #endif // BIGINTEGERMATH_H

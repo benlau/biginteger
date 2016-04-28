@@ -78,6 +78,12 @@ void BigIntegerUnitTests::pow()
     result = QString::fromStdString(bigIntegerToString(c));
     QVERIFY(result == "647225717667958234512676373328684966608135637121798638546825574314018838197362232702277832316406382792759851833889013515631314023038087");
 
+    a = 10;
+    b = 1;
+    c = BigIntegerMath::pow(a, b);
+    result = QString::fromStdString(bigIntegerToString(c));
+    QVERIFY(result == "10");
+
 }
 
 void BigIntegerUnitTests::gcd()
@@ -148,4 +154,6 @@ void BigIntegerUnitTests::fraction_data()
     QTest::newRow("") << 1.07 << "107" << "100";
     QTest::newRow("") << -1.07 << "-107" << "100";
     QTest::newRow("") << 0.0 << "0" << "1";
+    QTest::newRow("") << 0.8 << "4" << "5";
+
 }

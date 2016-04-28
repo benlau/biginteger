@@ -11,10 +11,12 @@ BigInteger BigIntegerMath::pow(const BigInteger &base, int exponent)
 {
     BigInteger result;
 
-    if (exponent <= 1) {
+    if (exponent < 1) {
         // It don't support floating point
         result = 1;
         return result;
+    } else if (exponent == 1) {
+        return base;
     }
 
     BigInteger x = base;
@@ -86,6 +88,10 @@ void BigIntegerMath::fraction(double input, BigInteger &numerator, BigInteger &d
         QString integerPart = str.mid(0, matcher.capturedStart());
         denominator = pow(BigInteger(10), decimal.size());
 
+        if (integerPart == "0") {
+            integerPart = "";
+        }
+
         for (int i = 0 ; i < decimal.size() ; i++) {
             integerPart += decimal.at(i);
         }
@@ -99,4 +105,12 @@ void BigIntegerMath::fraction(double input, BigInteger &numerator, BigInteger &d
         denominator /= factor;
     }
 
+}
+
+
+QDebug operator<<(QDebug d, const BigInteger &bigInteger)
+{
+    d << QString::fromStdString(bigIntegerToString(bigInteger));
+
+    return d;
 }
