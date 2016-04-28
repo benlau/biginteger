@@ -181,6 +181,23 @@ QString BigIntegerObject::multiply(const QString &a, const QStringList &fraction
     return QString::fromStdString(bigIntegerToString(value));
 }
 
+QString BigIntegerObject::multiply(const QString &a, qreal b) const
+{
+    BigInteger numerator, denominator,v;
+    QString res;
+
+    BigIntegerMath::fraction(b,numerator, denominator);
+
+    v = stringToBigInteger(a.toStdString());
+
+    v *= numerator;
+    v /= denominator;
+
+    res = QString::fromStdString(bigIntegerToString(v));
+
+    return res;
+}
+
 static QObject *provider(QQmlEngine *engine, QJSEngine *scriptEngine) {
     Q_UNUSED(engine);
     Q_UNUSED(scriptEngine);

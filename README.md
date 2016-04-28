@@ -23,7 +23,10 @@ import BigInteger 1.0
 string BigInteger.add(string a, string b)
 
 string BigInteger.multiply(string a, string b)
+
 string BigInteger.multiply(string a, stringlist fraction)
+
+string BigInteger.multiply(string a, real b)
 
 string BigInteger.minus(string a, string b)
 
