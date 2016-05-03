@@ -14,6 +14,8 @@ private Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 
+    void qvariant();
+
     void basicCalculation();
 
     void pow();

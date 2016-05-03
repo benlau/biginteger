@@ -17,6 +17,19 @@ void BigIntegerUnitTests::cleanupTestCase()
 {
 }
 
+void BigIntegerUnitTests::qvariant()
+{
+    BigInteger a(100),b;
+    QVariant v = QVariant::fromValue<BigInteger>(a);
+
+    QVERIFY(a != b);
+    QVERIFY(a == 100);
+    b = v.value<BigInteger>();
+
+    QVERIFY(a == b);
+
+}
+
 void BigIntegerUnitTests::basicCalculation()
 {
     BigInteger a,b,c;

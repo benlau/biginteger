@@ -19,4 +19,6 @@ public:
 
 QDebug operator<< (QDebug d, const BigInteger &bigInteger);
 
+Q_DECLARE_METATYPE(BigInteger)
+
 #endif // BIGINTEGERMATH_H
