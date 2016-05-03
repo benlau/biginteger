@@ -290,6 +290,14 @@ bool BigIntegerObject::_equals(QJSValue a, QJSValue b)
     return v1 == v2;
 }
 
+QString BigIntegerObject::_toString(QJSValue a)
+{
+    BigInteger v;
+    v = toBigInteger(a);
+
+    return QString::fromStdString(bigIntegerToString(v));
+}
+
 QString BigIntegerObject::multiply(const QString &a, QJSValue value) const
 {
     if (value.isString()) {

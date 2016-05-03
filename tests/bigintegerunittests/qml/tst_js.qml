@@ -10,6 +10,10 @@ TestCase {
         var b = BigInteger.create("1000");
         var c = BigInteger.create();
 
+        compare(a.toString(), "1000");
+        compare(b.toString(), "1000");
+        compare(c.toString(), "0");
+
         compare(a.equals(b), true);
         compare(b.equals(c), false);
     }

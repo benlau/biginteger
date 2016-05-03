@@ -9,6 +9,10 @@ BigInteger.prototype.equals = function(other) {
     return BI.BigInteger._equals(this.value, other.value);
 }
 
+BigInteger.prototype.toString = function() {
+    return BI.BigInteger._toString(this.value);
+}
+
 function create(value) {
     return new BigInteger(value);
 }

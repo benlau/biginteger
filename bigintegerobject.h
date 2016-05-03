@@ -33,6 +33,8 @@ public slots:
 
     bool _equals(QJSValue a, QJSValue b);
 
+    QString _toString(QJSValue a);
+
     /* Old String based API */
 
     QString multiply(const QString& a, QJSValue value) const;
