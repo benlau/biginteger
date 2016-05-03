@@ -1,6 +1,8 @@
 #pragma once
 #include <QObject>
 #include <QJSValue>
+#include <QVariant>
+#include <QQmlEngine>
 
 // QML Wrapper Object for BigInteger manipulation
 
@@ -16,9 +18,23 @@ public:
 
     QString multiply(const QString& a, qreal b) const;
 
+    QQmlEngine *engine() const;
+
+    void setEngine(QQmlEngine *engine);
+
 signals:
 
 public slots:
+    QJSValue create();
+
+    QJSValue create(QJSValue value);
+
+    QVariant _createValue(QJSValue value);
+
+    bool _equals(QJSValue a, QJSValue b);
+
+    /* Old String based API */
+
     QString multiply(const QString& a, QJSValue value) const;
 
     QString add(const QString& a, const QString& b) const;
@@ -49,4 +65,7 @@ public slots:
 
     QString pow(const QString& a, int b) const;
 
+private:
+    QQmlEngine* m_engine;
+    QJSValue creator;
 };

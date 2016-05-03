@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/BigInteger">
+        <file>js/biginteger.js</file>
+    </qresource>
+</RCC>

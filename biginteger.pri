@@ -19,3 +19,6 @@ SOURCES += \
     $$PWD/BigUnsignedInABase.cc \
     $$PWD/bigintegerobject.cpp \
     $$PWD/bigintegermath.cpp
+
+RESOURCES += \
+    $$PWD/biginteger.qrc

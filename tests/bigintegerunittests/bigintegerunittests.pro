@@ -26,4 +26,5 @@ HEADERS += \
 
 DISTFILES += \
     qml/tst_calculation.qml \
-    ../../README.md
+    ../../README.md \
+    qml/tst_js.qml
