@@ -1,6 +1,6 @@
 import QtQuick 2.0
 import QtTest 1.0
-import BigInteger 1.0
+import BigInteger 2.0
 
 TestCase {
     name: "JsTests"
@@ -25,7 +25,7 @@ TestCase {
         compare(BigInteger.create("10").multiply([8,10]).equals("8"), true);
         compare(BigInteger.create("10").multiply(0.8).equals("8"), true);
         //@TODO implmenet fraction
-        compare(BigInteger.multiply("10", BigInteger.fraction(0.8) ), "8");
+//        compare(BigInteger.multiply("10", BigInteger.fraction(0.8) ), "8");
     }
 
     /*

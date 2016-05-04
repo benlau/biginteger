@@ -1,5 +1,5 @@
 .pragma library
-.import BigInteger 1.0 as BI
+.import BigInteger 2.0 as BI
 
 function BigInteger(value) {
 }

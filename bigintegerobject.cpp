@@ -6,55 +6,8 @@
 #include "bigintegermath.h"
 
 // Copy from QuickCross project
-static QJSValue loadJavascript(QQmlEngine *engine, const QString &url, const QString &member)
-{
-
-    QString pattern  = "import QtQuick 2.0\nimport \"%1\" as JSObject;QtObject { property var object : JSObject.%2}";
-
-    QString qml = pattern.arg(url).arg(member);
-
-    QObject* holder = 0;
-
-    QQmlComponent comp (engine);
-    comp.setData(qml.toUtf8(),QUrl());
-    holder = comp.create();
-
-    if (!holder) {
-        qWarning() << QString("QuickCross: Failed to load Javscript: %1").arg(url);
-        qWarning() << QString("Error: ") << comp.errorString();
-        return 0;
-    }
-
-    QJSValue object = holder->property("object").value<QJSValue>();
-    holder->deleteLater();
-
-    if (object.isError()) {
-        qWarning() << QString("QuickCross: Failed to load Javascript: %1").arg(url);
-        qWarning() << object.toString();
-    }
-
-    return object;
-}
-
-static BigInteger toBigInteger(QJSValue value) {
-    BigInteger a;
-
-    if (value.isString()) {
-        a = stringToBigInteger(value.toString().toStdString());
-    } else if (value.isNumber()) {
-        a = BigInteger((int) value.toNumber());
-    } else if (value.hasOwnProperty("value")) {
-        a = value.property("value").toVariant().value<BigInteger>();
-    } else {
-        a = value.toVariant().value<BigInteger>();
-    }
-
-    return a;
-}
-
 BigIntegerObject::BigIntegerObject(QObject *parent) : QObject(parent)
 {
-    m_engine = 0;
 }
 
 QString BigIntegerObject::add(const QString &a, const QString &b) const
@@ -198,61 +151,6 @@ QString BigIntegerObject::pow(const QString &a, int b) const
 
 }
 
-QQmlEngine *BigIntegerObject::engine() const
-{
-    return m_engine;
-}
-
-void BigIntegerObject::setEngine(QQmlEngine *engine)
-{
-    m_engine = engine;
-
-    if (!m_engine) {
-        return;
-    }
-
-    creator = loadJavascript(m_engine, "qrc:///BigInteger/js/biginteger.js","create");
-}
-
-QJSValue BigIntegerObject::create()
-{
-    QJSValueList args;
-
-    return creator.call(args);
-}
-
-QJSValue BigIntegerObject::_multiply(QJSValue a, QJSValue value) const
-{
-    BigInteger v1,v2;
-    v1 = toBigInteger(a);
-
-    if (value.isArray()) {
-        BigInteger numerator,denominator;
-        numerator = toBigInteger(value.property("0"));
-        denominator = toBigInteger(value.property("1"));
-        v1 = v1 * numerator / denominator;
-
-    } else if (value.isNumber()) {
-
-        BigInteger numerator,denominator;
-        BigIntegerMath::fraction(value.toNumber(),numerator, denominator);
-        v1 = v1 * numerator / denominator;
-
-    } else {
-        v2 = toBigInteger(value);
-        v1 *= v2;
-    }
-
-    return m_engine->toScriptValue<BigInteger>(v1);
-}
-
-QJSValue BigIntegerObject::create(QJSValue value)
-{
-    QJSValueList args;
-    args << value;
-
-    return creator.call(args);
-}
 
 QString BigIntegerObject::multiply(const QString &a, const QString &b) const
 {
@@ -301,36 +199,6 @@ QString BigIntegerObject::multiply(const QString &a, qreal b) const
     return res;
 }
 
-QVariant BigIntegerObject::_createValue(QJSValue value) const
-{
-    BigInteger integer;
-
-    if (value.isString()) {
-        integer = stringToBigInteger(value.toString().toStdString());
-    } else if (value.isNumber()) {
-        integer = BigInteger((int) value.toNumber());
-    }
-
-    return QVariant::fromValue<BigInteger>(integer);
-}
-
-bool BigIntegerObject::_equals(QJSValue a, QJSValue b) const
-{
-    BigInteger v1,v2;
-    v1 = toBigInteger(a);
-    v2 = toBigInteger(b);
-
-    return v1 == v2;
-}
-
-QString BigIntegerObject::_toString(QJSValue a) const
-{
-    BigInteger v;
-    v = toBigInteger(a);
-
-    return QString::fromStdString(bigIntegerToString(v));
-}
-
 QString BigIntegerObject::multiply(const QString &a, QJSValue value) const
 {
     if (value.isString()) {
@@ -348,20 +216,3 @@ QString BigIntegerObject::multiply(const QString &a, QJSValue value) const
     }
 }
 
-static QObject *provider(QQmlEngine *engine, QJSEngine *scriptEngine) {
-    Q_UNUSED(engine);
-    Q_UNUSED(scriptEngine);
-
-    BigIntegerObject* object = new BigIntegerObject();
-    object->setEngine(engine);
-    return object;
-}
-
-class BigIntegerWrapperRegistrationHelper {
-public:
-    BigIntegerWrapperRegistrationHelper() {
-        qmlRegisterSingletonType<BigIntegerObject>("BigInteger", 1, 0, "BigInteger", provider);
-    }
-};
-
-static BigIntegerWrapperRegistrationHelper registerHelper;
