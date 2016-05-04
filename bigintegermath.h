@@ -14,7 +14,10 @@ public:
 
     static BigInteger gcd(const BigInteger &a,const BigInteger &b);
 
-    static void fraction(double decimal, BigInteger& numerator, BigInteger& denominator);
+    static void fraction(double decimal,
+                         BigInteger& numerator,
+                         BigInteger& denominator,
+                         bool normalize = true);
 };
 
 QDebug operator<< (QDebug d, const BigInteger &bigInteger);

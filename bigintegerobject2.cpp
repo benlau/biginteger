@@ -93,7 +93,9 @@ QJSValue BigIntegerObject2::_multiply(QJSValue a, QJSValue value) const
     } else if (value.isNumber()) {
 
         BigInteger numerator,denominator;
-        BigIntegerMath::fraction(value.toNumber(),numerator, denominator);
+
+        // Don't waste time to do normalization
+        BigIntegerMath::fraction(value.toNumber(),numerator, denominator, false);
         v1 = v1 * numerator / denominator;
 
     } else {
@@ -112,11 +114,11 @@ QJSValue BigIntegerObject2::create(QJSValue value)
     return creator.call(args);
 }
 
-QJSValue BigIntegerObject2::fraction(qreal input)
+QJSValue BigIntegerObject2::fraction(qreal input, bool normalize)
 {
     BigInteger numerator,denominator;
 
-    BigIntegerMath::fraction(input,numerator,denominator);
+    BigIntegerMath::fraction(input,numerator,denominator, normalize);
 
     QJSValue res = m_engine->newArray(2);
 

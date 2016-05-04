@@ -25,7 +25,7 @@ public slots:
 
     QJSValue create(QJSValue value);
 
-    QJSValue fraction(qreal input);
+    QJSValue fraction(qreal input, bool normalize = true);
 
     QVariant _createValue(QJSValue value) const;
 

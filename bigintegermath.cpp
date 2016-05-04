@@ -69,7 +69,7 @@ BigInteger BigIntegerMath::gcd(const BigInteger &a, const BigInteger &b)
     return _gcd(v1,v2);
 }
 
-void BigIntegerMath::fraction(double input, BigInteger &numerator, BigInteger &denominator)
+void BigIntegerMath::fraction(double input, BigInteger &numerator, BigInteger &denominator, bool normalize)
 {
     static QRegularExpression re("\\.[0-9]+$");
 
@@ -99,10 +99,12 @@ void BigIntegerMath::fraction(double input, BigInteger &numerator, BigInteger &d
         numerator = stringToBigInteger(integerPart.toStdString());
     }
 
-    BigInteger factor = gcd(numerator, denominator);
-    if (factor != 1) {
-        numerator /= factor;
-        denominator /= factor;
+    if (normalize) {
+        BigInteger factor = gcd(numerator, denominator);
+        if (factor != 1) {
+            numerator /= factor;
+            denominator /= factor;
+        }
     }
 
 }

@@ -75,10 +75,12 @@ TestCase {
         compare(f[1].equals("8"), true);
 
         f = BigInteger.fraction("0.8");
-
         compare(f[0].equals("4"), true);
         compare(f[1].equals("5"), true);
 
+        f = BigInteger.fraction("0.8", false);
+        compare(f[0].equals("8"), true);
+        compare(f[1].equals("10"), true);
     }
 
 }
