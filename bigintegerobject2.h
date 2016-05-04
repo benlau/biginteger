@@ -29,7 +29,7 @@ public slots:
 
     QVariant _createValue(QJSValue value) const;
 
-    bool _equals(QJSValue a, QJSValue b) const;
+    bool equals(QJSValue a, QJSValue b) const;
 
     QString _toString(QJSValue a) const;
 
@@ -38,6 +38,8 @@ public slots:
     QJSValue _divide(QJSValue a, QJSValue b) const;
 
     bool isNegative(QJSValue a) const;
+
+    int compare(QJSValue a, QJSValue b) const;
 
 private:
     QQmlEngine* m_engine;

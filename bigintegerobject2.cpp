@@ -125,6 +125,17 @@ bool BigIntegerObject2::isNegative(QJSValue a) const
     return (v1.getSign() == BigInteger::negative);
 }
 
+int BigIntegerObject2::compare(QJSValue a, QJSValue b) const
+{
+    BigInteger v1,v2;
+
+    v1 = toBigInteger(a);
+    v2 = toBigInteger(b);
+
+    return v1.compareTo(v2);
+
+}
+
 QJSValue BigIntegerObject2::create(QJSValue value)
 {
     QJSValueList args;
@@ -160,7 +171,7 @@ QVariant BigIntegerObject2::_createValue(QJSValue value) const
     return QVariant::fromValue<BigInteger>(integer);
 }
 
-bool BigIntegerObject2::_equals(QJSValue a, QJSValue b) const
+bool BigIntegerObject2::equals(QJSValue a, QJSValue b) const
 {
     BigInteger v1,v2;
     v1 = toBigInteger(a);

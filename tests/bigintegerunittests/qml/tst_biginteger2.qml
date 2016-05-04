@@ -36,21 +36,24 @@ TestCase {
         compare(BigInteger.create("-1231233141592653589793238462643383279").isNegative(), true);
     }
 
-    /*
     function test_compare() {
-        compare(BigInteger.compare("81723121231231233","123123123") , 1);
-        compare(BigInteger.greater("81723121231231233","123123123"), true);
-        compare(BigInteger.greaterOrEquals("81723121231231233","123123123"), true);
+        compare(BigInteger.create("81723121231231233").compare("123123123"), 1);
+        compare(BigInteger.create("81723121231231233").greater("123123123"), true);
+        compare(BigInteger.create("81723121231231233").greaterOrEquals("123123123"), true);
+        compare(BigInteger.create("81723121231231233").greaterOrEquals("81723121231231233"), true);
+        compare(BigInteger.create("81723121231231233").greaterOrEquals("81723121231231234"), false);
 
         compare(BigInteger.compare("123123123","81723121231231233") , -1);
-        compare(BigInteger.lesser("123123123","81723121231231233"), true);
-        compare(BigInteger.lesserOrEquals("123123123","81723121231231233"), true);
+        compare(BigInteger.create("123123123").lesser("81723121231231233"), true);
+        compare(BigInteger.create("123123123").lesserOrEquals("81723121231231233"), true);
 
         compare(BigInteger.compare("81723121231231233","81723121231231233") , 0);
         compare(BigInteger.equals("81723121231231233","81723121231231233") , true);
-        compare(BigInteger.lesserOrEquals("81723121231231233","81723121231231233") , true);
-        compare(BigInteger.greaterOrEquals("81723121231231233","81723121231231233") , true);
+        compare(BigInteger.create("81723121231231233").lesserOrEquals("81723121231231233") , true);
+        compare(BigInteger.create("81723121231231233").greaterOrEquals("81723121231231233"), true);
     }
+
+    /*
 
     function test_abs() {
         compare(BigInteger.abs("-12312312381723121231231233") , "12312312381723121231231233");

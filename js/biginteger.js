@@ -5,12 +5,7 @@ function BigInteger(value) {
 }
 
 BigInteger.prototype.equals = function(other) {
-    if (typeof other === "string") {
-        return BI.BigInteger._equals(this.value, other);
-    }
-
-    return BI.BigInteger._equals(this.value, other.value);
-
+    return BI.BigInteger.equals(this.value, other);
 }
 
 BigInteger.prototype.toString = function() {
@@ -35,6 +30,26 @@ BigInteger.prototype.divide = function(other) {
 
 BigInteger.prototype.isNegative = function() {
     return BI.BigInteger.isNegative(this);
+}
+
+BigInteger.prototype.compare = function(other) {
+    return BI.BigInteger.compare(this, other);
+}
+
+BigInteger.prototype.greater = function(other) {
+    return this.compare(other) > 0;
+}
+
+BigInteger.prototype.greaterOrEquals = function(other) {
+    return this.compare(other) >= 0;
+}
+
+BigInteger.prototype.lesser = function(other) {
+    return this.compare(other) < 0;
+}
+
+BigInteger.prototype.lesserOrEquals = function(other) {
+    return this.compare(other) <= 0;
 }
 
 function create(value) {
