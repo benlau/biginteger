@@ -18,18 +18,17 @@ TestCase {
         compare(b.equals(c), false);
     }
 
-    /*
     function test_multiply() {
-        var a = BigInteger.create();
-
         compare(BigInteger.create("3141592653589793238462643383279").multiply("3141592653589793238462643383279").equals("9869604401089358618834490999872991420714831834895839696791841"), true);
-        compare(BigInteger.multiply("134",[ "5", "7"]), "95");
-        compare(BigInteger.multiply("134", 0.714285 ), "95");
-        compare(BigInteger.multiply("10", [8,10]), "8");
-        compare(BigInteger.multiply("10", 0.8 ), "8");
+        compare(BigInteger.create("134").multiply([ "5", "7"]).equals("95"), true);
+        compare(BigInteger.create("134").multiply(0.714285).equals("95"), true);
+        compare(BigInteger.create("10").multiply([8,10]).equals("8"), true);
+        compare(BigInteger.create("10").multiply(0.8).equals("8"), true);
+        //@TODO implmenet fraction
         compare(BigInteger.multiply("10", BigInteger.fraction(0.8) ), "8");
     }
 
+    /*
     function test_divide() {
         compare(BigInteger.divide("1231233141592653589793238462643383279","9128391823091"), "134879523738031326302006");
     }

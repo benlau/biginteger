@@ -29,11 +29,13 @@ public slots:
 
     QJSValue create(QJSValue value);
 
-    QVariant _createValue(QJSValue value);
+    QVariant _createValue(QJSValue value) const;
 
-    bool _equals(QJSValue a, QJSValue b);
+    bool _equals(QJSValue a, QJSValue b) const;
 
-    QString _toString(QJSValue a);
+    QString _toString(QJSValue a) const;
+
+    QJSValue _multiply(QJSValue a, QJSValue value) const;
 
     /* Old String based API */
 

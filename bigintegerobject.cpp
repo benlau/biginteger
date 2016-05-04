@@ -36,10 +36,18 @@ static QJSValue loadJavascript(QQmlEngine *engine, const QString &url, const QSt
     return object;
 }
 
-static BigInteger toBigInteger(QJSValue& value) {
+static BigInteger toBigInteger(QJSValue value) {
     BigInteger a;
 
-    a = value.toVariant().value<BigInteger>();
+    if (value.isString()) {
+        a = stringToBigInteger(value.toString().toStdString());
+    } else if (value.isNumber()) {
+        a = BigInteger((int) value.toNumber());
+    } else if (value.hasOwnProperty("value")) {
+        a = value.property("value").toVariant().value<BigInteger>();
+    } else {
+        a = value.toVariant().value<BigInteger>();
+    }
 
     return a;
 }
@@ -213,6 +221,31 @@ QJSValue BigIntegerObject::create()
     return creator.call(args);
 }
 
+QJSValue BigIntegerObject::_multiply(QJSValue a, QJSValue value) const
+{
+    BigInteger v1,v2;
+    v1 = toBigInteger(a);
+
+    if (value.isArray()) {
+        BigInteger numerator,denominator;
+        numerator = toBigInteger(value.property("0"));
+        denominator = toBigInteger(value.property("1"));
+        v1 = v1 * numerator / denominator;
+
+    } else if (value.isNumber()) {
+
+        BigInteger numerator,denominator;
+        BigIntegerMath::fraction(value.toNumber(),numerator, denominator);
+        v1 = v1 * numerator / denominator;
+
+    } else {
+        v2 = toBigInteger(value);
+        v1 *= v2;
+    }
+
+    return m_engine->toScriptValue<BigInteger>(v1);
+}
+
 QJSValue BigIntegerObject::create(QJSValue value)
 {
     QJSValueList args;
@@ -268,7 +301,7 @@ QString BigIntegerObject::multiply(const QString &a, qreal b) const
     return res;
 }
 
-QVariant BigIntegerObject::_createValue(QJSValue value)
+QVariant BigIntegerObject::_createValue(QJSValue value) const
 {
     BigInteger integer;
 
@@ -281,7 +314,7 @@ QVariant BigIntegerObject::_createValue(QJSValue value)
     return QVariant::fromValue<BigInteger>(integer);
 }
 
-bool BigIntegerObject::_equals(QJSValue a, QJSValue b)
+bool BigIntegerObject::_equals(QJSValue a, QJSValue b) const
 {
     BigInteger v1,v2;
     v1 = toBigInteger(a);
@@ -290,7 +323,7 @@ bool BigIntegerObject::_equals(QJSValue a, QJSValue b)
     return v1 == v2;
 }
 
-QString BigIntegerObject::_toString(QJSValue a)
+QString BigIntegerObject::_toString(QJSValue a) const
 {
     BigInteger v;
     v = toBigInteger(a);

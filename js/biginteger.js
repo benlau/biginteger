@@ -2,17 +2,30 @@
 .import BigInteger 1.0 as BI
 
 function BigInteger(value) {
-    this.value = BI.BigInteger._createValue(value);
 }
 
 BigInteger.prototype.equals = function(other) {
+    if (typeof other === "string") {
+        return BI.BigInteger._equals(this.value, other);
+    }
+
     return BI.BigInteger._equals(this.value, other.value);
+
 }
 
 BigInteger.prototype.toString = function() {
     return BI.BigInteger._toString(this.value);
 }
 
+BigInteger.prototype.multiply = function(other) {
+    var ret = new BigInteger();
+
+    ret.value = BI.BigInteger._multiply(this.value, other);
+    return ret;
+}
+
 function create(value) {
-    return new BigInteger(value);
+    var ret = new BigInteger();
+    ret.value = BI.BigInteger._createValue(value);
+    return ret;
 }
