@@ -53,22 +53,19 @@ TestCase {
         compare(BigInteger.create("81723121231231233").greaterOrEquals("81723121231231233"), true);
     }
 
-    /*
-
     function test_abs() {
-        compare(BigInteger.abs("-12312312381723121231231233") , "12312312381723121231231233");
-        compare(BigInteger.abs("12312312381723121231231233") , "12312312381723121231231233");
+        compare(BigInteger.abs("-12312312381723121231231233").equals("12312312381723121231231233"), true);
+        compare(BigInteger.abs("12312312381723121231231233").equals("12312312381723121231231233"), true);
     }
 
     function test_gcd() {
-        compare(BigInteger.gcd("-7","3") , "1");
+        compare(BigInteger.gcd("-7","3").equals("1"), true);
+        compare(BigInteger.gcd("9","3").equals("3"), true);
     }
 
     function test_pow() {
-        compare(BigInteger.pow("23","99") , "647225717667958234512676373328684966608135637121798638546825574314018838197362232702277832316406382792759851833889013515631314023038087");
+        compare(BigInteger.pow("23","99").equals("647225717667958234512676373328684966608135637121798638546825574314018838197362232702277832316406382792759851833889013515631314023038087"), true);
     }
-
-    */
 
     function test_fraction() {
         var f = BigInteger.fraction("0.125");

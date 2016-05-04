@@ -41,6 +41,12 @@ public slots:
 
     int compare(QJSValue a, QJSValue b) const;
 
+    QJSValue abs(QJSValue a);
+
+    QJSValue gcd(QJSValue a, QJSValue b);
+
+    QJSValue pow(QJSValue base, int exponent);
+
 private:
     QQmlEngine* m_engine;
     QJSValue creator;

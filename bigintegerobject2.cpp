@@ -136,6 +136,41 @@ int BigIntegerObject2::compare(QJSValue a, QJSValue b) const
 
 }
 
+QJSValue BigIntegerObject2::abs(QJSValue a)
+{
+    BigInteger v1 = toBigInteger(a);
+    if (v1.getSign() == BigInteger::negative) {
+        v1.flipSign();
+    }
+
+    return create(m_engine->toScriptValue<BigInteger>(v1));
+}
+
+QJSValue BigIntegerObject2::gcd(QJSValue a, QJSValue b)
+{
+
+    BigInteger v1,v2,factor;
+
+    v1 = toBigInteger(a);
+    v2 = toBigInteger(b);
+
+    factor = BigIntegerMath::gcd(v1, v2);
+
+    return create(m_engine->toScriptValue<BigInteger>(factor));
+}
+
+QJSValue BigIntegerObject2::pow(QJSValue base, int exponent)
+{
+    BigInteger v1,res;
+
+    v1 = toBigInteger(base);
+
+    res = BigIntegerMath::pow(v1, exponent);
+
+    return create(m_engine->toScriptValue<BigInteger>(res));
+
+}
+
 QJSValue BigIntegerObject2::create(QJSValue value)
 {
     QJSValueList args;

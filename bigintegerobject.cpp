@@ -50,7 +50,7 @@ QString BigIntegerObject::abs(const QString &value) const
         v.flipSign();
         return QString::fromStdString(bigIntegerToString(v));
     } else {
-        return  value;
+        return value;
     }
 }
 
