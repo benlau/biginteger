@@ -26,6 +26,11 @@ BigInteger.prototype.multiply = function(other) {
 
 function create(value) {
     var ret = new BigInteger();
-    ret.value = BI.BigInteger._createValue(value);
+    if (typeof value === "string" ||
+        typeof value === "number") {
+        ret.value = BI.BigInteger._createValue(value);
+    } else {
+        ret.value = value;
+    }
     return ret;
 }

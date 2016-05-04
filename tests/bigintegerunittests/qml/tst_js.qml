@@ -66,11 +66,19 @@ TestCase {
         compare(BigInteger.pow("23","99") , "647225717667958234512676373328684966608135637121798638546825574314018838197362232702277832316406382792759851833889013515631314023038087");
     }
 
+    */
+
     function test_fraction() {
-        compare(BigInteger.fraction("0.125") , ["1","8"]);
-        compare(BigInteger.fraction("0.8") , ["4","5"]);
+        var f = BigInteger.fraction("0.125");
+
+        compare(f[0].equals("1"), true);
+        compare(f[1].equals("8"), true);
+
+        f = BigInteger.fraction("0.8");
+
+        compare(f[0].equals("4"), true);
+        compare(f[1].equals("5"), true);
 
     }
-    */
 
 }

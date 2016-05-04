@@ -25,6 +25,8 @@ public slots:
 
     QJSValue create(QJSValue value);
 
+    QJSValue fraction(qreal input);
+
     QVariant _createValue(QJSValue value) const;
 
     bool _equals(QJSValue a, QJSValue b) const;

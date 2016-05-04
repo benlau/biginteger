@@ -112,6 +112,20 @@ QJSValue BigIntegerObject2::create(QJSValue value)
     return creator.call(args);
 }
 
+QJSValue BigIntegerObject2::fraction(qreal input)
+{
+    BigInteger numerator,denominator;
+
+    BigIntegerMath::fraction(input,numerator,denominator);
+
+    QJSValue res = m_engine->newArray(2);
+
+    res.setProperty("0", create(m_engine->toScriptValue<BigInteger>(numerator)));
+    res.setProperty("1", create(m_engine->toScriptValue<BigInteger>(denominator)));
+
+    return res;
+}
+
 QVariant BigIntegerObject2::_createValue(QJSValue value) const
 {
     BigInteger integer;
