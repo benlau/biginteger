@@ -24,6 +24,19 @@ BigInteger.prototype.multiply = function(other) {
     return ret;
 }
 
+BigInteger.prototype.divide = function(other) {
+
+    var ret = new BigInteger();
+
+    ret.value = BI.BigInteger._divide(this.value, other);
+
+    return ret;
+}
+
+BigInteger.prototype.isNegative = function() {
+    return BI.BigInteger.isNegative(this);
+}
+
 function create(value) {
     var ret = new BigInteger();
     if (typeof value === "string" ||

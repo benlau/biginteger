@@ -106,6 +106,25 @@ QJSValue BigIntegerObject2::_multiply(QJSValue a, QJSValue value) const
     return m_engine->toScriptValue<BigInteger>(v1);
 }
 
+QJSValue BigIntegerObject2::_divide(QJSValue a, QJSValue b) const
+{
+    BigInteger v1,v2;
+    v1 = toBigInteger(a);
+    v2 = toBigInteger(b);
+
+    v1 /= v2;
+
+    return m_engine->toScriptValue<BigInteger>(v1);
+}
+
+bool BigIntegerObject2::isNegative(QJSValue a) const
+{
+    BigInteger v1;
+    v1 = toBigInteger(a);
+
+    return (v1.getSign() == BigInteger::negative);
+}
+
 QJSValue BigIntegerObject2::create(QJSValue value)
 {
     QJSValueList args;

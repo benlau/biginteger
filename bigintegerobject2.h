@@ -35,6 +35,10 @@ public slots:
 
     QJSValue _multiply(QJSValue a, QJSValue value) const;
 
+    QJSValue _divide(QJSValue a, QJSValue b) const;
+
+    bool isNegative(QJSValue a) const;
+
 private:
     QQmlEngine* m_engine;
     QJSValue creator;

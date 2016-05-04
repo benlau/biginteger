@@ -3,7 +3,7 @@ import QtTest 1.0
 import BigInteger 2.0
 
 TestCase {
-    name: "JsTests"
+    name: "BigInteger2Tests"
 
     function test_create() {
         var a = BigInteger.create(1000);
@@ -24,20 +24,19 @@ TestCase {
         compare(BigInteger.create("134").multiply(0.714285).equals("95"), true);
         compare(BigInteger.create("10").multiply([8,10]).equals("8"), true);
         compare(BigInteger.create("10").multiply(0.8).equals("8"), true);
-        //@TODO implmenet fraction
-//        compare(BigInteger.multiply("10", BigInteger.fraction(0.8) ), "8");
+        compare(BigInteger.create("10").multiply(BigInteger.fraction(0.8) ), "8");
     }
 
-    /*
     function test_divide() {
-        compare(BigInteger.divide("1231233141592653589793238462643383279","9128391823091"), "134879523738031326302006");
+        compare(BigInteger.create("1231233141592653589793238462643383279").divide("9128391823091").equals("134879523738031326302006"), true);
     }
 
     function test_isNegative() {
-        compare(BigInteger.isNegative("1231233141592653589793238462643383279"), false);
-        compare(BigInteger.isNegative("-1231233141592653589793238462643383279"), true);
+        compare(BigInteger.create("1231233141592653589793238462643383279").isNegative(), false);
+        compare(BigInteger.create("-1231233141592653589793238462643383279").isNegative(), true);
     }
 
+    /*
     function test_compare() {
         compare(BigInteger.compare("81723121231231233","123123123") , 1);
         compare(BigInteger.greater("81723121231231233","123123123"), true);
