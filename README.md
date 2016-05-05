@@ -30,6 +30,7 @@ Create a BigInteger object. You can pass in :
 
 1. A string
 2. A Javascript number
+3. Undefined - The result will be "0"
 
 **BigInteger.abs(number)**
 
