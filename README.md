@@ -4,7 +4,8 @@ QML BigInteger Library
 It is a library to provide BigInteger for QML.
 It is derived from the work by [Matt McCutchen](https://mattmccutchen.net/bigint/), and changed the licesne to APACHE-2.0.
 
-Only C++11 support has been added to the original work. 
+The original source is almost unmodified except for C++11 support.
+
 In case you only need to use BigInteger in Qt/C++ application, 
 you may just include all the *.cc files from this project.
 
@@ -13,7 +14,66 @@ Installation
 
 	qpm install com.github.benlau.biginteger
 
-API
+2.0 API
+======
+
+```
+import BigInteger 2.0
+```
+
+Usage
+-----
+
+**BigInteger.create(number)**
+
+Create a BigInteger object. You can pass in :
+
+1. A string
+2. A Javascript number
+
+**BigInteger.abs(number)**
+
+**BigInteger.gcd(a,b)**
+
+**BigInteger.pow(base, exp)**
+
+**BigInteger.fraction(number)**
+
+Methods
+-------
+
+**toString()**
+
+
+**equals(number)**
+
+**add(number)**
+
+```
+var num = BigInteger.create("1000").add(3); // 1003
+```
+
+**multiply(number)**
+
+**divide(number)**
+
+**minus(number)**
+
+**isNegative()**
+
+**compare(number)**
+
+**greater(number)**
+
+**greaterOrEquals(nunber)**
+
+**lesser(number)**
+
+**lesserOrEquals(number)**
+
+
+
+1.0 API
 ===
 
 ```
