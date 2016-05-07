@@ -52,6 +52,12 @@ BigInteger.prototype.lesserOrEquals = function(other) {
     return this.compare(other) <= 0;
 }
 
+BigInteger.prototype.add = function(other) {
+    var ret = new BigInteger();
+    ret.value = BI.BigInteger._add(this, other);
+    return ret;
+}
+
 function create(value) {
     var ret = new BigInteger();
     if (typeof value === "string" ||

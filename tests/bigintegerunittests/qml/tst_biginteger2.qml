@@ -82,4 +82,12 @@ TestCase {
         compare(f[1].equals("10"), true);
     }
 
+    function test_add() {
+        var a = BigInteger.create("1000");
+        var b = BigInteger.create("999");
+
+        compare(a.add("9999").equals("10999"), true);
+
+        compare(a.add(b).equals("1999"), true);
+    }
 }

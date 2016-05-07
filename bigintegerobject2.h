@@ -33,6 +33,8 @@ public slots:
 
     QString _toString(QJSValue a) const;
 
+    QJSValue _add(QJSValue a, QJSValue value) const;
+
     QJSValue _multiply(QJSValue a, QJSValue value) const;
 
     QJSValue _divide(QJSValue a, QJSValue b) const;

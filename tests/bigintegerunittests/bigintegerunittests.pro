@@ -25,6 +25,6 @@ HEADERS += \
     bigintegerunittests.h
 
 DISTFILES += \
-    qml/tst_calculation.qml \
     ../../README.md \
-    qml/tst_biginteger2.qml
+    qml/tst_biginteger2.qml \
+    qml/tst_biginteger1.qml
