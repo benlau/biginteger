@@ -234,4 +234,15 @@ QJSValue BigIntegerObject2::_add(QJSValue a, QJSValue value) const
     return m_engine->toScriptValue<BigInteger>(v1);
 }
 
+QJSValue BigIntegerObject2::_minus(QJSValue a, QJSValue value) const
+{
+    BigInteger v1, v2;
+    v1 = toBigInteger(a);
+    v2 = toBigInteger(value);
+
+    v1 -= v2;
+
+    return m_engine->toScriptValue<BigInteger>(v1);
+}
+
 

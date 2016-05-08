@@ -35,6 +35,8 @@ public slots:
 
     QJSValue _add(QJSValue a, QJSValue value) const;
 
+    QJSValue _minus(QJSValue a, QJSValue value) const;
+
     QJSValue _multiply(QJSValue a, QJSValue value) const;
 
     QJSValue _divide(QJSValue a, QJSValue b) const;

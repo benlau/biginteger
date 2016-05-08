@@ -58,6 +58,12 @@ BigInteger.prototype.add = function(other) {
     return ret;
 }
 
+BigInteger.prototype.minus = function(other) {
+    var ret = new BigInteger();
+    ret.value = BI.BigInteger._minus(this, other);
+    return ret;
+}
+
 function create(value) {
     var ret = new BigInteger();
     if (typeof value === "string" ||

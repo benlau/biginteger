@@ -90,4 +90,14 @@ TestCase {
 
         compare(a.add(b).equals("1999"), true);
     }
+
+    function test_minus() {
+        var a = BigInteger.create("1000");
+        var b = BigInteger.create("999");
+
+        compare(a.minus("9999").equals("-8999"), true);
+
+        compare(a.minus(b).equals("1"), true);
+
+    }
 }
