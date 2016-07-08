@@ -21,12 +21,9 @@ static QObject *provider2(QQmlEngine *engine, QJSEngine *scriptEngine) {
     return object;
 }
 
-class BigIntegerWrapperRegistrationHelper {
-public:
-    BigIntegerWrapperRegistrationHelper() {
-        qmlRegisterSingletonType<BigIntegerObject>("BigInteger", 1, 0, "BigInteger", provider);
-        qmlRegisterSingletonType<BigIntegerObject2>("BigInteger", 2, 0, "BigInteger", provider2);
-    }
-};
+static void registerQmlTypes() {
+    qmlRegisterSingletonType<BigIntegerObject>("BigInteger", 1, 0, "BigInteger", provider);
+    qmlRegisterSingletonType<BigIntegerObject2>("BigInteger", 2, 0, "BigInteger", provider2);
+}
 
-static BigIntegerWrapperRegistrationHelper registerHelper;
+Q_COREAPP_STARTUP_FUNCTION(registerQmlTypes)
